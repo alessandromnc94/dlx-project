@@ -1,0 +1,6 @@
+To format automatically a vhdl file in the directory the required command is:
+emacs PATH/TO/FILE --batch --eval '(downcase-region (point-min) (point-max))' --eval '(vhdl-beautify-buffer)' -f save-buffer  -u USER
+
+It's possible implement it in a script to execute it recursively
+POWERSHELL:
+Get-ChildItem ./ -Recurse -File -Include *.vhd | % { emacs $_.FullName --batch  --eval '(downcase-region (point-min) (point-max))' --eval '(vhdl-beautify-buffer)' -f save-buffer  -u USER}
