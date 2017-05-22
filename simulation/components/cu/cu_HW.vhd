@@ -34,7 +34,6 @@ ENTITY cu_hw IS
     );                                  -- active low
 END cu_hw;
 
--- behavioral version
 ARCHITECTURE behavioral OF cu_hw IS
 
   -- lut for control word (+ rtype bit)
@@ -59,12 +58,12 @@ BEGIN
   cw_mem_out <= cw_mem(conv_integer(UNSIGNED(opcode)));
   -- split previous signals
   -- split cw_mem_out in cw_itype and rtype
-  cw_itype   <= cw_mem_out(cw_array_size-1 DOWNTO 0);
-  rtype      <= cw_mem_out(cw_mem_array_size-1);
+  cw_itype   <= cw_mem_out(cw_mem_array_size-1 DOWNTO 1);
+  rtype      <= cw_mem_out(0);
   -- split alu_mem_out in alu and alu_valid
   alu        <= func(alu_array_size-1 DOWNTO 0);
   -- get correct rtype cw by replacing alu control bits
-  cw_rtype   <= cw_mem_out(cw_array_size-1 DOWNTO cw_array_size-1-3) & alu & cw_mem_out(cw_array_size-1-3-alu_array_size-1 DOWNTO 0);
+  cw_rtype   <= cw_mem_out(cw_mem_array_size-1 DOWNTO cw_mem_array_size-6) & alu & cw_mem_out(cw_mem_array_size-6-alu_array_size-1 DOWNTO 1);
 
   -- select the correct control word (mux 2 input)
   cw <= cw_itype WHEN rtype = '0' ELSE  -- instr is itype (nop is all '0's op_code)
@@ -77,14 +76,14 @@ BEGIN
   -- second stage
   s1      <= cw2(cw_array_size-3-1);
   s2      <= cw2(cw_array_size-3-2);
-  alu_out <= cw2(cw_array_size-3-3 DOWNTO cw_array_size-3-(3+alu_array_size-1));
-  en2     <= cw2(cw_array_size-3-(3+alu_array_size));
+  en2     <= cw2(cw_array_size-3-3);
+  alu_out <= cw2(cw_array_size-3-4 DOWNTO cw_array_size-3-(4+alu_array_size-1));
   -- third stage
-  rm      <= cw3(cw_array_size-3-(3+alu_array_size)-1);
-  wm      <= cw3(cw_array_size-3-(3+alu_array_size)-2);
-  wf1     <= cw1(cw_array_size-3-(3+alu_array_size)-3);
-  en3     <= cw3(cw_array_size-3-(3+alu_array_size)-4);
-  s3      <= cw3(cw_array_size-3-(3+alu_array_size)-5);
+  rm      <= cw3(cw_array_size-3-(4+alu_array_size-1)-1);
+  wm      <= cw3(cw_array_size-3-(4+alu_array_size-1)-2);
+  wf1     <= cw3(cw_array_size-3-(4+alu_array_size-1)-3);
+  en3     <= cw3(cw_array_size-3-(4+alu_array_size-1)-4);
+  s3      <= cw3(cw_array_size-3-(4+alu_array_size-1)-5);
 
   -- process to pipeline control words
   cw_pipe : PROCESS (clk, rst)
@@ -95,24 +94,13 @@ BEGIN
       cw3 <= (OTHERS => '0');
     ELSIF rising_edge(clk) THEN         -- rising clock edge
       cw1 <= cw;
-      cw2 <= cw1(cw_array_size-1-3 DOWNTO 0);
-      cw3 <= cw2(cw_array_size-1-3-(3+alu_array_size) DOWNTO 0);
+      cw2 <= cw1(cw2'LENGTH-1 DOWNTO 0);
+      cw3 <= cw2(cw3'LENGTH-1 DOWNTO 0);
     END IF;
   END PROCESS cw_pipe;
 END ARCHITECTURE;
 
--- structural version
-ARCHITECTURE structural OF cu_hw IS
-
-BEGIN
-END ARCHITECTURE;
-
-CONFIGURATION cu_hw_cfg_behavioral OF cu_hw IS
+CONFIGURATION cu_hw_cfg OF cu_hw IS
   FOR behavioral
-  END FOR;
-END CONFIGURATION;
-
-CONFIGURATION cu_hw_cfg_structural OF cu_hw IS
-  FOR structural
   END FOR;
 END CONFIGURATION;

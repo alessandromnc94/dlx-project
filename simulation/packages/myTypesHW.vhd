@@ -22,11 +22,10 @@ PACKAGE mytypeshw IS
 -- r-type instruction -> opcode field
   CONSTANT rtype          : opcode_array := "000001";  -- for any register-to-register operation
 -- r-type instruction -> func field
-  CONSTANT rtype_nop      : func_array   := "00000000000";  -- nop
-  CONSTANT rtype_add      : func_array   := "00000000001";  -- add rs1,rs2,rd
-  CONSTANT rtype_sub      : func_array   := "00000000010";  -- sub rs1,rs2,rd
-  CONSTANT rtype_and_op   : func_array   := "00000000011";  -- and rs1,rs2,rd
-  CONSTANT rtype_or_op    : func_array   := "00000000100";  -- or rs1,rs2,rd
+  CONSTANT rtype_add      : func_array   := "00000000000";  -- add rs1,rs2,rd
+  CONSTANT rtype_sub      : func_array   := "00000000001";  -- sub rs1,rs2,rd
+  CONSTANT rtype_and_op   : func_array   := "00000000010";  -- and rs1,rs2,rd
+  CONSTANT rtype_or_op    : func_array   := "00000000011";  -- or rs1,rs2,rd
 -- i-type instruction -> opcode field
   CONSTANT nop            : opcode_array := "000000";  -- nop
   CONSTANT itype_addi1    : opcode_array := "000010";  -- addi1 rs1,rd,inp1

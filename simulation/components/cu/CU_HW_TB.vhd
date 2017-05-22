@@ -36,11 +36,12 @@ ARCHITECTURE test OF cu_hw_tb IS
       );                                -- register file write enable
   END COMPONENT;
 
-  CONSTANT clk_period : TIME      := 4 NS;
-  SIGNAL clk_period_s : TIME      := clk_period;
-  SIGNAL clk_t, rst_t : STD_LOGIC := '0';
-  SIGNAL opc_t        : opcode_array;
-  SIGNAL func_t       : func_array;
+  CONSTANT clk_period     : TIME      := 4 NS;
+  CONSTANT test_nop_delay : TIME      := 0 * clk_period;
+  SIGNAL clk_period_s     : TIME      := clk_period;
+  SIGNAL clk_t, rst_t     : STD_LOGIC := '0';
+  SIGNAL opc_t            : opcode_array;
+  SIGNAL func_t           : func_array;
 
   SIGNAL en1_t, rf1_t, rf2_t               : STD_LOGIC;
   SIGNAL en2_t, s1_t, s2_t, alu1_t, alu2_t : STD_LOGIC;
@@ -81,63 +82,144 @@ BEGIN
     func_t <= rtype_add;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t  <= rtype;
     func_t <= rtype_sub;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     opc_t  <= rtype;
     func_t <= rtype_and_op;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t  <= rtype;
     func_t <= rtype_or_op;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     func_t <= (OTHERS => '0');
     opc_t  <= itype_addi1;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t <= itype_subi1;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     opc_t <= itype_andi1_op;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t <= itype_ori1_op;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     opc_t <= itype_addi2;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t <= itype_subi2;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     opc_t <= itype_andi2_op;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t <= itype_ori2_op;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     opc_t <= itype_mov;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t <= itype_s_reg1;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     --opc_t <= itype_s_mem1;
     --wait for clk_period;
 
+    -- opc_t <= nop;
+    -- func_t <= (others => '0');
+    -- wait for test_nop_delay;
+
     opc_t <= itype_l_mem1;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
 
     opc_t <= itype_s_reg2;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t <= itype_s_mem2;
     WAIT FOR clk_period;
 
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
     opc_t <= itype_l_mem2;
     WAIT FOR clk_period;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR test_nop_delay;
+
+    opc_t  <= nop;
+    func_t <= (OTHERS => '0');
+    WAIT FOR 3 * clk_period;
+
     ASSERT FALSE REPORT "testbench finished" SEVERITY FAILURE;
     WAIT;
 
