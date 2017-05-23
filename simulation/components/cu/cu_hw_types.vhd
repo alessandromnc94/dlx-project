@@ -1,23 +1,21 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
+USE work.alu_types.ALL;
+
 PACKAGE cu_hw_types IS
 
 -- control unit std_logic_vector sizes
-  CONSTANT opcode_size        : INTEGER := 6;   -- opcode field size
-  CONSTANT func_size          : INTEGER := 11;  -- func field size 
-  CONSTANT alu_array_size     : INTEGER := 2;   -- alu control bits size
-  CONSTANT alu_mem_array_size : INTEGER := 1+alu_array_size;  -- size for alu_mem_array (added valid output pin)
-  CONSTANT cw_array_size      : INTEGER := 11 + alu_array_size;  -- cw size
-  CONSTANT cw_mem_array_size  : INTEGER := 1+cw_array_size;  -- size for cw_mem_array (added rtype output pin)
+  CONSTANT opcode_size   : INTEGER := 6;   -- opcode field size
+  CONSTANT func_size     : INTEGER := 11;  -- func field size 
+  -- constant alu_array_size     : integer := 2;   -- alu control bits size
+  CONSTANT cw_array_size : INTEGER := 15;  -- cw size
 
 -- change the values of the instructions coding as you want, depending also on the type of control unit choosen
-  SUBTYPE cw_array IS STD_LOGIC_VECTOR(cw_array_size-1 DOWNTO 0);
-  SUBTYPE cw_mem_array IS STD_LOGIC_VECTOR(cw_mem_array_size-1 DOWNTO 0);
-  TYPE cw_mem_matrix IS ARRAY (INTEGER RANGE 0 TO 2**opcode_size-1) OF cw_mem_array;
-  SUBTYPE alu_array IS STD_LOGIC_VECTOR(alu_array_size-1 DOWNTO 0);
-  SUBTYPE opcode_array IS STD_LOGIC_VECTOR(opcode_size-1 DOWNTO 0);
-  SUBTYPE func_array IS STD_LOGIC_VECTOR(func_size-1 DOWNTO 0);
+  TYPE cw_array IS STD_LOGIC_VECTOR(cw_array_size-1 DOWNTO 0);
+  TYPE cw_mem_matrix IS ARRAY (INTEGER RANGE 0 TO 2**opcode_size-1) OF cw_array;
+  TYPE opcode_array IS STD_LOGIC_VECTOR(opcode_size-1 DOWNTO 0);
+  TYPE func_array IS STD_LOGIC_VECTOR(func_size-1 DOWNTO 0);
 
 -- r-type instruction -> opcode field
   CONSTANT rtype          : opcode_array := "000001";  -- for any register-to-register operation
