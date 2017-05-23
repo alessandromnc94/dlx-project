@@ -2,8 +2,8 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.ALL;
 USE ieee.std_logic_arith.ALL;
-USE work.mytypeshw.ALL;
--- use work.myfunctionshw.all;
+USE work.cu_hw_types.ALL;
+-- use work.cu_hw_functions.all;
 
 ENTITY cu_hw_tb IS
 END cu_hw_tb;

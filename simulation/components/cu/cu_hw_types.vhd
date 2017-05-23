@@ -1,7 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
-PACKAGE mytypeshw IS
+PACKAGE cu_hw_types IS
 
 -- control unit std_logic_vector sizes
   CONSTANT opcode_size        : INTEGER := 6;   -- opcode field size

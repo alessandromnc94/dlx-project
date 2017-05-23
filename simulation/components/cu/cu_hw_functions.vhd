@@ -4,14 +4,15 @@ USE ieee.std_logic_unsigned.ALL;
 USE ieee.std_logic_arith.ALL;
 USE std.textio.ALL;
 USE ieee.std_logic_textio.ALL;
-USE work.mytypeshw.ALL;
 
-PACKAGE myfunctionshw IS
+USE work.cu_hw_types.ALL;
+
+PACKAGE cu_hw_functions IS
 -- function to initialize cw_mem using a file (cw_input.txt)
   FUNCTION initialize_cw_mem RETURN cw_mem_matrix;
 END PACKAGE;
 
-PACKAGE BODY myfunctionshw IS
+PACKAGE BODY cu_hw_functions IS
 -- function to initialize cw_mem using a file (cw_input.txt)
   FUNCTION initialize_cw_mem RETURN cw_mem_matrix IS
     FILE file_in                    : TEXT;

@@ -3,8 +3,8 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.ALL;
 USE ieee.std_logic_arith.ALL;
 
-USE work.mytypeshw.ALL;
-USE work.myfunctionshw.ALL;
+USE work.cu_hw_types.ALL;
+USE work.cu_hw_functions.ALL;
 
 ENTITY cu_hw IS
   PORT (
