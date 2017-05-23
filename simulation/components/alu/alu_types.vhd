@@ -4,7 +4,7 @@ USE ieee.std_logic_1164.ALL;
 PACKAGE alu_types IS
 
   CONSTANT alu_array_size : INTEGER := 2;
-  TYPE alu_array IS STD_LOGIC_VECTOR(alu_array_size-1 DOWNTO 0);
+  SUBTYPE alu_array IS STD_LOGIC_VECTOR(alu_array_size-1 DOWNTO 0);
 
   CONSTANT alu_add : alu_array := conv_std_logic_vector(0, alu_array_size);
   CONSTANT alu_sub : alu_array := conv_std_logic_vector(1, alu_array_size);

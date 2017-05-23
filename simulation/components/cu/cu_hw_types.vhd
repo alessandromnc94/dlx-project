@@ -12,10 +12,10 @@ PACKAGE cu_hw_types IS
   CONSTANT cw_array_size : INTEGER := 15;  -- cw size
 
 -- change the values of the instructions coding as you want, depending also on the type of control unit choosen
-  TYPE cw_array IS STD_LOGIC_VECTOR(cw_array_size-1 DOWNTO 0);
+  SUBTYPE cw_array IS STD_LOGIC_VECTOR(cw_array_size-1 DOWNTO 0);
   TYPE cw_mem_matrix IS ARRAY (INTEGER RANGE 0 TO 2**opcode_size-1) OF cw_array;
-  TYPE opcode_array IS STD_LOGIC_VECTOR(opcode_size-1 DOWNTO 0);
-  TYPE func_array IS STD_LOGIC_VECTOR(func_size-1 DOWNTO 0);
+  SUBTYPE opcode_array IS STD_LOGIC_VECTOR(opcode_size-1 DOWNTO 0);
+  SUBTYPE func_array IS STD_LOGIC_VECTOR(func_size-1 DOWNTO 0);
 
 -- r-type instruction -> opcode field
   CONSTANT rtype          : opcode_array := "000001";  -- for any register-to-register operation
@@ -43,4 +43,3 @@ PACKAGE cu_hw_types IS
   CONSTANT itype_l_mem2   : opcode_array := "010000";  -- l_mem2 rs1,rd,inp1
 
 END PACKAGE;
-
