@@ -10,6 +10,7 @@ ENTITY register_n IS
       clk  : IN  STD_LOGIC;
       rst  : IN  STD_LOGIC;
       set  : IN  STD_LOGIC;
+      -- en : in std_logic;
       dout : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
       );
 END ENTITY;

@@ -12,7 +12,7 @@ ENTITY mux_n_m_1 IS
     m : INTEGER := 2                    -- number of inputs
     );
   PORT (
-    i : IN  mux_n_m_1_matrix(0 TO m-1)(n-1 DOWNTO 0);  -- input matrix [depth range, width range]
+    i : IN  mux_n_m_1_matrix(0 TO m-1)(n-1 DOWNTO 0);  -- input matrix (depth range)(width range)
     s : IN  STD_LOGIC_VECTOR(log2int(m)-1 DOWNTO 0);  -- selector is always a vector
     o : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
     );

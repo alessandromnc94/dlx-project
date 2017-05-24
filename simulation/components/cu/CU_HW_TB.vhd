@@ -3,10 +3,11 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.ALL;
 USE ieee.std_logic_arith.ALL;
 USE work.cu_hw_types.ALL;
--- use work.cu_hw_functions.all;
+
+-- WRONG TESTBENCH
 
 ENTITY cu_hw_tb IS
-END cu_hw_tb;
+END ENTITY;
 
 ARCHITECTURE test OF cu_hw_tb IS
   COMPONENT cu_hw IS
@@ -53,12 +54,13 @@ ARCHITECTURE test OF cu_hw_tb IS
 BEGIN
   clk_t <= NOT clk_t AFTER clk_period/2;
 
-  dut : cu_hw PORT MAP(en1_t,
-                       rf1_t,
-                       rf2_t,
-                       en2_t,
-                       s1_t,
-                       s2_t,
+  dut : cu_hw PORT MAP(
+     en1 => en1_t,
+      rf1 => rf1_t,
+             rf2 =>          rf2_t,
+                   en2 =>    en2_t,
+                 s1 =>      s1_t,
+                   s2 =>    s2_t,
                        alu_out_t,
                        en3_t,
                        rm_t,
@@ -254,12 +256,24 @@ BEGIN
       WHEN OTHERS         => opname <= "           nop";
     END CASE;
   END PROCESS;
-END test;
+END ARCHITECTURE;
 
-CONFIGURATION cu_hw_tb_cfg OF cu_hw_tb IS
+-- Configurations
+
+-- Dynamic configuration
+CONFIGURATION cfg_cu_hw_tb_dynamic OF cu_hw_tb IS
   FOR test
     FOR dut : cu_hw
-      USE CONFIGURATION work.cu_hw_cfg;
+      USE CONFIGURATION work.cfg_cu_hw_behavioral_dynamic;
     END FOR;
   END FOR;
-END cu_hw_tb_cfg;
+END CONFIGURATION;
+
+-- Static configuration
+CONFIGURATION cfg_cu_hw_tb_static OF cu_hw_tb IS
+  FOR test
+    FOR dut : cu_hw
+      USE CONFIGURATION work.cfg_cu_hw_behavioral_static;
+    END FOR;
+  END FOR;
+END CONFIGURATION;
