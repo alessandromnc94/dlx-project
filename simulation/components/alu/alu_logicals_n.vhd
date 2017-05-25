@@ -1,50 +1,50 @@
-library ieee;
-use ieee.std_logic_1164.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
 
-use work.alu_logicals_types.all;
+USE work.alu_logicals_types.ALL;
 
-entity alu_logicals_n is 
-	generic (
-		n : integer : 8
-	);
-	port (
-		i1 : in std_logic_vector(n-1 downto 0);
-		i2 : in std_logic_vector(n-1 downto 0);
-		logic : in alu_logicals_n_array;
-		o : out std_logic_vector(n-1 downto 0)
-	);
-end entity;
+ENTITY alu_logicals_n IS
+  GENERIC (
+    n : INTEGER : 8
+    );
+  PORT (
+    i1    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    i2    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    logic : IN  alu_logicals_n_array;
+    o     : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    );
+END ENTITY;
 
 -- architectures
 
 -- behavioral architecture
-architecture behavioral of alu_logicals_n is
-begin
+ARCHITECTURE behavioral OF alu_logicals_n IS
+BEGIN
 
-end architecture;
+END ARCHITECTURE;
 
 -- structural architecture
-architecture structural of alu_logicals_n is
-begin
+ARCHITECTURE structural OF alu_logicals_n IS
+BEGIN
 
-end architecture;
+END ARCHITECTURE;
 
 -- configurations
 
 -- behavioral configuration
-configuration cfg_alu_logicals_n_behavioral of alu_logicals_n is
-for behavioral
-end for;
-end configuration;
+CONFIGURATION cfg_alu_logicals_n_behavioral OF alu_logicals_n IS
+  FOR behavioral
+  END FOR;
+END CONFIGURATION;
 
 -- structural configuration with behavioral components
-configuration cfg_alu_logicals_n_structural_1 of alu_logicals_n is
-for structural
-end for;
-end configuration;
+CONFIGURATION cfg_alu_logicals_n_structural_1 OF alu_logicals_n IS
+  FOR structural
+  END FOR;
+END CONFIGURATION;
 
 -- structural configuration with structural components
-configuration cfg_alu_logicals_n_structural_2 of alu_logicals_n is
-for structural
-end for;
-end configuration;
+CONFIGURATION cfg_alu_logicals_n_structural_2 OF alu_logicals_n IS
+  FOR structural
+  END FOR;
+END CONFIGURATION;

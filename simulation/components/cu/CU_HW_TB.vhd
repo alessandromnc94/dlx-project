@@ -4,7 +4,7 @@ USE ieee.std_logic_unsigned.ALL;
 USE ieee.std_logic_arith.ALL;
 USE work.cu_hw_types.ALL;
 
--- WRONG TESTBENCH
+-- wrong testbench
 
 ENTITY cu_hw_tb IS
 END ENTITY;
@@ -55,22 +55,22 @@ BEGIN
   clk_t <= NOT clk_t AFTER clk_period/2;
 
   dut : cu_hw PORT MAP(
-     en1 => en1_t,
-      rf1 => rf1_t,
-             rf2 =>          rf2_t,
-                   en2 =>    en2_t,
-                 s1 =>      s1_t,
-                   s2 =>    s2_t,
-                       alu_out_t,
-                       en3_t,
-                       rm_t,
-                       wm_t,
-                       wf1_t,
-                       s3_t,
-                       opc_t,
-                       func_t,
-                       clk_t,
-                       rst_t);
+    en1 => en1_t,
+    rf1 => rf1_t,
+    rf2 => rf2_t,
+    en2 => en2_t,
+    s1  => s1_t,
+    s2  => s2_t,
+    alu_out_t,
+    en3_t,
+    rm_t,
+    wm_t,
+    wf1_t,
+    s3_t,
+    opc_t,
+    func_t,
+    clk_t,
+    rst_t);
 
   test_proc : PROCESS
   BEGIN
@@ -258,9 +258,9 @@ BEGIN
   END PROCESS;
 END ARCHITECTURE;
 
--- Configurations
+-- configurations
 
--- Dynamic configuration
+-- dynamic configuration
 CONFIGURATION cfg_cu_hw_tb_dynamic OF cu_hw_tb IS
   FOR test
     FOR dut : cu_hw
@@ -269,7 +269,7 @@ CONFIGURATION cfg_cu_hw_tb_dynamic OF cu_hw_tb IS
   END FOR;
 END CONFIGURATION;
 
--- Static configuration
+-- static configuration
 CONFIGURATION cfg_cu_hw_tb_static OF cu_hw_tb IS
   FOR test
     FOR dut : cu_hw

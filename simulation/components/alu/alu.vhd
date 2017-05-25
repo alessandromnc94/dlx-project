@@ -4,9 +4,9 @@ USE ieee.std_logic_unsigned.ALL;
 USE iee.std_logic_signed.ALL;
 USE ieee.std_logic_arith.ALL;
 
-use work.mux_n_m_1_types.all;
+USE work.mux_n_m_1_types.ALL;
 USE work.alu_types.ALL;
-use work.my_arith_functions.all;
+USE work.my_arith_functions.ALL;
 
 ENTITY alu IS
   GENERIC (
@@ -23,78 +23,78 @@ END ENTITY;
 -- architectures
 
 -- behavioral architecture
--- ARCHITECTURE behavioral OF alu IS
--- BEGIN
---   PROCESS (ALL)
---   BEGIN
---     CASE op_sel IS
---       WHEN alu_add => o <= i0 + i1;
---       WHEN alu_sub => o <= i0 - i1;
---       WHEN alu_and => o <= i0 AND i1;
---       WHEN alu_or  => o <= i0 OR i1;
---       WHEN alu_xor => o <= i0 XOR i1;
---       WHEN alu_sll => o <= conv_std_logic_vector(SLL(UNSIGNED(i0), UNSIGNED(i1)), n);
---       WHEN alu_srl => o <= conv_std_logic_vector(SRL(UNSIGNED(i0), UNSIGNED(i1)), n);
---       WHEN alu_sra => o <= conv_std_logic_vector(SRA(UNSIGNED(i0), UNSIGNED(i1)), n);
---       WHEN alu_rol => o <= conv_std_logic_vector(ROL(UNSIGNED(i0), UNSIGNED(i1)), n);
---       WHEN alu_ror => o <= conv_std_logic_vector(ROR(UNSIGNED(i0), UNSIGNED(i1)), n);
---       WHEN alu_comp_eq =>
---         o <= (OTHERS => '0')
---         IF i0 = i1 THEN
+-- architecture behavioral of alu is
+-- begin
+--   process (all)
+--   begin
+--     case op_sel is
+--       when alu_add => o <= i0 + i1;
+--       when alu_sub => o <= i0 - i1;
+--       when alu_and => o <= i0 and i1;
+--       when alu_or  => o <= i0 or i1;
+--       when alu_xor => o <= i0 xor i1;
+--       when alu_sll => o <= conv_std_logic_vector(sll(unsigned(i0), unsigned(i1)), n);
+--       when alu_srl => o <= conv_std_logic_vector(srl(unsigned(i0), unsigned(i1)), n);
+--       when alu_sra => o <= conv_std_logic_vector(sra(unsigned(i0), unsigned(i1)), n);
+--       when alu_rol => o <= conv_std_logic_vector(rol(unsigned(i0), unsigned(i1)), n);
+--       when alu_ror => o <= conv_std_logic_vector(ror(unsigned(i0), unsigned(i1)), n);
+--       when alu_comp_eq =>
+--         o <= (others => '0')
+--         if i0 = i1 then
 --           o(0) <= '1';
---         END IF;
---       WHEN alu_comp_gr =>
---         o <= (OTHERS => '0')
---         IF i0 > i1 THEN
+--         end if;
+--       when alu_comp_gr =>
+--         o <= (others => '0')
+--         if i0 > i1 then
 --           o(0) <= '1';
---         END IF;
---       WHEN alu_comp_lr =>
---         o <= (OTHERS => '0')
---         IF i0 < i1 THEN
+--         end if;
+--       when alu_comp_lr =>
+--         o <= (others => '0')
+--         if i0 < i1 then
 --           o(0) <= '1';
---         END IF;
---       WHEN alu_comp_ge =>
---         o <= (OTHERS => '0')
---         IF i0 >= i1 THEN
+--         end if;
+--       when alu_comp_ge =>
+--         o <= (others => '0')
+--         if i0 >= i1 then
 --           o(0) <= '1';
---         END IF;
---       WHEN alu_comp_le =>
---         o     <= (OTHERS => '0')
---         IF i0 <= i1 THEN
+--         end if;
+--       when alu_comp_le =>
+--         o     <= (others => '0')
+--         if i0 <= i1 then
 --           o(0) <= '1';
---         END IF;
---       WHEN alu_comp_ne =>
---         o <= (OTHERS => '0')
---         IF i0 /= i1 THEN
+--         end if;
+--       when alu_comp_ne =>
+--         o <= (others => '0')
+--         if i0 /= i1 then
 --           o(0) <= '1';
---         END IF;
---       WHEN OTHERS => o <= (OTHERS => 'z');
---     END CASE;
---   END PROCESS;
--- END ARCHITECTURE;
+--         end if;
+--       when others => o <= (others => 'z');
+--     end case;
+--   end process;
+-- end architecture;
 
 -- structural architecture
-ARCHITECTURE structural of alu is
+ARCHITECTURE structural OF alu IS
 
-  component mux_n_m_1 is
-    generic (
-      n : integer;
-      m : integer
-    );
-    port (
-      i : in mux_n_m_1_matrix(0 to m-1)(n-1 downto 0);
-      s : in STD_LOGIC_VECTOR(log2int(m)-1 downto 0);
-      o : out STD_LOGIC_VECTOR(n-1 downto 0)
-    );
-  end component;
+  COMPONENT mux_n_m_1 IS
+    GENERIC (
+      n : INTEGER;
+      m : INTEGER
+      );
+    PORT (
+      i : IN  mux_n_m_1_matrix(0 TO m-1)(n-1 DOWNTO 0);
+      s : IN  STD_LOGIC_VECTOR(log2int(m)-1 DOWNTO 0);
+      o : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+      );
+  END COMPONENT;
 
-  component alu_logical is 
-  end component;
+  COMPONENT alu_logical IS
+  END COMPONENT;
 
 BEGIN
 
 
-end architecture;
+END ARCHITECTURE;
 
 -- configurations
 

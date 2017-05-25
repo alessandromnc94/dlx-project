@@ -236,9 +236,9 @@ BEGIN  -- architecture behavioral
   END PROCESS;
 END ARCHITECTURE;
 
-configuration cfg_tb_register_file_win_behavioral of tb_register_file_win
-for testbench
-  for dut : register_file_win use configuration work.cfg_register_file_win_behavioral;
-  end for;
-end for;
-end configuration;
+CONFIGURATION cfg_tb_register_file_win_behavioral OF tb_register_file_win
+  FOR testbench
+  FOR dut : register_file_win USE CONFIGURATION work.cfg_register_file_win_behavioral;
+END FOR;
+END FOR;
+END CONFIGURATION;

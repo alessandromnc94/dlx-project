@@ -11,7 +11,7 @@ END ENTITY;
 
 ARCHITECTURE behavioral OF nor_gate IS
 BEGIN
-  o <= i1 nOR i2;
+  o <= i1 NOR i2;
 END ARCHITECTURE;
 
 CONFIGURATION cfg_nor_gate_behavioral OF nor_gate IS

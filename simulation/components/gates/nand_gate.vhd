@@ -11,7 +11,7 @@ END ENTITY;
 
 ARCHITECTURE behavioral OF nand_gate IS
 BEGIN
-  o <= i1 nAND i2;
+  o <= i1 NAND i2;
 END ARCHITECTURE;
 
 CONFIGURATION cfg_nand_gate_behavioral OF nand_gate IS

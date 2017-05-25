@@ -11,7 +11,7 @@ END ENTITY;
 
 ARCHITECTURE behavioral OF xnor_gate IS
 BEGIN
-  o <= i1 xnor i2;
+  o <= i1 XNOR i2;
 END ARCHITECTURE;
 
 CONFIGURATION cfg_xnor_gate_behavioral OF xnor_gate IS

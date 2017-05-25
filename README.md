@@ -2,11 +2,29 @@
 
 This repository contains the DLX project developed for Politecnico di Torino Microelectronics course.
 
+# TO DO
+
+* Convert files from VHDL 2008 to VHDL 1998
+  * MUX_n_m_1 (not possible full generic)
+  * XXX_gate_n (not possible __*"logic\_op std\_logic\_vector"*__ )
+  * probably other stuff
+* Implement
+  * Counters
+  * Adders/Subtracters
+  * Multipliers
+  * Dividers
+  * Shifters
+  * Floating Point Elements
+  * Comparators
+* Draw schematic
+
+
+
 ## File Tree
 * scripts : all scripts to automate compilation, analysis and simulations
 * simulation : all files for simulations (MODELSIM)
- * components : all components with own packages are placed here<!--* others : all not vhdl files are placed here-->
- * packages : all generic packages are placed here
+  * components : all components with own packages are placed here<!--* others : all not vhdl files are placed here-->
+  * packages : all generic packages are placed here
 * synthesis : all output files from synthesis (SYNOPSYS)
 * how to format vhdl file.txt
 * README.md

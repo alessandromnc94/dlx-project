@@ -39,7 +39,7 @@ ENTITY cu_hw IS
     );
 END cu_hw;
 
--- Architectures
+-- architectures
 
 -- behavioral architecture with lut defined by file cw_input.txt
 ARCHITECTURE behavioral_dynamic OF cu_hw IS
@@ -144,7 +144,14 @@ END ARCHITECTURE;
 ARCHITECTURE behavioral_static OF cu_hw IS
 
   -- lut for control word
-  SIGNAL cw_mem           : cw_mem_matrix                               := initialize_cw_mem;
+  SIGNAL cw_mem : cw_mem_matrix := (
+    0      => cw_nop,                   -- nop
+    1      => ,                         -- rtype
+    2      => ,
+    3      => ,
+    4      => ,
+    OTHERS => cw_nop                    -- instructions not defined
+    );
   -- control word from lut
   SIGNAL cw               : cw_array                                    := (OTHERS => '0');
   -- split cw in stages
@@ -239,11 +246,15 @@ BEGIN
   END PROCESS;
 END ARCHITECTURE;
 
+-- configurations
+
+-- dynamic behavioral configuration
 CONFIGURATION cfg_cu_hw_behavioral_dynamic OF cu_hw IS
   FOR behavioral_dynamic
   END FOR;
 END CONFIGURATION;
 
+-- static behavioral configuration
 CONFIGURATION cfg_cu_hw_behavioral_static OF cu_hw IS
   FOR behavioral_static
   END FOR;
