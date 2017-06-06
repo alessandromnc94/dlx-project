@@ -108,6 +108,7 @@ ARCHITECTURE structural OF alu IS
 
   SIGNAL zero_out           : STD_LOGIC;
   SIGNAL comp_mode          : comparator_array;
+  SIGNAL signed_comparison  : STD_LOGIC;
   SIGNAL comparator_eq_out  : STD_LOGIC;
   SIGNAL comparator_gr_out  : STD_LOGIC;
   SIGNAL comparator_lo_out  : STD_LOGIC;
@@ -167,14 +168,15 @@ BEGIN
   -- this comparator compares the carry out from adder and the zero_out from zero_comparator
   -- which kind comparison is choosen externally
   adder_comparator_comp : comparator PORT MAP (
-    zero_out  => zero_comparator_out,
-    carry_out => addsub_carry_out,
-    eq_out    => comparator_eq_out,
-    gr_out    => comparator_gr_out,
-    lo_out    => comparator_lo_out,
-    ge_out    => comparator_ge_out,
-    le_out    => comparator_le_out,
-    ne_out    => comparator_ne_out
+    zero_out          => zero_comparator_out,
+    carry_out         => addsub_carry_out,
+    signed_comparison => signed_comparison,
+    eq_out            => comparator_eq_out,
+    gr_out            => comparator_gr_out,
+    lo_out            => comparator_lo_out,
+    ge_out            => comparator_ge_out,
+    le_out            => comparator_le_out,
+    ne_out            => comparator_ne_out
     );
 
 --
