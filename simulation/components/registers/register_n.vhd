@@ -4,15 +4,15 @@ USE ieee.std_logic_1164.ALL;
 ENTITY register_n IS
   GENERIC (
     n : INTEGER := 8
-    )
-    PORT (
-      din  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      clk  : IN  STD_LOGIC;
-      rst  : IN  STD_LOGIC;
-      set  : IN  STD_LOGIC;
-      -- en : in std_logic;
-      dout : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
-      );
+    );
+  PORT (
+    din  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    clk  : IN  STD_LOGIC;
+    rst  : IN  STD_LOGIC;
+    set  : IN  STD_LOGIC;
+    en   : IN  STD_LOGIC;
+    dout : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    );
 END ENTITY;
 
 -- architectures
@@ -34,7 +34,7 @@ BEGIN
     ELSE
       dout <= (OTHERS => '1');
     END IF;
-  ELSIF rising_edge(clk) THEN
+  ELSIF rising_edge(clk) AND en = '1' THEN
     dout <= din;
   END IF;
 END PROCESS;
@@ -49,6 +49,7 @@ ARCHITECTURE structural OF register_n IS
       clk : IN  STD_LOGIC;
       rst : IN  STD_LOGIC;
       set : IN  STD_LOGIC;
+      en  : IN  STD_LOGIC;
       q   : OUT STD_LOGIC
       );
   END COMPONENT;
@@ -64,7 +65,7 @@ BEGIN
         set => set,
         q   => dout(i)
         );
-  END GENERATE dff_generation;
+  END GENERATE;
 END ARCHITECTURE;
 
 -- configurations

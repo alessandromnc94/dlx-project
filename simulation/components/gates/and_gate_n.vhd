@@ -6,14 +6,24 @@ ENTITY and_gate_n IS
     n : INTEGER := 3
     );
   PORT (
-    i : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    o : OUT STD_LOGIC
+    in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    out_s : OUT STD_LOGIC
     );
 END ENTITY;
 
 ARCHITECTURE behavioral OF and_gate_n IS
+  SIGNAL tmp_out_s : STD_LOGIC;
 BEGIN
-  o <= AND i;
+
+  tmp_out_s <= in_s(0);
+  and_gates_gen : FOR i IN 1 TO n-1 GENERATE
+    tmp_out_s <= tmp_out_s AND in_s(i);
+  END GENERATE;
+
+  out_s <= tmp_out_s;
+
+-- it works only with vhdl 2008
+-- out_s <= and i;
 END ARCHITECTURE;
 
 CONFIGURATION cfg_and_gate_n_behavioral OF and_gate_n IS

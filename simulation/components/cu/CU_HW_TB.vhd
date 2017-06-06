@@ -113,28 +113,28 @@ BEGIN
     WAIT FOR test_nop_delay;
 
     func_t <= (OTHERS => '0');
-    opc_t  <= itype_addi1;
+    opc_t  <= itype_addin1;
     WAIT FOR clk_period;
 
     opc_t  <= nop;
     func_t <= (OTHERS => '0');
     WAIT FOR test_nop_delay;
 
-    opc_t <= itype_subi1;
+    opc_t <= itype_subin1;
     WAIT FOR clk_period;
 
     opc_t  <= nop;
     func_t <= (OTHERS => '0');
     WAIT FOR test_nop_delay;
 
-    opc_t <= itype_andi1_op;
+    opc_t <= itype_andin1_op;
     WAIT FOR clk_period;
 
     opc_t  <= nop;
     func_t <= (OTHERS => '0');
     WAIT FOR test_nop_delay;
 
-    opc_t <= itype_ori1_op;
+    opc_t <= itype_orin1_op;
     WAIT FOR clk_period;
 
     opc_t  <= nop;
@@ -238,22 +238,22 @@ BEGIN
           WHEN rtype_or_op  => opname <= "   rtype_or_op";
           WHEN OTHERS       => opname <= "           nop";
         END CASE;
-      WHEN itype_addi1    => opname <= "   itype_addi1";
-      WHEN itype_subi1    => opname <= "   itype_subi1";
-      WHEN itype_andi1_op => opname <= "itype_andi1_op";
-      WHEN itype_ori1_op  => opname <= " itype_ori1_op";
-      WHEN itype_addi2    => opname <= "   itype_addi2";
-      WHEN itype_subi2    => opname <= "   itype_subi2";
-      WHEN itype_andi2_op => opname <= "itype_andi2_op";
-      WHEN itype_ori2_op  => opname <= " itype_ori2_op";
-      WHEN itype_mov      => opname <= "     itype_mov";
-      WHEN itype_s_reg1   => opname <= "  itype_s_reg1";
+      WHEN itype_addin1    => opname <= "   itype_addin1";
+      WHEN itype_subin1    => opname <= "   itype_subin1";
+      WHEN itype_andin1_op => opname <= "itype_andin1_op";
+      WHEN itype_orin1_op  => opname <= " itype_orin1_op";
+      WHEN itype_addi2     => opname <= "   itype_addi2";
+      WHEN itype_subi2     => opname <= "   itype_subi2";
+      WHEN itype_andi2_op  => opname <= "itype_andi2_op";
+      WHEN itype_ori2_op   => opname <= " itype_ori2_op";
+      WHEN itype_mov       => opname <= "     itype_mov";
+      WHEN itype_s_reg1    => opname <= "  itype_s_reg1";
       -- when itype_s_mem1        => opname <= "  itype_s_mem1";
-      WHEN itype_l_mem1   => opname <= "  itype_l_mem1";
-      WHEN itype_s_reg2   => opname <= "  itype_s_reg2";
-      WHEN itype_s_mem2   => opname <= "  itype_s_mem2";
-      WHEN itype_l_mem2   => opname <= "  itype_l_mem2";
-      WHEN OTHERS         => opname <= "           nop";
+      WHEN itype_l_mem1    => opname <= "  itype_l_mem1";
+      WHEN itype_s_reg2    => opname <= "  itype_s_reg2";
+      WHEN itype_s_mem2    => opname <= "  itype_s_mem2";
+      WHEN itype_l_mem2    => opname <= "  itype_l_mem2";
+      WHEN OTHERS          => opname <= "           nop";
     END CASE;
   END PROCESS;
 END ARCHITECTURE;

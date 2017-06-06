@@ -6,10 +6,10 @@ ENTITY mux_n_2_1 IS
     n : INTEGER := 1
     );
   PORT (
-    i0 : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    i1 : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    s  : IN  STD_LOGIC;
-    o  : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    in_0  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    s     : IN  STD_LOGIC;
+    out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
     );
 END ENTITY;
 
@@ -18,8 +18,8 @@ END ENTITY;
 -- behavioral architecture
 ARCHITECTURE behavioral OF mux_n_2_1 IS
 BEGIN
-  o <= i0 WHEN s = '0' ELSE
-       i1;
+  out_s <= in_0 WHEN s = '0' ELSE
+           in_1;
 END ARCHITECTURE;
 
 -- structural architecture
@@ -27,60 +27,60 @@ ARCHITECTURE structural OF mux_n_2_1 IS
 
   COMPONENT and_gate IS
     PORT (
-      i1 : IN  STD_LOGIC;
-      i2 : IN  STD_LOGIC;
-      o  : OUT STD_LOGIC
+      in_1  : IN  STD_LOGIC;
+      in_2  : IN  STD_LOGIC;
+      out_s : OUT STD_LOGIC
       );
   END COMPONENT;
 
   COMPONENT or_gate IS
     PORT (
-      i1 : IN  STD_LOGIC;
-      i2 : IN  STD_LOGIC;
-      o  : OUT STD_LOGIC
+      in_1  : IN  STD_LOGIC;
+      in_2  : IN  STD_LOGIC;
+      out_s : OUT STD_LOGIC
       );
   END COMPONENT;
 
   COMPONENT not_gate IS
     PORT (
-      i : IN  STD_LOGIC;
-      o : OUT STD_LOGIC
+      i     : IN  STD_LOGIC;
+      out_s : OUT STD_LOGIC
       );
   END COMPONENT;
 
-  SIGNAL not_s                  : STD_LOGIC                      := '0';
-  SIGNAL i0_and_out, i1_and_out : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
+  SIGNAL not_s                    : STD_LOGIC                      := '0';
+  SIGNAL in0_and_out, in1_and_out : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
 
 BEGIN
 
   not_s_gate : not_gate
     PORT MAP(
-      i => s,
-      o => not_s
+      i     => s,
+      out_s => not_s
       );
 
   gates_gen : FOR i IN 0 TO n-1 GENERATE
-    i0_and_gatex : and_gate
+    in0_and_gatex : and_gate
       PORT MAP (
-        i1 => i0(i),
-        i2 => not_s,
-        o  => i0_and_out(i)
+        in_1  => in_0(i),
+        in_2  => not_s,
+        out_s => in0_and_out(i)
         );
 
-    i1_and_gatex : and_gate
+    in1_and_gatex : and_gate
       PORT MAP (
-        i1 => i1(i),
-        i2 => s,
-        o  => i1_and_out(i)
+        in_1  => in_1(i),
+        in_2  => s,
+        out_s => in1_and_out(i)
         );
 
     or_gatex : or_gate
       PORT MAP (
-        i1 => i0_and_out(i),
-        i2 => i1_and_out(i),
-        o  => o(i)
+        in_1  => in0_and_out(i),
+        in_2  => in1_and_out(i),
+        out_s => out_s(i)
         );
-  END GENERATE gates_gen;
+  END GENERATE;
 
 END ARCHITECTURE;
 
@@ -97,11 +97,11 @@ CONFIGURATION cfg_mux_n_2_1_structural OF mux_n_2_1 IS
       USE CONFIGURATION work.cfg_not_gate_behavioral;
     END FOR;
     FOR gates_gen
-      FOR i0_and_gatex : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
+      FOR in0_and_gatex : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
       END FOR;
-      FOR i1_and_gatex : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
+      FOR in1_and_gatex : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
       END FOR;
-      FOR or_gatex     : or_gate USE CONFIGURATION work.cfg_or_gate_behavioral;
+      FOR or_gatex      : or_gate USE CONFIGURATION work.cfg_or_gate_behavioral;
       END FOR;
     END FOR;
   END FOR;

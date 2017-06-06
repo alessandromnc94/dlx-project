@@ -1,24 +1,27 @@
 # dlx-project
 
-This repository contains the DLX project developed for Politecnico di Torino Microelectronics course.
+This repository contains the DLX project developed for Politecnico di Torino Microelectronic Systems course.
 
 # TO DO
 
-* Convert files from VHDL 2008 to VHDL 1998
-  * MUX_n_m_1 (not possible full generic)
-  * XXX_gate_n (not possible __*"logic\_op std\_logic\_vector"*__ )
-  * probably other stuff
-* Implement
+* To Insert
   * Counters
-  * Adders/Subtracters
   * Multipliers
   * Dividers
-  * Shifters
+  * Shifters / Rotators
   * Floating Point Elements
-  * Comparators
-* Draw schematic
-
-
+  * Datapath
+  * Branch Prediction Unit
+  * DLX top entity
+  * Testbenches
+  * Scripts
+  * Sign Extender
+  * Needed multiplexers
+  * Encoders / Decoders
+* Modify
+  * Control Unit
+  * ALU
+* Draw schematics
 
 ## File Tree
 * scripts : all scripts to automate compilation, analysis and simulations

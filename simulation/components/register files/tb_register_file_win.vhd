@@ -68,7 +68,7 @@ ARCHITECTURE testbench OF tb_register_file_win IS
 
   -- signal added only for show the clk_period during simulation
   SIGNAL clk_period_s : TIME := clk_period;
-BEGIN  -- architecture behavioral
+BEGIN
   -- clock signal
   clk              <= NOT clk AFTER clk_period/2;
   -- 'from_memory_data' is always the # of windows in rf
@@ -114,7 +114,7 @@ BEGIN  -- architecture behavioral
   END PROCESS;
 
   PROCESS (sub_ret, sub_call, reset) IS
-  BEGIN  -- process
+  BEGIN
     IF reset = '1' THEN
       windows_in_rf <= 1;
     ELSIF rising_edge(sub_call) THEN
@@ -146,7 +146,7 @@ BEGIN  -- architecture behavioral
       add_wr <= conv_std_logic_vector(i, add_wr'LENGTH);
       datain <= conv_std_logic_vector(i, datain'LENGTH);
       WAIT FOR clk_period;
-    END LOOP;  -- i
+    END LOOP;
 
     REPORT "write on the first window registers (the value of register is its address in the section preceded by 3 bits: '001' is for in registers, '010' is for local and '100' is for out)" SEVERITY FAILURE;
     WAIT UNTIL falling_edge(clk);
@@ -166,7 +166,7 @@ BEGIN  -- architecture behavioral
       datain <= "100" & conv_std_logic_vector(i, datain'LENGTH-3);
       add_wr <= conv_std_logic_vector(n_global_registers+2*n_local_registers+i, add_wr'LENGTH);
       WAIT FOR clk_period;
-    END LOOP;  -- i
+    END LOOP;
     wr     <= '0';
     WAIT FOR clk_period;
     REPORT "reset register file to test call and ret subroutine: registers in a window contains its number" SEVERITY FAILURE;
@@ -188,7 +188,7 @@ BEGIN  -- architecture behavioral
       FOR k IN 0 TO n_global_registers + 3 * n_local_registers -1 LOOP
         add_wr <= conv_std_logic_vector(n_global_registers+k, add_wr'LENGTH);
         WAIT FOR clk_period;
-      END LOOP;  -- k
+      END LOOP;
       wr       <= '0';
       WAIT FOR clk_period;
       sub_call <= '1';
@@ -200,7 +200,7 @@ BEGIN  -- architecture behavioral
         WAIT FOR clk_period;
       END IF;
       WAIT FOR 5 * clk_period;
-    END LOOP;  -- i
+    END LOOP;
     WAIT FOR 5 * clk_period;
 
     -- test ret routine 3 times
@@ -214,7 +214,7 @@ BEGIN  -- architecture behavioral
         WAIT UNTIL fill = '0';
         WAIT FOR clk_period;
       END IF;
-    END LOOP;  -- i
+    END LOOP;
 
     WAIT FOR 10 * clk_period;
 

@@ -7,6 +7,7 @@ ENTITY dff IS
     clk : IN  STD_LOGIC;
     rst : IN  STD_LOGIC;
     set : IN  STD_LOGIC;
+    en  : IN  STD_LOGIC;
     q   : OUT STD_LOGIC
     );
 END ENTITY;
@@ -27,7 +28,7 @@ BEGIN
     ELSE
       q <= '1';
     END IF;
-  ELSIF rising_edge(clk) THEN
+  ELSIF rising_edge(clk) AND en = '1' THEN
     q <= d;
   END IF;
 END PROCESS;

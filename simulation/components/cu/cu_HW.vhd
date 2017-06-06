@@ -37,7 +37,7 @@ ENTITY cu_hw IS
     clk              : IN  STD_LOGIC;
     rst              : IN  STD_LOGIC
     );
-END cu_hw;
+END ENTITY;
 
 -- architectures
 
@@ -93,7 +93,7 @@ BEGIN
 
   -- process to pipeline control words
   cw_pipe : PROCESS (clk, rst)
-  BEGIN  -- process clk
+  BEGIN
     IF rst = '0' THEN                   -- asynchronous reset (active low)
       cw1  <= (OTHERS => '0');
       cw2  <= (OTHERS => '0');
@@ -127,10 +127,10 @@ BEGIN
           WHEN rtype_or  => alu <= alu_or;
           WHEN OTHERS    => alu <= alu_nop;
         END CASE;
-      WHEN itype_addi1 | itype_addi2   => alu <= alu_add;
-      WHEN itype_subi1 | itype_subi2   => alu <= alu_sub;
-      WHEN itype_andi1 | itype_andi2   => alu <= alu_and;
-      WHEN itype_ori1 | itype_ori2     => alu <= alu_or;
+      WHEN itype_addin1 | itype_addi2  => alu <= alu_add;
+      WHEN itype_subin1 | itype_subi2  => alu <= alu_sub;
+      WHEN itype_andin1 | itype_andi2  => alu <= alu_and;
+      WHEN itype_orin1 | itype_ori2    => alu <= alu_or;
       WHEN itype_s_reg1 | itype_s_reg2 => alu <= alu_add;
       -- when itype_s_mem1 => alu <= alu_add;
       WHEN itype_s_mem2                => alu <= alu_add;
@@ -199,7 +199,7 @@ BEGIN
 
   -- process to pipeline control words
   cw_pipe : PROCESS (clk, rst)
-  BEGIN  -- process clk
+  BEGIN
     IF rst = '0' THEN                   -- asynchronous reset (active low)
       cw1  <= (OTHERS => '0');
       cw2  <= (OTHERS => '0');
@@ -233,10 +233,10 @@ BEGIN
           WHEN rtype_or  => alu <= alu_or;
           WHEN OTHERS    => alu <= alu_nop;
         END CASE;
-      WHEN itype_addi1 | itype_addi2   => alu <= alu_add;
-      WHEN itype_subi1 | itype_subi2   => alu <= alu_sub;
-      WHEN itype_andi1 | itype_andi2   => alu <= alu_and;
-      WHEN itype_ori1 | itype_ori2     => alu <= alu_or;
+      WHEN itype_addin1 | itype_addi2  => alu <= alu_add;
+      WHEN itype_subin1 | itype_subi2  => alu <= alu_sub;
+      WHEN itype_andin1 | itype_andi2  => alu <= alu_and;
+      WHEN itype_orin1 | itype_ori2    => alu <= alu_or;
       WHEN itype_s_reg1 | itype_s_reg2 => alu <= alu_add;
       -- when itype_s_mem1 => alu <= alu_add;
       WHEN itype_s_mem2                => alu <= alu_add;

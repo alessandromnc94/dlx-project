@@ -20,28 +20,28 @@ PACKAGE cu_hw_types IS
   CONSTANT cw_nop : cw_array := (OTHERS => '0');
 
 -- r-type instruction -> opcode field
-  CONSTANT rtype          : opcode_array := "000001";  -- for any register-to-register operation
+  CONSTANT rtype           : opcode_array := "000001";  -- for any register-to-register operation
 -- r-type instruction -> func field
-  CONSTANT rtype_add      : func_array   := "00000000000";  -- add rs1,rs2,rd
-  CONSTANT rtype_sub      : func_array   := "00000000001";  -- sub rs1,rs2,rd
-  CONSTANT rtype_and_op   : func_array   := "00000000010";  -- and rs1,rs2,rd
-  CONSTANT rtype_or_op    : func_array   := "00000000011";  -- or rs1,rs2,rd
+  CONSTANT rtype_add       : func_array   := "00000000000";  -- add rs1,rs2,rd
+  CONSTANT rtype_sub       : func_array   := "00000000001";  -- sub rs1,rs2,rd
+  CONSTANT rtype_and_op    : func_array   := "00000000010";  -- and rs1,rs2,rd
+  CONSTANT rtype_or_op     : func_array   := "00000000011";  -- or rs1,rs2,rd
 -- i-type instruction -> opcode field
-  CONSTANT nop            : opcode_array := "000000";  -- nop
-  CONSTANT itype_addi1    : opcode_array := "000010";  -- addi1 rs1,rd,inp1
-  CONSTANT itype_subi1    : opcode_array := "000011";  -- subi1 rs1,rd,inp1
-  CONSTANT itype_andi1_op : opcode_array := "000100";  -- and1 rs1,rd,inp1
-  CONSTANT itype_ori1_op  : opcode_array := "000101";  -- ori1 rs1,rd,inp1
-  CONSTANT itype_addi2    : opcode_array := "000110";  -- subi2 rs1,rd,inp1
-  CONSTANT itype_subi2    : opcode_array := "000111";  -- subi2 rs1,rd,inp1
-  CONSTANT itype_andi2_op : opcode_array := "001000";  -- and2 rs1,rd,inp1
-  CONSTANT itype_ori2_op  : opcode_array := "001001";  -- ori2 rs1,rd,inp1
-  CONSTANT itype_mov      : opcode_array := "001010";  -- mov rs1,rd,inp1
-  CONSTANT itype_s_reg1   : opcode_array := "001011";  -- s_reg1 rs1,rd,inp1
+  CONSTANT nop             : opcode_array := "000000";  -- nop
+  CONSTANT itype_addin1    : opcode_array := "000010";  -- addin1 rs1,rd,inp1
+  CONSTANT itype_subin1    : opcode_array := "000011";  -- subin1 rs1,rd,inp1
+  CONSTANT itype_andin1_op : opcode_array := "000100";  -- and1 rs1,rd,inp1
+  CONSTANT itype_orin1_op  : opcode_array := "000101";  -- orin1 rs1,rd,inp1
+  CONSTANT itype_addi2     : opcode_array := "000110";  -- subi2 rs1,rd,inp1
+  CONSTANT itype_subi2     : opcode_array := "000111";  -- subi2 rs1,rd,inp1
+  CONSTANT itype_andi2_op  : opcode_array := "001000";  -- and2 rs1,rd,inp1
+  CONSTANT itype_ori2_op   : opcode_array := "001001";  -- ori2 rs1,rd,inp1
+  CONSTANT itype_mov       : opcode_array := "001010";  -- mov rs1,rd,inp1
+  CONSTANT itype_s_reg1    : opcode_array := "001011";  -- s_reg1 rs1,rd,inp1
   -- constant itype_s_mem1 : opcode_array :=  "001100";    -- s_mem1 rs1,rd,inp1
-  CONSTANT itype_l_mem1   : opcode_array := "001101";  -- l_mem1 rs1,rd,inp1
-  CONSTANT itype_s_reg2   : opcode_array := "001110";  -- s_reg2 rs1,rd,inp1
-  CONSTANT itype_s_mem2   : opcode_array := "001111";  -- s_mem2 rs1,rd,inp1
-  CONSTANT itype_l_mem2   : opcode_array := "010000";  -- l_mem2 rs1,rd,inp1
+  CONSTANT itype_l_mem1    : opcode_array := "001101";  -- l_mem1 rs1,rd,inp1
+  CONSTANT itype_s_reg2    : opcode_array := "001110";  -- s_reg2 rs1,rd,inp1
+  CONSTANT itype_s_mem2    : opcode_array := "001111";  -- s_mem2 rs1,rd,inp1
+  CONSTANT itype_l_mem2    : opcode_array := "010000";  -- l_mem2 rs1,rd,inp1
 
 END PACKAGE;

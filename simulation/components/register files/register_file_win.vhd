@@ -70,7 +70,7 @@ BEGIN
   fill  <= in_filling;
 
   PROCESS (clk)
-  BEGIN  -- process
+  BEGIN
     IF rising_edge(clk) THEN
       -- reset operation is synchronous
       IF reset = '1' THEN
