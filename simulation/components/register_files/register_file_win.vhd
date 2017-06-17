@@ -4,7 +4,6 @@ USE ieee.std_logic_unsigned.ALL;
 USE ieee.std_logic_arith.ALL;
 
 USE work.my_arith_functions.ALL;
-USE work.register_file_win_types.ALL;
 
 ENTITY register_file_win IS
   GENERIC (
@@ -47,12 +46,15 @@ ARCHITECTURE behavioral OF register_file_win IS
   CONSTANT width_add             : INTEGER := log2int(n_window_registers + n_global_registers);
   -- total_registers contains the number of all registers (except global)
   CONSTANT n_total_win_registers : INTEGER := windows * offset_cwp;
+  
+  -- define type for registers array
+  TYPE reg_array IS (natural range <>) OF STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
 
   -- define signals
   -- 'global_registers' is the collection of global registers
-  SIGNAL global_registers        : reg_array(0 TO n_global_registers-1)(width_data-1 DOWNTO 0)    := (OTHERS => (OTHERS => '0'));
+  SIGNAL global_registers        : reg_array(0 TO n_global_registers-1)    := (OTHERS => (OTHERS => '0'));
   -- 'win_registers' is the collection of in, local (and out) registers
-  SIGNAL win_registers           : reg_array(0 TO n_total_win_registers-1)(width_data-1 DOWNTO 0) := (OTHERS => (OTHERS => '0'));
+  SIGNAL win_registers           : reg_array(0 TO n_total_win_registers-1) := (OTHERS => (OTHERS => '0'));
   -- 'swp' and 'cwp' contains the address of the 1st register of stored window and current window
   SIGNAL cwp, swp                : INTEGER                                                        := 0;
   -- 'in_spilling' and 'in_filling' are signals used to check which operation is in execution.
@@ -76,13 +78,13 @@ BEGIN
       IF reset = '1' THEN
         win_registers    <= (OTHERS => (OTHERS => '0'));
         global_registers <= (OTHERS => (OTHERS => '0'));
-        out1             <= (OTHERS => 'z');
-        out2             <= (OTHERS => 'z');
+        out1             <= (OTHERS => 'Z');
+        out2             <= (OTHERS => 'Z');
         cwp              <= 0;
         swp              <= 0;
         in_spilling      <= '0';
         in_filling       <= '0';
-        to_memory_data   <= (OTHERS => 'z');
+        to_memory_data   <= (OTHERS => 'Z');
         rf_cycles        <= 0;
       ELSIF enable = '1' THEN
         IF in_spilling = '1' THEN

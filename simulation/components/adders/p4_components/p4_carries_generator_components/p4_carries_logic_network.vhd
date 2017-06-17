@@ -98,17 +98,17 @@ BEGIN
 
   bintable : FOR level IN carry_step_log2+1 TO n_log2 GENERATE
     bintable_blcks : FOR blck IN 1 TO bintable_blocks(n, carry_step) GENERATE
-      bintable_valid_blck : IF bintable_valid_block(level, blck, carry_step, n) GENERATE
-        bintable_g_block : IF bintable_is_g(level, blck, carry_step, n) GENERATE
+      bintable_valid_blck : IF bintable_valid_block(level, blck, carry_step) GENERATE
+        bintable_g_block : IF bintable_is_g(level, blck, carry_step) GENERATE
           g_block_x : g_block
             PORT MAP (
               pg_l  => pg_matrix(level-1)(bintable_left(carry_step, blck)),
               g_l   => g_matrix(level-1)(bintable_left(carry_step, blck)),
-              g_r   => g_matrix(level-1)(bintable_right(carry_step level, blck)),
+              g_r   => g_matrix(level-1)(bintable_right(carry_step, level, blck)),
               g_out => g_matrix(level)(bintable_left(carry_step, blck))
               );
         END GENERATE;
-        bintable_pg_block : IF NOT bintable_is_g(level, blck, carry_step, n) GENERATE
+        bintable_pg_block : IF NOT bintable_is_g(level, blck, carry_step) GENERATE
           pg_block_x : pg_block
             PORT MAP (
               pg_l   => pg_matrix(level-1)(bintable_left(carry_step, blck)),
@@ -120,7 +120,7 @@ BEGIN
               );
         END GENERATE;
       END GENERATE;
-      bintable_redirect : IF NOT bintable_valid_block(level, blck, carry_step, n) GENERATE
+      bintable_redirect : IF NOT bintable_valid_block(level, blck, carry_step) GENERATE
         pg_matrix(level)(bintable_left(carry_step, blck)) <= pg_matrix(level-1)(bintable_left(carry_step, blck));
         g_matrix(level)(bintable_left(carry_step, blck))  <= g_matrix(level-1)(bintable_left(carry_step, blck));
       END GENERATE;
@@ -133,19 +133,16 @@ END ARCHITECTURE;
 -- structural configuration
 CONFIGURATION cfg_p4_carries_logic_network_structural OF p4_carries_logic_network IS
   FOR structural
-    FOR g_block_0 : g_block
-      USE CONFIGURATION work.cfg_g_block_structural;
+    FOR g_block_0 : g_block USE CONFIGURATION work.cfg_g_block_structural;
     END FOR;
     FOR bintree
       FOR bintree_blcks
         FOR bintree_g_block
-          FOR ALL : g_block
-            USE CONFIGURATION work.cfg_g_block_structural;
+          FOR ALL : g_block USE CONFIGURATION work.cfg_g_block_structural;
           END FOR;
         END FOR;
         FOR bintree_pg_block
-          FOR ALL : pg_block
-            USE CONFIGURATION work.cfg_pg_block_structural;
+          FOR ALL : pg_block USE CONFIGURATION work.cfg_pg_block_structural;
           END FOR;
         END FOR;
       END FOR;
@@ -154,13 +151,11 @@ CONFIGURATION cfg_p4_carries_logic_network_structural OF p4_carries_logic_networ
       FOR bintable_blcks
         FOR bintable_valid_blck
           FOR bintable_g_block
-            FOR ALL : g_block
-              USE CONFIGURATION work.cfg_g_block_structural;
+            FOR ALL : g_block USE CONFIGURATION work.cfg_g_block_structural;
             END FOR;
           END FOR;
           FOR bintable_pg_block
-            FOR ALL : pg_block
-              USE CONFIGURATION work.cfg_pg_block_structural;
+            FOR ALL : pg_block USE CONFIGURATION work.cfg_pg_block_structural;
             END FOR;
           END FOR;
         END FOR;

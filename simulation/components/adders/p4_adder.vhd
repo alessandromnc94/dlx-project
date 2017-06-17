@@ -21,7 +21,7 @@ END ENTITY;
 
 ARCHITECTURE structural OF p4_adder IS
 
-  COMPONENT carries_generator IS
+  COMPONENT p4_carries_generator IS
     GENERIC (
       n          : INTEGER;
       carry_step : INTEGER
@@ -34,7 +34,7 @@ ARCHITECTURE structural OF p4_adder IS
       );
   END COMPONENT;
 
-  COMPONENT sum_generator IS
+  COMPONENT p4_sum_generator IS
     GENERIC (
       n          : INTEGER;
       carry_step : INTEGER
@@ -42,18 +42,18 @@ ARCHITECTURE structural OF p4_adder IS
     PORT (
       in_1       : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
       in_2       : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      carries_in : IN  STD_LOGIC_VECTOR (n/carry DOWNTO 0);
+      carries_in : IN  STD_LOGIC_VECTOR (n/carry_step DOWNTO 0);
       sum        : OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0)
       );
   END COMPONENT;
 
-  SIGNAL carries : STD_LOGIC_VECTOR (n/carry DOWNTO 0);
+  SIGNAL carries : STD_LOGIC_VECTOR (n/carry_step DOWNTO 0);
 
 BEGIN
 
-  carry_out <= carries(n/carry);
+  carry_out <= carries(n/carry_step);
 
-  cg : carry_generator
+  cg : p4_carries_generator
     GENERIC MAP (
       n          => n,
       carry_step => carry_step
@@ -65,10 +65,10 @@ BEGIN
       carries_out => carries
       );
 
-  sg : sum_generator
+  sg : p4_sum_generator
     GENERIC MAP (
-      n     => n,
-      carry => carry
+      n          => n,
+      carry_step => carry_step
       )
     PORT MAP (
       in_1       => in_1,
@@ -84,11 +84,11 @@ END ARCHITECTURE;
 -- structural configuration
 CONFIGURATION cfg_p4_adder_structural OF p4_adder IS
   FOR structural
-    FOR cg : carry_generator
-      USE CONFIGURATION work.cfg_carry_generator_structural;
+    FOR cg : p4_carries_generator
+      USE CONFIGURATION work.cfg_p4_carries_generator_structural;
     END FOR;
-    FOR sg : sum_generator
-      USE CONFIGURATION work.cfg_sum_generator_structural;
+    FOR sg : p4_sum_generator
+      USE CONFIGURATION work.cfg_p4_sum_generator_structural;
     END FOR;
   END FOR;
 END CONFIGURATION;

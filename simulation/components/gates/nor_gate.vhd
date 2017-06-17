@@ -1,7 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
-ENTITY or_gate IS
+ENTITY nor_gate IS
   PORT (
     in_1  : IN  STD_LOGIC;
     in_2  : IN  STD_LOGIC;

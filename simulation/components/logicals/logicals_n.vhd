@@ -5,7 +5,7 @@ USE work.logicals_types.ALL;
 
 ENTITY logicals_n IS
   GENERIC (
-    n : INTEGER : 8
+    n : INTEGER := 8
     );
   PORT (
     in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
@@ -19,16 +19,20 @@ END ENTITY;
 
 -- behavioral architecture
 ARCHITECTURE behavioral OF logicals_n IS
-  SIGNAL nands_0 : STD_LOGIC_VECTOR(n-1);
-  SIGNAL nands_1 : STD_LOGIC_VECTOR(n-1);
-  SIGNAL nands_2 : STD_LOGIC_VECTOR(n-1);
-  SIGNAL nands_3 : STD_LOGIC_VECTOR(n-1);
+  SIGNAL not_in_1, not_in_2 : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  SIGNAL nands_0            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  SIGNAL nands_1            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  SIGNAL nands_2            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  SIGNAL nands_3            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
 BEGIN
 
-  nands_0 <= NOT (logic(0) AND (NOT in_1) AND (NOT in_2));
-  nands_1 <= NOT (logic(1) AND (NOT in_1) AND (in_2));
-  nands_2 <= NOT (logic(2) AND (in_1) AND (NOT in_2));
-  nands_3 <= NOT (logic(3) AND (in_1) AND (in_2));
+  not_in_1 <= NOT in_1;
+  not_in_2 <= NOT in_2;
+
+  nands_0 <= NOT ((n-1 DOWNTO 0 => logic(0)) AND not_in_1 AND not_in_2);
+  nands_1 <= NOT ((n-1 DOWNTO 0 => logic(1)) AND not_in_1 AND (in_2));
+  nands_2 <= NOT ((n-1 DOWNTO 0 => logic(2)) AND in_1 AND not_in_2);
+  nands_3 <= NOT ((n-1 DOWNTO 0 => logic(3)) AND in_1 AND in_2);
 
   out_s <= NOT (nands_0 AND nands_1 AND nands_2 AND nands_3);
 
@@ -73,13 +77,15 @@ CONFIGURATION cfg_logicals_n_structural_1 OF logicals_n IS
       FOR logicals_x : logicals USE CONFIGURATION work.cfg_logicals_behavioral;
       END FOR;
     END FOR;
-  END CONFIGURATION;
+  END FOR;
+END CONFIGURATION;
 
 -- structural configuration with structural components
-  CONFIGURATION cfg_logicals_n_structural_2 OF logicals_n IS
-    FOR structural
-      FOR logicals_gen
+CONFIGURATION cfg_logicals_n_structural_2 OF logicals_n IS
+  FOR structural
+    FOR logicals_gen
       FOR logicals_x : logicals USE CONFIGURATION work.cfg_logicals_structural;
+      END FOR;
+    END FOR;
   END FOR;
-  END FOR;
-  END CONFIGURATION;
+END CONFIGURATION;

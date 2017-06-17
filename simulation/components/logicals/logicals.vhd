@@ -33,7 +33,7 @@ END ARCHITECTURE;
 
 -- structural architecture
 ARCHITECTURE structural OF logicals IS
-  COMPONENT nand_gate_n IS
+  COMPONENT nand_gate_single_n IS
     GENERIC (
       n : INTEGER
       );
@@ -50,54 +50,59 @@ ARCHITECTURE structural OF logicals IS
       );
   END COMPONENT;
 
-  SIGNAL not_in_1, not_in_2 : STD_LOGIC                    := '0';
-  SIGNAL nand_outputs       : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0');
+  SIGNAL not_in_1, not_in_2                                         : STD_LOGIC                    := '0';
+  SIGNAL nand_outputs                                               : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0');
+  SIGNAL internal_in_0, internal_in_1, internal_in_2, internal_in_3 : STD_LOGIC_VECTOR(2 DOWNTO 0);
 BEGIN
 
-  not_in1_gate : NOT PORT MAP (
+  not_in_1_gate : not_gate PORT MAP (
     in_s  => in_1,
     out_s => not_in_1
     );
 
-  not_i2_gate : NOT PORT MAP (
+  not_in_2_gate : not_gate PORT MAP (
     in_s  => in_2,
     out_s => not_in_2
     );
 
 -- nand:   (s0)(not in_1)(not in_2)
-  nand_gate_3_0 : nand_gate_n GENERIC MAP (
+  internal_in_0 <= logic(0) & not_in_1 & not_in_2;
+  nand_gate_3_0 : nand_gate_single_n GENERIC MAP (
     n => 3
     ) PORT MAP (
-      in_s  => logic(0) & not_in_1 & not_in_2,
+      in_s  => internal_in_0,
       out_s => nand_outputs(0)
       );
 
 -- nand:   (s1)(not in_1)(in_2)
-  nand_gate_3_1 : nand_gate_n GENERIC MAP (
+  internal_in_1 <= logic(1) & not_in_1 & in_2;
+  nand_gate_3_1 : nand_gate_single_n GENERIC MAP (
     n => 3
     ) PORT MAP (
-      in_s  => logic(1) & not_in_1 & in_2,
+      in_s  => internal_in_1,
       out_s => nand_outputs(1)
       );
 
 -- nand:   (s2)(in_1)(not in_2)
-  nand_gate_3_2 : nand_gate_n GENERIC MAP (
+  internal_in_2 <= logic(2) & in_1 & not_in_2;
+  nand_gate_3_2 : nand_gate_single_n GENERIC MAP (
     n => 3
     ) PORT MAP (
-      in_s  => logic(2) & in_1 & not_in_2,
+      in_s  => internal_in_2,
       out_s => nand_outputs(2)
       );
 
 -- nand:   (s3)(in_1)(in_2)
-  nand_gate_3_3 : nand_gate_n GENERIC MAP (
+  internal_in_3 <= logic(3) & in_1 & in_2;
+  nand_gate_3_3 : nand_gate_single_n GENERIC MAP (
     n => 3
     ) PORT MAP (
-      in_s  => logic(3) & in_1 & in_2,
+      in_s  => internal_in_3,
       out_s => nand_outputs(3)
       );
 
 -- last nand with 4 inputs from previous nands
-  nand_gate_4_fin : nand_gate_n GENERIC MAP (
+  nand_gate_4_fin : nand_gate_single_n GENERIC MAP (
     n => 4
     ) PORT MAP (
       in_s  => nand_outputs,
@@ -109,27 +114,27 @@ END ARCHITECTURE;
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_alu_logical_n_behavioral OF alu_logical_n IS
+CONFIGURATION cfg_logicals_behavioral OF logicals IS
   FOR behavioral
   END FOR;
 END CONFIGURATION;
 
 -- structural configuration
-CONFIGURATION cfg_alu_logical_n_structural OF alu_logical_n IS
+CONFIGURATION cfg_logicals_structural OF logicals IS
   FOR structural
     FOR not_in_1_gate   : not_gate USE CONFIGURATION work.cfg_not_gate_behavioral;
     END FOR;
     FOR not_in_2_gate   : not_gate USE CONFIGURATION work.cfg_not_gate_behavioral;
     END FOR;
-    FOR nand_gate_3_0   : nand_gate_n USE CONFIGURATION work.cfg_nand_gate_n_behavioral;
+    FOR nand_gate_3_0   : nand_gate_single_n USE CONFIGURATION work.cfg_nand_gate_single_n_behavioral;
     END FOR;
-    FOR nand_gate_3_1   : nand_gate_n USE CONFIGURATION work.cfg_nand_gate_n_behavioral;
+    FOR nand_gate_3_1   : nand_gate_single_n USE CONFIGURATION work.cfg_nand_gate_single_n_behavioral;
     END FOR;
-    FOR nand_gate_3_2   : nand_gate_n USE CONFIGURATION work.cfg_nand_gate_n_behavioral;
+    FOR nand_gate_3_2   : nand_gate_single_n USE CONFIGURATION work.cfg_nand_gate_single_n_behavioral;
     END FOR;
-    FOR nand_gate_3_3   : nand_gate_n USE CONFIGURATION work.cfg_nand_gate_n_behavioral;
+    FOR nand_gate_3_3   : nand_gate_single_n USE CONFIGURATION work.cfg_nand_gate_single_n_behavioral;
     END FOR;
-    FOR nand_gate_4_fin : nand_gate_n USE CONFIGURATION work.cfg_nand_gate_n_behavioral;
+    FOR nand_gate_4_fin : nand_gate_single_n USE CONFIGURATION work.cfg_nand_gate_single_n_behavioral;
     END FOR;
   END FOR;
 END CONFIGURATION;

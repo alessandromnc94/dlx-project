@@ -61,8 +61,8 @@ BEGIN
 
   cl_net : p4_carries_logic_network
     GENERIC MAP (
-      n     => n,
-      carry => carry
+      n          => n,
+      carry_step => carry_step
       )
     PORT MAP (
       pg          => pg0_s,
@@ -77,11 +77,9 @@ END ARCHITECTURE;
 -- structural configuration
 CONFIGURATION cfg_p4_carries_generator_structural OF p4_carries_generator IS
   FOR structural
-    FOR pg_net : pg_network
-      USE CONFIGURATION work.cfg_pg_network_structural;
+    FOR pg_net : pg_network USE CONFIGURATION work.cfg_pg_network_structural_2;
     END FOR;
-    FOR cl_net : carry_logic_network
-      USE CONFIGURATION work.cfg_carry_logic_network_structural;
+    FOR cl_net : p4_carries_logic_network USE CONFIGURATION work.cfg_p4_carries_logic_network_structural;
     END FOR;
   END FOR;
 END CONFIGURATION;

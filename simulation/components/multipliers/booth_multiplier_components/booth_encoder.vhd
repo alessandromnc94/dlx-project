@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.ALL;
 
 ENTITY booth_encoder IS
   GENERIC(
-    n : INTEGER := 16
+    n : INTEGER := 8
     );
   PORT(
     in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
@@ -30,7 +30,7 @@ BEGIN
   blck_gen : FOR i IN 0 TO n_encoders_block-1 GENERATE
     blck_x : booth_encoder_block PORT MAP (
       in_s  => in_s_tmp(2*i+2 DOWNTO 2*i),
-      out_s => out_s(2*i+2 DOWNTO 2*i)
+      out_s => out_s(3*i+2 DOWNTO 3*i)
       );
   END GENERATE;
 

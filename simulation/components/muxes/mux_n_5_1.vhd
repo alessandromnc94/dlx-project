@@ -23,7 +23,7 @@ END ENTITY;
 -- behavioral architecture
 ARCHITECTURE behavioral OF mux_n_5_1 IS
 BEGIN
-  PROCESS (ALL)
+  PROCESS (in_0, in_1, in_2, in_3, in_4, s)
   BEGIN
     CASE conv_integer(s) IS
       WHEN 0      => out_s <= in_0;
@@ -31,7 +31,7 @@ BEGIN
       WHEN 2      => out_s <= in_2;
       WHEN 3      => out_s <= in_3;
       WHEN 4      => out_s <= in_4;
-      WHEN OTHERS => out_s <= (OTHERS => 'z');
+      WHEN OTHERS => out_s <= (OTHERS => 'Z');
     END CASE;
   END PROCESS;
 END ARCHITECTURE;

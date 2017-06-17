@@ -1,3 +1,5 @@
+use work.my_arith_functions.all;
+
 PACKAGE p4_carries_logic_network_functions IS
   FUNCTION bintree_blocks (
     n     : INTEGER;

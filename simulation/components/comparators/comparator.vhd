@@ -24,7 +24,7 @@ ARCHITECTURE behavioral OF comparator IS
 BEGIN
 -- unsigned comparison needs the value of carry_out
 -- signed comparison needs the negate value of carry_out
-  c_out  <= signed_comparison XOR c_out;
+  c_out  <= signed_comparison XOR carry_out;
   eq_out <= zero_out;
   ne_out <= NOT zero_out;
   ge_out <= c_out;
