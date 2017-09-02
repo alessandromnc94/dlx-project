@@ -1,40 +1,78 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use work.mytypes.all;
 
-entity forwarding_unit
+entity forwarding_unit is
+  generic(
+    n : integer := 32; --address length
+    m : integer := 32 --data length
+    );
   port (
-    arf      : in  addregtype(1 downto 0);
-    ar       : in  addregtype(3 downto 0);
-    data_in  : in  regtype(2 downto 0);
-    clk      : in  std_locic;
+    arf1     : in  std_logic_vector(n-1 downto 0); --addresses of regisers for the current operation 
+    arf2     : in  std_logic_vector(n-1 downto 0);
+    decar    : in  std_logic_vector(n-1 downto 0); --adrress of reg in decode stage
+    exear    : in  std_logic_vector(n-1 downto 0); --adrress of reg in execute stage
+    memar    : in  std_logic_vector(n-1 downto 0); --adrress of reg in memory stage
+    wrbar    : in  std_logic_vector(n-1 downto 0); --adrress of reg in write back stage
+    decd     : in  std_logic_vector(m-1 downto 0); -- data coming from decode stage
+    exed     : in  std_logic_vector(m-1 downto 0); -- data coming from execute stage
+    memd     : in  std_logic_vector(m-1 downto 0); -- data coming from memory stage
+    wrbd     : in  std_logic_vector(m-1 downto 0); -- data coming from write back stage
+    clk      : in  std_logic;
     out_mux  : out std_logic_vector(1 downto 0);
-    data_out : out regtype(1 downto 0)
+    dout1    : out std_logic_vector(m-1 downto 0); -- data to be forwarded
+    dout2    : out std_logic_vector(m-1 downto 0) 
     );
 end entity;
 
 
-architecture behavioral of forwardin_unit is
+architecture behavioral of forwarding_unit is
+  
+type addrarray is array(0 to 3) of std_logic_vector(n-1 downto 0);
+type datarray  is array(0 to 3) of std_logic_vector(m-1 downto 0);  
+
+signal ar , arf : addrarray;
+signal data_in  : datarray;
+
+constant zero : std_logic_vector(n-1 downto 0) := (others => '0');
 
 begin
   
   process(clk)
+    
+    variable data_out : datarray;
 
   begin
     
+    ar(0) <= decar;
+    ar(1) <= exear;
+    ar(2) <= memar;
+    ar(3) <= wrbar;
+
+    arf(0) <= arf1;
+    arf(1) <= arf2;
+    arf(2) <= (OTHERS => 'Z');
+    arf(3) <= (OTHERS => 'Z');
+
+    data_in(0) <= decd;
+    data_in(1) <= exed;
+    data_in(2) <= memd;
+    data_in(3) <= wrbd;
+    
     if(rising_edge(clk)) then
-      out_mux(0) <= '0';
-      out_mux(1) <= '1';
+      out_mux(0) <= '0'; --set both the muxes at normal flow
+      out_mux(1) <= '0';
       for i in 0 to 3 loop
-        for j in o to 1 loop
+        for j in 0 to 1 loop
           if(arf(j) /= zero) then
-            if(arf(j) = ar(i)) then
-              out_mux(j)  <= '1';
-              data_out(j) <= data_in(i);
-            end if
+            if(arf(j) = ar(i)) then 
+              out_mux(j)  <= '1'; --set desired mux at forwarding mode
+              data_out(j) := data_in(i); --forward corresponding data
+            end if;
           end if;
         end loop;
-      end loop
+      end loop;
+      dout1 <= data_out(0);
+      dout2 <= data_out(1);
     end if;
     
   end process;
