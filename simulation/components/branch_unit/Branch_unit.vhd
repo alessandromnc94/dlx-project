@@ -1,19 +1,18 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
-USE work.MyTypes.all;
 
 ENTITY Branch_unit IS
   GENERIC (
-    n : INTEGER := regsize
+    n1  : INTEGER := 32;
     );
   PORT (
-    imm : IN  STD_LOGIC_VECTOR(n-1 downto 0);   --From datapath
-    reg : IN  STD_LOGIC_VECTOR(n-1 downto 0);
-    npc : IN  STD_LOGIC_VECTOR(n-1 downto 0);
+    imm : IN  STD_LOGIC_VECTOR(n1-1 downto 0);   --From datapath
+    reg : IN  STD_LOGIC_VECTOR(n1-1 downto 0);
+    npc : IN  STD_LOGIC_VECTOR(n1-1 downto 0);
     be  : IN  STD_LOGIC;                        --From CU
     jr  : IN  STD_LOGIC;
     jmp : IN  STD_LOGIC;
-    pc  : OUT STD_LOGIC_VECTOR(n-1 downto 0);
+    pc  : OUT STD_LOGIC_VECTOR(n1-1 downto 0)
     );
 END ENTITY;
 
@@ -46,50 +45,38 @@ ARCHITECTURE Structural OF Branch_unit IS
       n : INTEGER := 4
      );
    PORT (
-  <<<<<<< HEAD
       in_1      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
       in_2      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
       carry_in  : IN  STD_LOGIC;
       sum       : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0);
       carry_out : OUT STD_LOGIC
-  =======
-     in_1      : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-     in_2      : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-     carry_in  : STD_LOGIC;
-     sum       : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-     carry_out : STD_LOGIC
-  >>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
       );
   END COMPONENT;
   
   COMPONENT not_gate IS
     PORT (
-  <<<<<<< HEAD
       in_s  : IN  STD_LOGIC;
-  =======
-      i     : IN  STD_LOGIC;
-  >>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
       out_s : OUT STD_LOGIC
       );
   END COMPONENT;
   
-  SIGNAL om1 , os          : STD_LOGIC_VECTOR(regsize-1 DOWNTO 0);
-  SIGNAL ocmp , oinv , om2 , om3 : STD_LOGIC;
+  SIGNAL om1 , os                : STD_LOGIC_VECTOR(n1-1 DOWNTO 0);
+  SIGNAL ocmp , oinv , om2 , om3 : STD_LOGIC_VECTOR(0 DOWNTO 0);
   
   BEGIN
-    
-    mux1 : mux_n_2_1        generic map(n => regsize)
-                            port map(imm , reg , jr , om1);
-    comp : zero_comparator  generic map(n => regsize)
-                            port map(reg , ocmp);
-    add  : rca_n            generic map(n => regsize)
-                            port map(npc , om1 , '0' , os , open);
-    inv  : not_gate         port map(ocmp , oinv);
+   
+    comp : zero_comparator  generic map(n => n1)
+                            port map(reg , ocmp(0));
+    add  : rca_n            generic map(n => n1)
+                            port map(npc , imm , '0' , os , open);
+    inv  : not_gate         port map(ocmp(0) , oinv(0));
+    mux1 : mux_n_2_1        generic map(n => n1)
+                            port map(os , reg , jr , om1);
     mux2 : mux_n_2_1        generic map(n => 1)
                             port map(oinv , ocmp , be , om2);
     mux3 : mux_n_2_1        generic map(n => 1)
-                            port map('0' , om2 , jmp , om3);
-    mux4 : mux_n_2_1 generic map(n => regsize)
-                     port map(npc , os , om3 , pc);
+                            port map("0" , om2 , jmp , om3);
+    mux4 : mux_n_2_1        generic map(n => n1)
+                            port map(npc , om1 , om3(0) , pc);
     
 END ARCHITECTURE;
