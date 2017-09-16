@@ -2,12 +2,12 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
 ENTITY not_gate_n IS
-  generic (
-    n : integer := 1
-  )
+  GENERIC (
+    n : INTEGER := 1
+    );
   PORT (
-    in_s  : IN  STD_LOGIC_vector(n-1 downto 0);
-    out_s : OUT STD_LOGIC_vector(n-1 downto 0)
+    in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
     );
 END ENTITY;
 
@@ -16,25 +16,25 @@ END ENTITY;
 -- behavioral architecture
 ARCHITECTURE behavioral OF not_gate_n IS
 BEGIN
-  out_s <= not in_s;
+  out_s <= NOT in_s;
 END ARCHITECTURE;
 
 -- structural architecture
 ARCHITECTURE structural OF not_gate_n IS
-  component not_gate is 
-  port (
-    in_s : in std_logic;
-    out_s : out std_logic
-  );
-  end component;
+  COMPONENT not_gate IS
+    PORT (
+      in_s  : IN  STD_LOGIC;
+      out_s : OUT STD_LOGIC
+      );
+  END COMPONENT;
 
 BEGIN
-gate_gen : for i in 0 to n-1 generate
-  not_gate_x : not_gate port map (
-    in_s => in_s(i),
-    out_s => out_s(i)
-  );
-  end generate;
+  gate_gen : FOR i IN 0 TO n-1 GENERATE
+    not_gate_x : not_gate PORT MAP (
+      in_s  => in_s(i),
+      out_s => out_s(i)
+      );
+  END GENERATE;
 END ARCHITECTURE;
 
 -- configurations
@@ -48,9 +48,9 @@ END CONFIGURATION;
 -- structural configuration
 CONFIGURATION cfg_not_gate_n_structural OF not_gate_n IS
   FOR structural
-    for gate_gen
-      for not_gate_x : not_gate use configuration work.cfg_not_gate_behavioral;
-      end for;
-    end for;
+    FOR gate_gen
+      FOR not_gate_x : not_gate USE CONFIGURATION work.cfg_not_gate_behavioral;
+      END FOR;
+    END FOR;
   END FOR;
 END CONFIGURATION;

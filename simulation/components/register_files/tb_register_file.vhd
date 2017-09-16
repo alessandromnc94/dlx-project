@@ -1,7 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
-ENTITY tb_registerfile IS
+ENTITY tb_register_file IS
 END ENTITY;
 
 ARCHITECTURE testbench OF tb_register_file IS

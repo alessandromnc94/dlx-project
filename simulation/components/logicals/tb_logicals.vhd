@@ -52,7 +52,7 @@ BEGIN
     logic <= logicals_xnor;
     WAIT FOR 100 PS;
 
-    ASSERT FALSE REPORT "Testbench finished" SEVERITY FAILURE;
+    ASSERT FALSE REPORT "testbench finished" SEVERITY FAILURE;
   END PROCESS;
 
 END ARCHITECTURE;

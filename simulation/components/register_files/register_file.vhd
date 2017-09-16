@@ -28,9 +28,9 @@ END ENTITY;
 
 -- behavioral architecture
 ARCHITECTURE behavioral OF register_file IS
-  
+
   -- define type for registers array
-  TYPE reg_array IS (natural range <>) OF STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
+  TYPE reg_array IS (NATURAL RANGE <>) OF STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
 
   SIGNAL registers : reg_array(0 TO 2**width_add-1) := (OTHERS => (OTHERS => '0'));
 
@@ -39,8 +39,8 @@ BEGIN
   BEGIN
     IF rising_edge(clk) THEN
       IF reset = '1' THEN
-        out1      <= (OTHERS => 'Z');
-        out2      <= (OTHERS => 'Z');
+        out1      <= (OTHERS => 'z');
+        out2      <= (OTHERS => 'z');
         registers <= (OTHERS => (OTHERS => '0'));
       ELSIF enable = '1' THEN
         IF wr = '1' THEN

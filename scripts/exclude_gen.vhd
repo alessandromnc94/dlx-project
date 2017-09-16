@@ -1,101 +1,101 @@
-entity exclude_gen is
-end entity;
+ENTITY exclude_gen IS
+END ENTITY;
 
-architecture behavioral of exclude_gen is
-component rca_n is
-end component;
-component p4_adder is
-end component;
-component half_adder is
-end component;
-component full_adder is
-end component;
-component alu is
-end component;
-component comparator is
-end component;
-component zero_comparator is
-end component;
-component cu_hw is
-end component;
-component datapath is
-end component;
-component divider is
-end component;
-component dff is
-end component;
-component and_gate is
-end component;
-component and_gate_n is
-end component;
-component and_gate_single_n is
-end component;
-component or_gate is
-end component;
-component or_gate_n is
-end component;
-component or_gate_single_n is
-end component;
-component xor_gate is
-end component;
-component xor_gate_n is
-end component;
-component xor_gate_single_n is
-end component;
-component nand_gate is
-end component;
-component nand_gate_n is
-end component;
-component nand_gate_single_n is
-end component;
-component nor_gate is
-end component;
-component nor_gate_n is
-end component;
-component nor_gate_single_n is
-end component;
-component xnor_gate is
-end component;
-component xnor_gate_n is
-end component;
-component xnor_gate_single_n is
-end component;
-component not_gate is
-end component;
-component not_gate_n is
-end component;
-component logicals is
-end component;
-component logicals_n is
-end component;
-component booth_multiplier is
-end component;
-component mux_n_2_1 is
-end component;
-component mux_n_4_1 is
-end component;
-component mux_n_5_1 is
-end component;
-component mux_n_6_1 is
-end component;
-component mux_n_8_1 is
-end component;
-component mux_n_16_1 is
-end component;
-component pg_network is
-end component;
-component register_file is
-end component;
-component register_file_win is
-end component;
-component register_n is
-end component;
-component rotator is
-end component;
-component shifter is
-end component;
-component sign_extender is
-end component;
-begin
+ARCHITECTURE behavioral OF exclude_gen IS
+  COMPONENT rca_n IS
+  END COMPONENT;
+  COMPONENT p4_adder IS
+  END COMPONENT;
+  COMPONENT half_adder IS
+  END COMPONENT;
+  COMPONENT full_adder IS
+  END COMPONENT;
+  COMPONENT alu IS
+  END COMPONENT;
+  COMPONENT comparator IS
+  END COMPONENT;
+  COMPONENT zero_comparator IS
+  END COMPONENT;
+  COMPONENT cu_hw IS
+  END COMPONENT;
+  COMPONENT datapath IS
+  END COMPONENT;
+  COMPONENT divider IS
+  END COMPONENT;
+  COMPONENT dff IS
+  END COMPONENT;
+  COMPONENT and_gate IS
+  END COMPONENT;
+  COMPONENT and_gate_n IS
+  END COMPONENT;
+  COMPONENT and_gate_single_n IS
+  END COMPONENT;
+  COMPONENT or_gate IS
+  END COMPONENT;
+  COMPONENT or_gate_n IS
+  END COMPONENT;
+  COMPONENT or_gate_single_n IS
+  END COMPONENT;
+  COMPONENT xor_gate IS
+  END COMPONENT;
+  COMPONENT xor_gate_n IS
+  END COMPONENT;
+  COMPONENT xor_gate_single_n IS
+  END COMPONENT;
+  COMPONENT nand_gate IS
+  END COMPONENT;
+  COMPONENT nand_gate_n IS
+  END COMPONENT;
+  COMPONENT nand_gate_single_n IS
+  END COMPONENT;
+  COMPONENT nor_gate IS
+  END COMPONENT;
+  COMPONENT nor_gate_n IS
+  END COMPONENT;
+  COMPONENT nor_gate_single_n IS
+  END COMPONENT;
+  COMPONENT xnor_gate IS
+  END COMPONENT;
+  COMPONENT xnor_gate_n IS
+  END COMPONENT;
+  COMPONENT xnor_gate_single_n IS
+  END COMPONENT;
+  COMPONENT not_gate IS
+  END COMPONENT;
+  COMPONENT not_gate_n IS
+  END COMPONENT;
+  COMPONENT logicals IS
+  END COMPONENT;
+  COMPONENT logicals_n IS
+  END COMPONENT;
+  COMPONENT booth_multiplier IS
+  END COMPONENT;
+  COMPONENT mux_n_2_1 IS
+  END COMPONENT;
+  COMPONENT mux_n_4_1 IS
+  END COMPONENT;
+  COMPONENT mux_n_5_1 IS
+  END COMPONENT;
+  COMPONENT mux_n_6_1 IS
+  END COMPONENT;
+  COMPONENT mux_n_8_1 IS
+  END COMPONENT;
+  COMPONENT mux_n_16_1 IS
+  END COMPONENT;
+  COMPONENT pg_network IS
+  END COMPONENT;
+  COMPONENT register_file IS
+  END COMPONENT;
+  COMPONENT register_file_win IS
+  END COMPONENT;
+  COMPONENT register_n IS
+  END COMPONENT;
+  COMPONENT rotator IS
+  END COMPONENT;
+  COMPONENT shifter IS
+  END COMPONENT;
+  COMPONENT sign_extender IS
+  END COMPONENT;
+BEGIN
 
-end architecture;
+END ARCHITECTURE;

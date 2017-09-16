@@ -6,19 +6,11 @@ ENTITY rca_n IS
     n : INTEGER := 4
     );
   PORT (
-<<<<<<< HEAD
     in_1      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
     in_2      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
     carry_in  : IN  STD_LOGIC;
     sum       : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0);
     carry_out : OUT STD_LOGIC
-=======
-    in_1      : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2      : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    carry_in  : STD_LOGIC;
-    sum       : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    carry_out : STD_LOGIC
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
     );
 END ENTITY;
 
@@ -29,19 +21,11 @@ ARCHITECTURE structural OF rca_n IS
 
   COMPONENT full_adder IS
     PORT(
-<<<<<<< HEAD
       in_1      : IN  STD_LOGIC;
       in_2      : IN  STD_LOGIC;
       carry_in  : IN  STD_LOGIC;
       sum       : OUT STD_LOGIC;
       carry_out : OUT STD_LOGIC
-=======
-      in_1      : STD_LOGIC;
-      in_2      : STD_LOGIC;
-      carry_in  : STD_LOGIC;
-      sum       : STD_LOGIC;
-      carry_out : STD_LOGIC
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
       );
   END COMPONENT;
 

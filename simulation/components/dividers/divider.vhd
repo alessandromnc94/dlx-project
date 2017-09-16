@@ -5,11 +5,7 @@ USE ieee.std_logic_arith.ALL;
 
 ENTITY divider IS
   GENERIC (
-<<<<<<< HEAD
     n : INTEGER := 8
-=======
-    n : INTEGER := 32
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
     )
     PORT (
       in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);

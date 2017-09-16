@@ -78,7 +78,7 @@ BEGIN
     carry_out         <= '1';
     signed_comparison <= '1';
     WAIT FOR 1 NS;
-    ASSERT FALSE REPORT "Testbench Finished!" SEVERITY FAILURE;
+    ASSERT FALSE REPORT "testbench finished!" SEVERITY FAILURE;
   END PROCESS;
 END ARCHITECTURE;
 

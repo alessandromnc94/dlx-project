@@ -1,44 +1,44 @@
-library ieee;
-use ieee.std_logic_1164.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
 
-entity forwarding_unit is
-  generic(
-    n : integer := 32; --address length
-    m : integer := 32 --data length
+ENTITY forwarding_unit IS
+  GENERIC(
+    n : INTEGER := 32;                  --address length
+    m : INTEGER := 32                   --data length
     );
-  port (
-    arf1     : in  std_logic_vector(n-1 downto 0); --addresses of regisers for the current operation 
-    arf2     : in  std_logic_vector(n-1 downto 0);
-    exear    : in  std_logic_vector(n-1 downto 0); --adrress of reg in execute stage
-    memar    : in  std_logic_vector(n-1 downto 0); --adrress of reg in memory stage
-    exed     : in  std_logic_vector(m-1 downto 0); -- data coming from execute stage
-    memd     : in  std_logic_vector(m-1 downto 0); -- data coming from memory stage
-    clk      : in  std_logic;
-    out_mux  : out std_logic_vector(1 downto 0);
-    dout1    : out std_logic_vector(m-1 downto 0); -- data to be forwarded
-    dout2    : out std_logic_vector(m-1 downto 0) 
+  PORT (
+    arf1    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);  --addresses of regisers for the current operation 
+    arf2    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+    exear   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);  --adrress of reg in execute stage
+    memar   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);  --adrress of reg in memory stage
+    exed    : IN  STD_LOGIC_VECTOR(m-1 DOWNTO 0);  -- data coming from execute stage
+    memd    : IN  STD_LOGIC_VECTOR(m-1 DOWNTO 0);  -- data coming from memory stage
+    clk     : IN  STD_LOGIC;
+    out_mux : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+    dout1   : OUT STD_LOGIC_VECTOR(m-1 DOWNTO 0);  -- data to be forwarded
+    dout2   : OUT STD_LOGIC_VECTOR(m-1 DOWNTO 0)
     );
-end entity;
+END ENTITY;
 
 
-architecture behavioral of forwarding_unit is
-  
-type addrarray is array(0 to 1) of std_logic_vector(n-1 downto 0);
-type datarray  is array(0 to 1) of std_logic_vector(m-1 downto 0);  
+ARCHITECTURE behavioral OF forwarding_unit IS
 
-signal ar , arf : addrarray;
-signal data_in  : datarray;
+  TYPE addrarray IS ARRAY(0 TO 1) OF STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  TYPE datarray IS ARRAY(0 TO 1) OF STD_LOGIC_VECTOR(m-1 DOWNTO 0);
 
-constant zero : std_logic_vector(n-1 downto 0) := (others => '0');
+  SIGNAL ar, arf : addrarray;
+  SIGNAL data_in : datarray;
 
-begin
-  
-  process(clk)
-    
-    variable data_out : datarray;
+  CONSTANT zero : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
 
-  begin
-    
+BEGIN
+
+  PROCESS(clk)
+
+    VARIABLE data_out : datarray;
+
+  BEGIN
+
     ar(0) <= exear;
     ar(1) <= memar;
 
@@ -47,24 +47,24 @@ begin
 
     data_in(0) <= exed;
     data_in(1) <= memd;
-    
-    if(rising_edge(clk)) then
-      out_mux(0) <= '0'; --set both the muxes at normal flow
+
+    IF(rising_edge(clk)) THEN
+      out_mux(0) <= '0';                  --set both the muxes at normal flow
       out_mux(1) <= '0';
-      for i in 0 to 1 loop
-        for j in 0 to 1 loop
-          if(arf(j) /= zero) then
-            if(arf(j) = ar(i)) then 
-              out_mux(j)  <= '1'; --set desired mux at forwarding mode
-              data_out(j) := data_in(i); --forward corresponding data
-            end if;
-          end if;
-        end loop;
-      end loop;
+      FOR i IN 0 TO 1 LOOP
+        FOR j IN 0 TO 1 LOOP
+          IF(arf(j) /= zero) THEN
+            IF(arf(j) = ar(i)) THEN
+              out_mux(j)  <= '1';         --set desired mux at forwarding mode
+              data_out(j) := data_in(i);  --forward corresponding data
+            END IF;
+          END IF;
+        END LOOP;
+      END LOOP;
       dout1 <= data_out(0);
       dout2 <= data_out(1);
-    end if;
-    
-  end process;
-  
-end architecture;
+    END IF;
+
+  END PROCESS;
+
+END ARCHITECTURE;

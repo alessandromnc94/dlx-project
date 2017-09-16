@@ -5,7 +5,6 @@ USE work.booth_generator_types.ALL;
 
 ENTITY booth_multiplier IS
   GENERIC (
-<<<<<<< HEAD
     n : INTEGER := 8
     );
   PORT (
@@ -13,14 +12,6 @@ ENTITY booth_multiplier IS
     in_2       : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
     signed_mul : IN  STD_LOGIC;
     out_s      : OUT STD_LOGIC_VECTOR(2*n-1 DOWNTO 0)
-=======
-    n : INTEGER := 16
-    );
-  PORT (
-    in_1 : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2 : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    mul  : OUT STD_LOGIC_VECTOR(2*n-1 DOWNTO 0)
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
     );
 END ENTITY;
 
@@ -39,10 +30,6 @@ ARCHITECTURE structural OF booth_multiplier IS
       );
   END COMPONENT;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
   COMPONENT booth_generator IS
     GENERIC(
       n_in  : INTEGER;
@@ -55,19 +42,11 @@ ARCHITECTURE structural OF booth_multiplier IS
       );
   END COMPONENT;
 
-<<<<<<< HEAD
 -- in_0 : 0
 -- in_1 : 1 x k
 -- in_2 : -1 x k
 -- in_3 : 2 x k
 -- in_4 : -2 x k
-=======
--- in_0 : in_1 x k x (-2)
--- in_1 : in_1 x k x 2
--- in_2 : in_1 x k x (-1)
--- in_3 : in_1 x k x 1
--- in_4 : in_1 x k x 0
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
   COMPONENT mux_n_5_1 IS
     GENERIC (
       n : INTEGER
@@ -96,7 +75,6 @@ ARCHITECTURE structural OF booth_multiplier IS
       );
   END COMPONENT;
 
-<<<<<<< HEAD
   CONSTANT n_prime : INTEGER := n+2;
 
   CONSTANT n_level   : INTEGER := n_prime/2 + n_prime MOD 2;
@@ -119,44 +97,18 @@ BEGIN
     n => n_prime
     ) PORT MAP (
       in_s  => in_2_bis,
-=======
-  CONSTANT n_level   : INTEGER := n/2 + n MOD 2;
-  CONSTANT n_shifted : INTEGER := n+shifted_pos;
-
-  TYPE signal_matrix IS ARRAY(n_level -1 DOWNTO 0) OF STD_LOGIC_VECTOR(n_shifted-1 DOWNTO 0);
-
-  SIGNAL carries_out                      : STD_LOGIC_VECTOR(n_level -1 DOWNTO 0);
-  SIGNAL encoder_out                      : STD_LOGIC_VECTOR(3*n_level-1 DOWNTO 0);
-  SIGNAL gen_pos_out, gen_neg_out         : STD_LOGIC_VECTOR(n_shifted-1);
-  SIGNAL mux_out_matrix, adder_out_matrix : signal_matrix;
-
-BEGIN
-
-  booth_encoder_comp : booth_encoder GENERIC MAP (
-    n => n
-    ) PORT MAP (
-      in_s  => in_2,
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
       out_s => encoder_out
       );
 
   booth_generator_comp : booth_generator GENERIC MAP (
-<<<<<<< HEAD
     n_in  => n_prime,
     n_out => n_shifted
     ) PORT MAP (
       in_s    => in_1_bis,
-=======
-    n_in  => n,
-    n_out => n_shifted
-    ) PORT MAP (
-      in_s    => in_1,
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
       pos_out => gen_pos_out,
       neg_out => gen_neg_out
       );
 
-<<<<<<< HEAD
   muxes_gen : FOR i IN 0 TO n_level-1 GENERATE
     mux_x : mux_n_5_1 GENERIC MAP (
       n => 2*n_prime
@@ -197,11 +149,6 @@ BEGIN
   END GENERATE;
 
   out_s <= adder_out_matrix(n_level-1)(2*n-1 DOWNTO 0);
-=======
--- mux_0 : mux_n_5_1 generic map (
---      n => n_shifted
--- )
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
 
 END ARCHITECTURE;
 

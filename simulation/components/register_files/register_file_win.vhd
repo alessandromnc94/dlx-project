@@ -46,9 +46,9 @@ ARCHITECTURE behavioral OF register_file_win IS
   CONSTANT width_add             : INTEGER := log2int(n_window_registers + n_global_registers);
   -- total_registers contains the number of all registers (except global)
   CONSTANT n_total_win_registers : INTEGER := windows * offset_cwp;
-  
+
   -- define type for registers array
-  TYPE reg_array IS (natural range <>) OF STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
+  TYPE reg_array IS (NATURAL RANGE <>) OF STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
 
   -- define signals
   -- 'global_registers' is the collection of global registers
@@ -56,15 +56,15 @@ ARCHITECTURE behavioral OF register_file_win IS
   -- 'win_registers' is the collection of in, local (and out) registers
   SIGNAL win_registers           : reg_array(0 TO n_total_win_registers-1) := (OTHERS => (OTHERS => '0'));
   -- 'swp' and 'cwp' contains the address of the 1st register of stored window and current window
-  SIGNAL cwp, swp                : INTEGER                                                        := 0;
+  SIGNAL cwp, swp                : INTEGER                                 := 0;
   -- 'in_spilling' and 'in_filling' are signals used to check which operation is in execution.
   -- they are needed because 'spill' and 'fill' outputs can be only modified but not checked in 'if' conditions
-  SIGNAL in_spilling, in_filling : STD_LOGIC                                                      := '0';
+  SIGNAL in_spilling, in_filling : STD_LOGIC                               := '0';
   -- 'rf_cycles' contains how many times cycles are started.
   -- it is used to check if at the least one window is stored in memory
-  SIGNAL rf_cycles               : INTEGER                                                        := 0;
+  SIGNAL rf_cycles               : INTEGER                                 := 0;
   -- 'memory_cnt' is an offset used during filling and spilling operation
-  SIGNAL memory_cnt              : INTEGER                                                        := 0;
+  SIGNAL memory_cnt              : INTEGER                                 := 0;
 
 BEGIN
 
@@ -78,13 +78,13 @@ BEGIN
       IF reset = '1' THEN
         win_registers    <= (OTHERS => (OTHERS => '0'));
         global_registers <= (OTHERS => (OTHERS => '0'));
-        out1             <= (OTHERS => 'Z');
-        out2             <= (OTHERS => 'Z');
+        out1             <= (OTHERS => 'z');
+        out2             <= (OTHERS => 'z');
         cwp              <= 0;
         swp              <= 0;
         in_spilling      <= '0';
         in_filling       <= '0';
-        to_memory_data   <= (OTHERS => 'Z');
+        to_memory_data   <= (OTHERS => 'z');
         rf_cycles        <= 0;
       ELSIF enable = '1' THEN
         IF in_spilling = '1' THEN

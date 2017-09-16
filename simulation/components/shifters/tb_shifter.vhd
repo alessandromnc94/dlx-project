@@ -55,7 +55,7 @@ BEGIN
     WAIT FOR 1 NS;
     arith_shift                 <= '1';
     WAIT FOR 1 NS;
-    ASSERT FALSE REPORT "Testbench finished!" SEVERITY FAILURE;
+    ASSERT FALSE REPORT "testbench finished!" SEVERITY FAILURE;
   END PROCESS;
 
 END ARCHITECTURE;

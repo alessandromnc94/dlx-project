@@ -1,13 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
-<<<<<<< HEAD
 
 ENTITY p4_sum_generator IS
-=======
-USE work.constants.ALL;
-
-ENTITY sum_generator IS
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
 
   GENERIC (
     n          : INTEGER := 32;
@@ -25,15 +19,9 @@ END ENTITY;
 -- architectures
 
 -- structural architecture
-<<<<<<< HEAD
 ARCHITECTURE structural OF p4_sum_generator IS
 
   COMPONENT p4_carry_select_block IS
-=======
-ARCHITECTURE structural OF sum_generator IS
-
-  COMPONENT carry_select_block IS
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
     GENERIC (
       n : INTEGER
       );
@@ -47,11 +35,7 @@ ARCHITECTURE structural OF sum_generator IS
 BEGIN
 
   csb_gen : FOR i IN 0 TO n/carry_step-1 GENERATE
-<<<<<<< HEAD
     csbx : p4_carry_select_block
-=======
-    csbx : carry_select_block
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
       GENERIC MAP (
         n => carry_step
         )
@@ -65,18 +49,10 @@ BEGIN
 
 END ARCHITECTURE;
 
-<<<<<<< HEAD
 CONFIGURATION cfg_p4_sum_generator_structural OF p4_sum_generator IS
   FOR structural
     FOR csb_gen
       FOR ALL : p4_carry_select_block USE CONFIGURATION work.cfg_p4_carry_select_block_structural;
-=======
-CONFIGURATION cfg_sum_generator_structural OF sum_generator IS
-  FOR structural
-    FOR csb_gen
-      FOR ALL : carry_select_block
-        USE CONFIGURATION work.cfg_carry_select_block_structural;
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
       END FOR;
     END FOR;
   END FOR;

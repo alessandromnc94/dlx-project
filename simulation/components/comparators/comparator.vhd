@@ -5,6 +5,7 @@ ENTITY comparator IS
   PORT (
     zero_out          : IN  STD_LOGIC;
     carry_out         : IN  STD_LOGIC;
+    sign_out          : IN  STD_LOGIC;
     signed_comparison : IN  STD_LOGIC;
     eq_out            : OUT STD_LOGIC;
     gr_out            : OUT STD_LOGIC;
@@ -19,22 +20,23 @@ END ENTITY;
 
 -- behavioral architecture
 ARCHITECTURE behavioral OF comparator IS
-  SIGNAL c_out : STD_LOGIC;
+  SIGNAL c_out, z_out : STD_LOGIC;
 
 BEGIN
 -- unsigned comparison needs the value of carry_out
 -- signed comparison needs the negate value of carry_out
-<<<<<<< HEAD
-  c_out  <= signed_comparison XOR carry_out;
-=======
-  c_out  <= signed_comparison XOR c_out;
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
-  eq_out <= zero_out;
-  ne_out <= NOT zero_out;
+  -- c_out  <= signed_comparison xor carry_out;
+  c_out <= carry_out WHEN signed_comparison = '0' ELSE NOT sign_out;
+  z_out <= NOT sign_out AND zero_out;
+
+  eq_out <= z_out;
+  ne_out <= NOT z_out;
   ge_out <= c_out;
-  lo_out <= NOT c_out;
-  gr_out <= (NOT zero_out) AND c_out;
-  le_out <= (NOT c_out) OR zero_out;
+  -- ge_out <= c_out or zero_out;
+  lo_out <= (NOT c_out);
+  -- lo_out <= (not c_out) and (not zero_out);
+  gr_out <= ((NOT z_out) AND c_out);
+  le_out <= ((NOT c_out) OR z_out);
 
 END ARCHITECTURE;
 

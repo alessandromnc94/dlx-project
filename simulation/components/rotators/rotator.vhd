@@ -5,11 +5,7 @@ USE ieee.std_logic_arith.ALL;
 
 ENTITY rotator IS
   GENERIC (
-<<<<<<< HEAD
     n : INTEGER := 8
-=======
-    n : INTEGER := 32
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
     );
   PORT (
     base_vector     : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
@@ -23,7 +19,6 @@ END ENTITY;
 
 -- behavioral architecture
 ARCHITECTURE behavioral OF rotator IS
-<<<<<<< HEAD
   SIGNAL out_s_tmp, base_vector_casted : BIT_VECTOR(n-1 DOWNTO 0);
   SIGNAL rotate_by_value_casted        : INTEGER;
 BEGIN
@@ -32,11 +27,6 @@ BEGIN
   out_s                  <= to_stdlogicvector(out_s_tmp);
   out_s_tmp              <= base_vector_casted ROL rotate_by_value_casted WHEN left_rotation = '1' ELSE
                base_vector_casted ROR rotate_by_value_casted;
-=======
-BEGIN
-  out_s <= base_vector ROL rotate_by_value WHEN left_rotation = '1' ELSE
-           base_vector ROR rotate_by_value;
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
 
 END ARCHITECTURE;
 

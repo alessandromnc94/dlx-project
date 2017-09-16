@@ -8,7 +8,7 @@ ENTITY tb_p4_adder IS
 END ENTITY;
 
 ARCHITECTURE behavioral OF tb_p4_adder IS
-  CONSTANT n : INTEGER := 32;
+  CONSTANT n : INTEGER := 16;
   COMPONENT p4_adder IS
     GENERIC (
       n : INTEGER
@@ -24,6 +24,7 @@ ARCHITECTURE behavioral OF tb_p4_adder IS
 
   SIGNAL in_1, in_2, sum     : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
   SIGNAL carry_in, carry_out : STD_LOGIC;
+  SIGNAL expected_sum        : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
 
 
 BEGIN
@@ -49,16 +50,21 @@ BEGIN
       FOR i IN -2 TO 2 LOOP
         in_1 <= conv_std_logic_vector(i, n);
         FOR j IN -2 TO 2 LOOP
-          IF c = 0 THEN
-            in_2 <= conv_std_logic_vector(j, n);
-          ELSE
-            in_2 <= NOT conv_std_logic_vector(j, n);
-          END IF;
+          -- if c = 0 then
+          --   expected_sum <= conv_std_logic_vector(i+j, n);
+          --   in_2 <= conv_std_logic_vector(j, n);
+          -- else
+          --   in_2 <= not conv_std_logic_vector(j, n);
+          --   expected_sum <= conv_std_logic_vector(i-j, n);
+          -- end if;
+
+          expected_sum <= conv_std_logic_vector(i+j+c, n);
+          in_2         <= conv_std_logic_vector(j, n);
           WAIT FOR 100 PS;
         END LOOP;
       END LOOP;
     END LOOP;
-    ASSERT FALSE REPORT "Testbench finished!" SEVERITY FAILURE;
+    ASSERT FALSE REPORT "testbench finished!" SEVERITY FAILURE;
   END PROCESS;
 
 END ARCHITECTURE;

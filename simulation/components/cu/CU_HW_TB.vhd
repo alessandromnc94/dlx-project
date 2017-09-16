@@ -236,7 +236,7 @@ BEGIN
           WHEN rtype_sub    => opname <= "     rtype_sub";
           WHEN rtype_and_op => opname <= "  rtype_and_op";
           WHEN rtype_or_op  => opname <= "   rtype_or_op";
-          WHEN OTHERS       => opname <= "           nop";
+          WHEN OTHERS       => opname <= "         nop";
         END CASE;
       WHEN itype_addin1    => opname <= "   itype_addin1";
       WHEN itype_subin1    => opname <= "   itype_subin1";
@@ -253,7 +253,7 @@ BEGIN
       WHEN itype_s_reg2    => opname <= "  itype_s_reg2";
       WHEN itype_s_mem2    => opname <= "  itype_s_mem2";
       WHEN itype_l_mem2    => opname <= "  itype_l_mem2";
-      WHEN OTHERS          => opname <= "           nop";
+      WHEN OTHERS          => opname <= "            nop";
     END CASE;
   END PROCESS;
 END ARCHITECTURE;

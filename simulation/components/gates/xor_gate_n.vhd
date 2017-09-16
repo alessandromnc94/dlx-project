@@ -2,19 +2,14 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
 ENTITY xor_gate_n IS
-  generic (
-    n : integer := 1
-  )
-  PORT (
-<<<<<<< HEAD
-    in_1  : IN  STD_LOGIC_vector(n-1 downto 0);
-    in_2  : IN  STD_LOGIC_vector(n-1 downto 0);
-    out_s : OUT STD_LOGIC_vector(n-1 downto 0)
-=======
-    in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    out_s : OUT STD_LOGIC
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
-    );
+  GENERIC (
+    n : INTEGER := 1
+    )
+    PORT (
+      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+      );
 END ENTITY;
 
 -- architectures
@@ -23,39 +18,27 @@ END ENTITY;
 ARCHITECTURE behavioral OF xor_gate_n IS
   SIGNAL tmp_out_s : STD_LOGIC;
 BEGIN
-<<<<<<< HEAD
-  out_s <= in_1 xor in_2;
+  out_s <= in_1 XOR in_2;
 END ARCHITECTURE;
 
 -- structural architecture
 ARCHITECTURE structural OF xor_gate_n IS
-  component xor_gate is 
-  port (
-    in_1 : in std_logic;
-    in_2 : in std_logic;
-    out_s : out std_logic
-  );
-  end component;
+  COMPONENT xor_gate IS
+    PORT (
+      in_1  : IN  STD_LOGIC;
+      in_2  : IN  STD_LOGIC;
+      out_s : OUT STD_LOGIC
+      );
+  END COMPONENT;
 
 BEGIN
-gate_gen : for i in 0 to n-1 generate
-  xor_gate_x : xor_gate port map (
-    in_1 => in_1(i),
-    in_2 => in_2(i),
-    out_s => out_s(i)
-  );
-  end generate;
-=======
-  tmp_out_s <= in_s(0);
-  xor_gates_gen : FOR j IN 1 TO n-1 GENERATE
-    tmp_out_s <= tmp_out_s XOR in_s(j);
+  gate_gen : FOR i IN 0 TO n-1 GENERATE
+    xor_gate_x : xor_gate PORT MAP (
+      in_1  => in_1(i),
+      in_2  => in_2(i),
+      out_s => out_s(i)
+      );
   END GENERATE;
-
-  out_s <= tmp_out_s;
-
--- it works only with vhdl 2008
--- out_s <= xor i;
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
 END ARCHITECTURE;
 
 -- configurations
@@ -69,9 +52,9 @@ END CONFIGURATION;
 -- structural configuration
 CONFIGURATION cfg_xor_gate_n_structural OF xor_gate_n IS
   FOR structural
-    for gate_gen
-      for xor_gate_x : xor_gate use configuration work.cfg_xor_gate_behavioral;
-      end for;
-    end for;
+    FOR gate_gen
+      FOR xor_gate_x : xor_gate USE CONFIGURATION work.cfg_xor_gate_behavioral;
+      END FOR;
+    END FOR;
   END FOR;
 END CONFIGURATION;

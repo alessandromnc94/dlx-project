@@ -33,7 +33,7 @@ BEGIN
       WHEN 3      => out_s <= in_3;
       WHEN 4      => out_s <= in_4;
       WHEN 5      => out_s <= in_5;
-      WHEN OTHERS => out_s <= (OTHERS => 'Z');
+      WHEN OTHERS => out_s <= (OTHERS => 'z');
     END CASE;
   END PROCESS;
 END ARCHITECTURE;

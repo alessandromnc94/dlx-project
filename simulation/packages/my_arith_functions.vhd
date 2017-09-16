@@ -6,19 +6,15 @@ PACKAGE my_arith_functions IS
     n : INTEGER
     )
     RETURN INTEGER;
-<<<<<<< HEAD
   FUNCTION log2int_own (
     n : INTEGER
     )
     RETURN INTEGER;
-=======
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
 END PACKAGE;
 
 PACKAGE BODY my_arith_functions IS
   FUNCTION log2int (
     n : INTEGER
-<<<<<<< HEAD
     ) RETURN INTEGER IS
   BEGIN
     RETURN INTEGER(ceil(log2(REAL(n))));
@@ -27,8 +23,6 @@ PACKAGE BODY my_arith_functions IS
 
   FUNCTION log2int_own (
     n : INTEGER
-=======
->>>>>>> b5269eb7a9009e8583aa25f6804745188b2d496f
     )
     RETURN INTEGER IS
     VARIABLE tmp : INTEGER := n;
