@@ -1,70 +1,70 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY rca_n IS
-  GENERIC (
-    n : INTEGER := 4
+entity rca_n is
+  generic (
+    n : integer := 4
     );
-  PORT (
-    in_1      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    carry_in  : IN  STD_LOGIC;
-    sum       : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    carry_out : OUT STD_LOGIC
+  port (
+    in_1      : in  std_logic_vector(n-1 downto 0);
+    in_2      : in  std_logic_vector(n-1 downto 0);
+    carry_in  : in  std_logic;
+    sum       : out std_logic_vector(n-1 downto 0);
+    carry_out : out std_logic
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- structural architecture
-ARCHITECTURE structural OF rca_n IS
+architecture structural of rca_n is
 
-  COMPONENT full_adder IS
-    PORT(
-      in_1      : IN  STD_LOGIC;
-      in_2      : IN  STD_LOGIC;
-      carry_in  : IN  STD_LOGIC;
-      sum       : OUT STD_LOGIC;
-      carry_out : OUT STD_LOGIC
+  component full_adder is
+    port(
+      in_1      : in  std_logic;
+      in_2      : in  std_logic;
+      carry_in  : in  std_logic;
+      sum       : out std_logic;
+      carry_out : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL carries : STD_LOGIC_VECTOR(n DOWNTO 0) := (OTHERS => '0');
+  signal carries : std_logic_vector(n downto 0) := (others => '0');
 
-BEGIN
+begin
   carries(0) <= carry_in;
   carry_out  <= carries(n);
 
-  full_adder_gen : FOR i IN 0 TO n-1 GENERATE
-    full_adder_x : full_adder PORT MAP (
+  full_adder_gen : for i in 0 to n-1 generate
+    full_adder_x : full_adder port map (
       in_1      => in_1(i),
       in_2      => in_2(i),
       carry_in  => carries(i),
       sum       => sum(i),
       carry_out => carries(i+1)
       );
-  END GENERATE;
+  end generate;
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- structural configuration with behavioral components
-CONFIGURATION cfg_rca_n_structural_1 OF rca_n IS
-  FOR structural
-    FOR full_adder_gen
-      FOR full_adder_x : full_adder USE CONFIGURATION work.cfg_full_adder_behavioral;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_rca_n_structural_1 of rca_n is
+  for structural
+    for full_adder_gen
+      for full_adder_x : full_adder use configuration work.cfg_full_adder_behavioral;
+      end for;
+    end for;
+  end for;
+end configuration;
 
 -- structural configuration with structural components
-CONFIGURATION cfg_rca_n_structural_2 OF rca_n IS
-  FOR structural
-    FOR full_adder_gen
-      FOR full_adder_x : full_adder USE CONFIGURATION work.cfg_full_adder_structural;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_rca_n_structural_2 of rca_n is
+  for structural
+    for full_adder_gen
+      for full_adder_x : full_adder use configuration work.cfg_full_adder_structural;
+      end for;
+    end for;
+  end for;
+end configuration;

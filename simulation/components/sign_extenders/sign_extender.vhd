@@ -1,32 +1,32 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY sign_extender IS
-  GENERIC (
-    n_in  : INTEGER := 32;
-    n_out : INTEGER := 2*n_in
+entity sign_extender is
+  generic (
+    n_in  : integer := 32;
+    n_out : integer := 2*n_in
     );
-  PORT (
-    in_s  : IN  STD_LOGIC_VECTOR(n_in-1 DOWNTO 0);
-    en    : IN  STD_LOGIC;
-    out_s : OUT STD_LOGIC_VECTOR(n_out-1 DOWNTO 0)
+  port (
+    in_s  : in  std_logic_vector(n_in-1 downto 0);
+    en    : in  std_logic;
+    out_s : out std_logic_vector(n_out-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF sign_extender IS
-  SIGNAL extended_bit : STD_LOGIC;
-BEGIN
-  extended_bit <= en AND in_s(n_in-1);
-  out_s        <= (n_out-1 DOWNTO n_in => extended_bit) & in_s;
-END ARCHITECTURE;
+architecture behavioral of sign_extender is
+  signal extended_bit : std_logic;
+begin
+  extended_bit <= en and in_s(n_in-1);
+  out_s        <= (n_out-1 downto n_in => extended_bit) & in_s;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_sign_extender_behavioral OF sign_extender IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_sign_extender_behavioral of sign_extender is
+  for behavioral
+  end for;
+end configuration;

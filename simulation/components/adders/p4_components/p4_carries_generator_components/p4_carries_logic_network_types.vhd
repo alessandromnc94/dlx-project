@@ -1,8 +1,8 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-USE work.my_arith_functions.ALL;
+use work.my_arith_functions.all;
 
-PACKAGE p4_carries_logic_network_types IS
+package p4_carries_logic_network_types is
 
-END PACKAGE;
+end package;

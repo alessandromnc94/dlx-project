@@ -1,43 +1,43 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-ENTITY mux_n_4_1 IS
-  GENERIC (
-    n : INTEGER := 1                           -- number of bits for inputs
+entity mux_n_4_1 is
+  generic (
+    n : integer := 1                           -- number of bits for inputs
     );
-  PORT (
-    in_0  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_3  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    s     : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);  -- selector
-    out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    in_0  : in  std_logic_vector(n-1 downto 0);
+    in_1  : in  std_logic_vector(n-1 downto 0);
+    in_2  : in  std_logic_vector(n-1 downto 0);
+    in_3  : in  std_logic_vector(n-1 downto 0);
+    s     : in  std_logic_vector(2 downto 0);  -- selector
+    out_s : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF mux_n_4_1 IS
-BEGIN
-  PROCESS (ALL)
-  BEGIN
-    CASE conv_integer(s) IS
-      WHEN 0      => out_s <= in_0;
-      WHEN 1      => out_s <= in_1;
-      WHEN 2      => out_s <= in_2;
-      WHEN 3      => out_s <= in_3;
-      WHEN OTHERS => NULL;
-    END CASE;
-  END PROCESS;
-END ARCHITECTURE;
+architecture behavioral of mux_n_4_1 is
+begin
+  process (all)
+  begin
+    case conv_integer(s) is
+      when 0      => out_s <= in_0;
+      when 1      => out_s <= in_1;
+      when 2      => out_s <= in_2;
+      when 3      => out_s <= in_3;
+      when others => null;
+    end case;
+  end process;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_mux_n_4_1_behavioral OF mux_n_4_1 IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_mux_n_4_1_behavioral of mux_n_4_1 is
+  for behavioral
+  end for;
+end configuration;

@@ -1,17 +1,17 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-PACKAGE logicals_types IS
-  CONSTANT logicals_array_size : INTEGER := 4;
-  SUBTYPE logicals_array IS STD_LOGIC_VECTOR(logicals_array_size-1 DOWNTO 0);
+package logicals_types is
+  constant logicals_array_size : integer := 4;
+  subtype logicals_array is std_logic_vector(logicals_array_size-1 downto 0);
 
-  CONSTANT logicals_and  : logicals_array := "1000";
-  CONSTANT logicals_nand : logicals_array := "0111";
-  CONSTANT logicals_or   : logicals_array := "1110";
-  CONSTANT logicals_nor  : logicals_array := "0001";
-  CONSTANT logicals_xor  : logicals_array := "0110";
-  CONSTANT logicals_xnor : logicals_array := "1001";
+  constant logicals_and  : logicals_array := "1000";
+  constant logicals_nand : logicals_array := "0111";
+  constant logicals_or   : logicals_array := "1110";
+  constant logicals_nor  : logicals_array := "0001";
+  constant logicals_xor  : logicals_array := "0110";
+  constant logicals_xnor : logicals_array := "1001";
 
-END PACKAGE;
+end package;

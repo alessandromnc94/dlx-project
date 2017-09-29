@@ -1,65 +1,65 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-USE work.logicals_types.ALL;
+use work.logicals_types.all;
 
-ENTITY tb_logicals IS
-END ENTITY;
+entity tb_logicals is
+end entity;
 
-ARCHITECTURE behavioral OF tb_logicals IS
-  CONSTANT n : INTEGER := 4;
-  COMPONENT logicals_n IS
-    GENERIC (
-      n : INTEGER
+architecture behavioral of tb_logicals is
+  constant n : integer := 4;
+  component logicals_n is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      logic : IN  logicals_array;
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      logic : in  logicals_array;
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL in_1, in_2, out_s : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL logic             : logicals_array;
-BEGIN
+  signal in_1, in_2, out_s : std_logic_vector(n-1 downto 0);
+  signal logic             : logicals_array;
+begin
 
-  dut : logicals_n GENERIC MAP (
+  dut : logicals_n generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_1  => in_1,
       in_2  => in_2,
       logic => logic,
       out_s => out_s
       );
 
-  PROCESS
-  BEGIN
+  process
+  begin
 
     in_1 <= "1100";
     in_2 <= "1010";
 
     logic <= logicals_and;
-    WAIT FOR 100 PS;
+    wait for 100 ps;
     logic <= logicals_nand;
-    WAIT FOR 100 PS;
+    wait for 100 ps;
     logic <= logicals_or;
-    WAIT FOR 100 PS;
+    wait for 100 ps;
     logic <= logicals_nor;
-    WAIT FOR 100 PS;
+    wait for 100 ps;
     logic <= logicals_xor;
-    WAIT FOR 100 PS;
+    wait for 100 ps;
     logic <= logicals_xnor;
-    WAIT FOR 100 PS;
+    wait for 100 ps;
 
-    ASSERT FALSE REPORT "testbench finished" SEVERITY FAILURE;
-  END PROCESS;
+    assert false report "testbench finished" severity failure;
+  end process;
 
-END ARCHITECTURE;
+end architecture;
 
-CONFIGURATION cfg_tb_logicals_behavioral OF tb_logicals IS
-  FOR behavioral
-    FOR dut : logicals_n USE CONFIGURATION work.cfg_logicals_n_structural_1;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_tb_logicals_behavioral of tb_logicals is
+  for behavioral
+    for dut : logicals_n use configuration work.cfg_logicals_n_structural_1;
+    end for;
+  end for;
+end configuration;

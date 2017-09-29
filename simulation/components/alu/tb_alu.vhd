@@ -1,40 +1,40 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_arith.ALL;
-USE std.textio.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use std.textio.all;
 
-USE work.alu_types.ALL;
+use work.alu_types.all;
 
-ENTITY tb_alu IS
-END ENTITY;
+entity tb_alu is
+end entity;
 
-ARCHITECTURE behavioral OF tb_alu IS
+architecture behavioral of tb_alu is
 
-  CONSTANT n : INTEGER := 8;
+  constant n : integer := 8;
 
-  COMPONENT alu IS
-    GENERIC (
-      n : INTEGER
+  component alu is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      op_sel : IN  alu_array;
+    port (
+      in_1   : in  std_logic_vector(n-1 downto 0);
+      in_2   : in  std_logic_vector(n-1 downto 0);
+      op_sel : in  alu_array;
       -- outputs
-      out_s  : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+      out_s  : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL in_1, in_2, out_s, expected_out_s : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '1');
-  SIGNAL op_sel                            : alu_array;
-  SIGNAL operation                         : STRING(1 TO 5)                 := "     ";
-  SIGNAL correct                           : BOOLEAN;
-BEGIN
+  end component;
+  signal in_1, in_2, out_s, expected_out_s : std_logic_vector(n-1 downto 0) := (others => '1');
+  signal op_sel                            : alu_array;
+  signal operation                         : string(1 to 5)                 := "     ";
+  signal correct                           : boolean;
+begin
 
   correct <= expected_out_s = out_s;
 
-  dut : alu GENERIC MAP (
+  dut : alu generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_1   => in_1,
       in_2   => in_2,
       op_sel => op_sel,
@@ -42,193 +42,193 @@ BEGIN
       );
 
 
-  PROCESS
-  BEGIN
+  process
+  begin
 
-    FOR i IN -2 TO 2 LOOP
+    for i in -2 to 2 loop
       in_1 <= conv_std_logic_vector(i, n);
-      FOR j IN -2 TO 2 LOOP
+      for j in -2 to 2 loop
         in_2   <= conv_std_logic_vector(j, n);
         op_sel <= alu_add;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_sub;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
 
         op_sel <= alu_and;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_or;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_xor;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_nand;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_nor;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_xnor;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
 
         op_sel <= alu_sll;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_srl;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_sra;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
 
         op_sel <= alu_rol;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_ror;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
 
         op_sel <= alu_mul_signed;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_mul;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
 
         op_sel <= alu_comp_eq;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_ne;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_gr;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_ge;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_lo;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_le;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_gr_signed;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_ge_signed;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_lo_signed;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
         op_sel <= alu_comp_le_signed;
-        WAIT FOR 100 PS;
+        wait for 100 ps;
 
 
-      END LOOP;
-    END LOOP;
-    ASSERT FALSE REPORT "testbench terminated!!!" SEVERITY FAILURE;
+      end loop;
+    end loop;
+    assert false report "testbench terminated!!!" severity failure;
 
-  END PROCESS;
+  end process;
 
-  PROCESS(op_sel, in_1, in_2)
-  BEGIN
-    CASE op_sel IS
-      WHEN alu_add =>
+  process(op_sel, in_1, in_2)
+  begin
+    case op_sel is
+      when alu_add =>
         operation      <= "  add";
-        expected_out_s <= UNSIGNED(in_1) + UNSIGNED(in_2);
-      WHEN alu_sub =>
+        expected_out_s <= unsigned(in_1) + unsigned(in_2);
+      when alu_sub =>
         operation      <= "  sub";
-        expected_out_s <= UNSIGNED(in_1) - UNSIGNED(in_2);
-      WHEN alu_and =>
+        expected_out_s <= unsigned(in_1) - unsigned(in_2);
+      when alu_and =>
         operation      <= "  and";
-        expected_out_s <= in_1 AND in_2;
-      WHEN alu_or =>
+        expected_out_s <= in_1 and in_2;
+      when alu_or =>
         operation      <= "   or";
-        expected_out_s <= in_1 OR in_2;
-      WHEN alu_xor =>
+        expected_out_s <= in_1 or in_2;
+      when alu_xor =>
         operation      <= "  xor";
-        expected_out_s <= in_1 XOR in_2;
-      WHEN alu_nand =>
+        expected_out_s <= in_1 xor in_2;
+      when alu_nand =>
         operation      <= " nand";
-        expected_out_s <= in_1 NAND in_2;
-      WHEN alu_nor =>
+        expected_out_s <= in_1 nand in_2;
+      when alu_nor =>
         operation      <= "  nor";
-        expected_out_s <= in_1 NOR in_2;
-      WHEN alu_xnor =>
+        expected_out_s <= in_1 nor in_2;
+      when alu_xnor =>
         operation      <= " xnor";
-        expected_out_s <= in_1 XNOR in_2;
-      WHEN alu_mul =>
+        expected_out_s <= in_1 xnor in_2;
+      when alu_mul =>
         operation      <= "u mul";
-        expected_out_s <= UNSIGNED(in_1(n/2-1 DOWNTO 0)) * UNSIGNED(in_2(n/2-1 DOWNTO 0));
-      WHEN alu_mul_signed =>
+        expected_out_s <= unsigned(in_1(n/2-1 downto 0)) * unsigned(in_2(n/2-1 downto 0));
+      when alu_mul_signed =>
         operation      <= "s mul";
-        expected_out_s <= SIGNED(in_1(n/2-1 DOWNTO 0)) * SIGNED(in_2(n/2-1 DOWNTO 0));
-      WHEN alu_sll =>
+        expected_out_s <= signed(in_1(n/2-1 downto 0)) * signed(in_2(n/2-1 downto 0));
+      when alu_sll =>
         operation      <= "  sll";
-        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) SLL conv_integer(UNSIGNED(in_2)));
-      WHEN alu_srl =>
+        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) sll conv_integer(unsigned(in_2)));
+      when alu_srl =>
         operation      <= "  srl";
-        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) SRL conv_integer(UNSIGNED(in_2)));
-      WHEN alu_sra =>
+        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) srl conv_integer(unsigned(in_2)));
+      when alu_sra =>
         operation      <= "  sra";
-        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) SRA conv_integer(UNSIGNED(in_2)));
-      WHEN alu_rol =>
+        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) sra conv_integer(unsigned(in_2)));
+      when alu_rol =>
         operation      <= "  rol";
-        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) ROL conv_integer(UNSIGNED(in_2)));
-      WHEN alu_ror =>
+        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) rol conv_integer(unsigned(in_2)));
+      when alu_ror =>
         operation      <= "  ror";
-        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) ROR conv_integer(UNSIGNED(in_2)));
-      WHEN alu_comp_eq =>
+        expected_out_s <= to_stdlogicvector(to_bitvector(in_1) ror conv_integer(unsigned(in_2)));
+      when alu_comp_eq =>
         operation                             <= "   eq";
-        expected_out_s(n-1 DOWNTO 1)          <= (OTHERS => '0');
-        IF in_1 = in_2 THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                <= '0';
-        END IF;
-      WHEN alu_comp_ne =>
+        expected_out_s(n-1 downto 1)          <= (others => '0');
+        if in_1 = in_2 then expected_out_s(0) <= '1';
+        else expected_out_s(0)                <= '0';
+        end if;
+      when alu_comp_ne =>
         operation                              <= "   ne";
-        expected_out_s(n-1 DOWNTO 1)           <= (OTHERS => '0');
-        IF in_1 /= in_2 THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                 <= '0';
-        END IF;
-      WHEN alu_comp_gr =>
+        expected_out_s(n-1 downto 1)           <= (others => '0');
+        if in_1 /= in_2 then expected_out_s(0) <= '1';
+        else expected_out_s(0)                 <= '0';
+        end if;
+      when alu_comp_gr =>
         operation                                                 <= "   gr";
-        expected_out_s(n-1 DOWNTO 1)                              <= (OTHERS => '0');
-        IF UNSIGNED(in_1) > UNSIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                                    <= '0';
-        END IF;
-      WHEN alu_comp_ge =>
+        expected_out_s(n-1 downto 1)                              <= (others => '0');
+        if unsigned(in_1) > unsigned(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)                                    <= '0';
+        end if;
+      when alu_comp_ge =>
         operation                                                  <= "    ge";
-        expected_out_s(n-1 DOWNTO 1)                               <= (OTHERS => '0');
-        IF UNSIGNED(in_1) >= UNSIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                                     <= '0';
-        END IF;
-      WHEN alu_comp_lo =>
+        expected_out_s(n-1 downto 1)                               <= (others => '0');
+        if unsigned(in_1) >= unsigned(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)                                     <= '0';
+        end if;
+      when alu_comp_lo =>
         operation                                                 <= "   lo";
-        expected_out_s(n-1 DOWNTO 1)                              <= (OTHERS => '0');
-        IF UNSIGNED(in_1) < UNSIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                                    <= '0';
-        END IF;
-      WHEN alu_comp_le =>
+        expected_out_s(n-1 downto 1)                              <= (others => '0');
+        if unsigned(in_1) < unsigned(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)                                    <= '0';
+        end if;
+      when alu_comp_le =>
         operation                    <= "   le";
-        expected_out_s(n-1 DOWNTO 1) <= (OTHERS => '0');
-        IF UNSIGNED(in_1)            <= UNSIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)       <= '0';
-        END IF;
-      WHEN alu_comp_gr_signed =>
+        expected_out_s(n-1 downto 1) <= (others => '0');
+        if unsigned(in_1)            <= unsigned(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)       <= '0';
+        end if;
+      when alu_comp_gr_signed =>
         operation                                             <= "s  gr";
-        expected_out_s(n-1 DOWNTO 1)                          <= (OTHERS => '0');
-        IF SIGNED(in_1) > SIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                                <= '0';
-        END IF;
-      WHEN alu_comp_ge_signed =>
+        expected_out_s(n-1 downto 1)                          <= (others => '0');
+        if signed(in_1) > signed(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)                                <= '0';
+        end if;
+      when alu_comp_ge_signed =>
         operation                                              <= "s  ge";
-        expected_out_s(n-1 DOWNTO 1)                           <= (OTHERS => '0');
-        IF SIGNED(in_1) >= SIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                                 <= '0';
-        END IF;
-      WHEN alu_comp_lo_signed =>
+        expected_out_s(n-1 downto 1)                           <= (others => '0');
+        if signed(in_1) >= signed(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)                                 <= '0';
+        end if;
+      when alu_comp_lo_signed =>
         operation                                             <= "s  lo";
-        expected_out_s(n-1 DOWNTO 1)                          <= (OTHERS => '0');
-        IF SIGNED(in_1) < SIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)                                <= '0';
-        END IF;
-      WHEN alu_comp_le_signed =>
+        expected_out_s(n-1 downto 1)                          <= (others => '0');
+        if signed(in_1) < signed(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)                                <= '0';
+        end if;
+      when alu_comp_le_signed =>
         operation                    <= "s  le";
-        expected_out_s(n-1 DOWNTO 1) <= (OTHERS => '0');
-        IF SIGNED(in_1)              <= SIGNED(in_2) THEN expected_out_s(0) <= '1';
-        ELSE expected_out_s(0)       <= '0';
-        END IF;
-      WHEN OTHERS =>
+        expected_out_s(n-1 downto 1) <= (others => '0');
+        if signed(in_1)              <= signed(in_2) then expected_out_s(0) <= '1';
+        else expected_out_s(0)       <= '0';
+        end if;
+      when others =>
         operation <= " null";
-    END CASE;
-  END PROCESS;
-END ARCHITECTURE;
+    end case;
+  end process;
+end architecture;
 
-CONFIGURATION cfg_tb_alu_behavioral OF tb_alu IS
-  FOR behavioral
-    FOR dut : alu USE CONFIGURATION work.cfg_alu_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_tb_alu_behavioral of tb_alu is
+  for behavioral
+    for dut : alu use configuration work.cfg_alu_behavioral;
+    end for;
+  end for;
+end configuration;

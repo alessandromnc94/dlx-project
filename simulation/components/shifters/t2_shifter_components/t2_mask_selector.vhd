@@ -1,23 +1,23 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-USE work.my_arith_functions.ALL;
+use work.my_arith_functions.all;
 
-ENTITY t2_mask_selector IS
-  GENERIC (
-    n           : INTEGER := 32;
-    mask_offset : INTEGER := 3
+entity t2_mask_selector is
+  generic (
+    n           : integer := 32;
+    mask_offset : integer := 3
     );
-  PORT (
-    base_vector    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    shift_by_value : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 3);
-    left_shift     : IN  STD_LOGIC;
-    arith_shift    : IN  STD_LOGIC;
-    out_s          : OUT STD_LOGIC_VECTOR(n+2**mask_offset-1 DOWNTO 0)
+  port (
+    base_vector    : in  std_logic_vector(n-1 downto 0);
+    shift_by_value : in  std_logic_vector(n-1 downto 3);
+    left_shift     : in  std_logic;
+    arith_shift    : in  std_logic;
+    out_s          : out std_logic_vector(n+2**mask_offset-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
@@ -34,28 +34,28 @@ END ENTITY;
 -- end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF t2_mask_selector IS
-  COMPONENT t2_mask_generator IS
-    GENERIC (
-      n           : INTEGER;
-      mask_offset : INTEGER
+architecture structural of t2_mask_selector is
+  component t2_mask_generator is
+    generic (
+      n           : integer;
+      mask_offset : integer
       );
-    PORT (
-      base_vector : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      arith_shift : IN  STD_LOGIC;
-      out_s       : OUT STD_LOGIC_VECTOR(3*n+2**(1+mask_offset)-1 DOWNTO 0)
+    port (
+      base_vector : in  std_logic_vector(n-1 downto 0);
+      arith_shift : in  std_logic;
+      out_s       : out std_logic_vector(3*n+2**(1+mask_offset)-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL mask_gen_out : STD_LOGIC_VECTOR(2*n+2**mask_offset-1 DOWNTO 0);
-  TYPE mask_array IS ARRAY (-(2**mask_offset-1) TO 2**mask_offset-1) OF STD_LOGIC_VECTOR(n+2**mask_offset-1);
-  SIGNAL mask_xx      : mask_array;
+  signal mask_gen_out : std_logic_vector(2*n+2**mask_offset-1 downto 0);
+  type mask_array is array (-(2**mask_offset-1) to 2**mask_offset-1) of std_logic_vector(n+2**mask_offset-1);
+  signal mask_xx      : mask_array;
 
-BEGIN
+begin
 
-  masks_redirect : FOR i IN 0 TO 2**mask_offset-1 GENERATE
-    mask_xx(i) <= mask_gen_out(2*n+(1-i)*2**mask_offset-1 DOWNTO 2*n-i*2**mask_offset);  -- 
-  END GENERATE;
+  masks_redirect : for i in 0 to 2**mask_offset-1 generate
+    mask_xx(i) <= mask_gen_out(2*n+(1-i)*2**mask_offset-1 downto 2*n-i*2**mask_offset);  -- 
+  end generate;
 
 
-END ARCHITECTURE;
+end architecture;

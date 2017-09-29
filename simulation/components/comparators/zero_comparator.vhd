@@ -1,31 +1,31 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY zero_comparator IS
-  GENERIC (
-    n : INTEGER := 8
+entity zero_comparator is
+  generic (
+    n : integer := 8
     );
-  PORT (
-    in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    out_s : OUT STD_LOGIC
+  port (
+    in_s  : in  std_logic_vector(n-1 downto 0);
+    out_s : out std_logic
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF zero_comparator IS
-BEGIN
+architecture behavioral of zero_comparator is
+begin
 
-  out_s <= '1' WHEN in_s = (n-1 DOWNTO 0 => '0') ELSE
+  out_s <= '1' when in_s = (n-1 downto 0 => '0') else
            '0';
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_zero_comparator_behavioral OF zero_comparator IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_zero_comparator_behavioral of zero_comparator is
+  for behavioral
+  end for;
+end configuration;

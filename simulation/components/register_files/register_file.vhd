@@ -1,66 +1,66 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
 
 
-ENTITY register_file IS
-  GENERIC (
-    width_add  : INTEGER := 5;
-    width_data : INTEGER := 64
+entity register_file is
+  generic (
+    width_add  : integer := 5;
+    width_data : integer := 64
     );
-  PORT (
-    clk     : IN  STD_LOGIC;
-    reset   : IN  STD_LOGIC;
-    enable  : IN  STD_LOGIC;
-    rd1     : IN  STD_LOGIC;
-    rd2     : IN  STD_LOGIC;
-    wr      : IN  STD_LOGIC;
-    add_wr  : IN  STD_LOGIC_VECTOR(width_add-1 DOWNTO 0);
-    add_rd1 : IN  STD_LOGIC_VECTOR(width_add-1 DOWNTO 0);
-    add_rd2 : IN  STD_LOGIC_VECTOR(width_add-1 DOWNTO 0);
-    datain  : IN  STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-    out1    : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-    out2    : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)
+  port (
+    clk     : in  std_logic;
+    reset   : in  std_logic;
+    enable  : in  std_logic;
+    rd1     : in  std_logic;
+    rd2     : in  std_logic;
+    wr      : in  std_logic;
+    add_wr  : in  std_logic_vector(width_add-1 downto 0);
+    add_rd1 : in  std_logic_vector(width_add-1 downto 0);
+    add_rd2 : in  std_logic_vector(width_add-1 downto 0);
+    datain  : in  std_logic_vector(width_data-1 downto 0);
+    out1    : out std_logic_vector(width_data-1 downto 0);
+    out2    : out std_logic_vector(width_data-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF register_file IS
+architecture behavioral of register_file is
 
   -- define type for registers array
-  TYPE reg_array IS (NATURAL RANGE <>) OF STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
+  type reg_array is (natural range <>) of std_logic_vector(width_data-1 downto 0);
 
-  SIGNAL registers : reg_array(0 TO 2**width_add-1) := (OTHERS => (OTHERS => '0'));
+  signal registers : reg_array(0 to 2**width_add-1) := (others => (others => '0'));
 
-BEGIN
-  PROCESS (clk)
-  BEGIN
-    IF rising_edge(clk) THEN
-      IF reset = '1' THEN
-        out1      <= (OTHERS => 'z');
-        out2      <= (OTHERS => 'z');
-        registers <= (OTHERS => (OTHERS => '0'));
-      ELSIF enable = '1' THEN
-        IF wr = '1' THEN
+begin
+  process (clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        out1      <= (others => 'z');
+        out2      <= (others => 'z');
+        registers <= (others => (others => '0'));
+      elsif enable = '1' then
+        if wr = '1' then
           registers(conv_integer(add_wr)) <= datain;
-        END IF;
-        IF rd1 = '1' THEN
+        end if;
+        if rd1 = '1' then
           out1 <= registers(conv_integer(add_rd1));
-        END IF;
-        IF rd2 = '1' THEN
+        end if;
+        if rd2 = '1' then
           out2 <= registers(conv_integer(add_rd2));
-        END IF;
-      END IF;
-    END IF;
-  END PROCESS;
-END ARCHITECTURE;
+        end if;
+      end if;
+    end if;
+  end process;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_register_file_behavioral OF register_file IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_register_file_behavioral of register_file is
+  for behavioral
+  end for;
+end configuration;

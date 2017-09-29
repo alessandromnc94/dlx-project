@@ -1,20 +1,20 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY nand_gate IS
-  PORT (
-    in_1  : IN  STD_LOGIC;
-    in_2  : IN  STD_LOGIC;
-    out_s : OUT STD_LOGIC
+entity nand_gate is
+  port (
+    in_1  : in  std_logic;
+    in_2  : in  std_logic;
+    out_s : out std_logic
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE behavioral OF nand_gate IS
-BEGIN
-  out_s <= in_1 NAND in_2;
-END ARCHITECTURE;
+architecture behavioral of nand_gate is
+begin
+  out_s <= in_1 nand in_2;
+end architecture;
 
-CONFIGURATION cfg_nand_gate_behavioral OF nand_gate IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_nand_gate_behavioral of nand_gate is
+  for behavioral
+  end for;
+end configuration;

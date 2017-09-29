@@ -1,40 +1,40 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY dff IS
-  PORT (
-    d   : IN  STD_LOGIC;
-    clk : IN  STD_LOGIC;
-    rst : IN  STD_LOGIC;
-    set : IN  STD_LOGIC;
-    en  : IN  STD_LOGIC;
-    q   : OUT STD_LOGIC
+entity dff is
+  port (
+    d   : in  std_logic;
+    clk : in  std_logic;
+    rst : in  std_logic;
+    set : in  std_logic;
+    en  : in  std_logic;
+    q   : out std_logic
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE behavioral OF dff IS
-BEGIN
+architecture behavioral of dff is
+begin
 
-  PROCESS (clk, rst, set)
-  BEGIN
+  process (clk, rst, set)
+  begin
 -- asynchronous set and reset
-    IF rst = '1' OR set = '1' THEN
+    if rst = '1' or set = '1' then
       -- if rst and set are equal to '1'
       -- forbidden input
-      IF rst = set THEN
+      if rst = set then
         q <= 'x';
-      ELSIF rst = '1'
+      elsif rst = '1'
         q <= '0';
-    ELSE
+    else
       q <= '1';
-    END IF;
-  ELSIF rising_edge(clk) AND en = '1' THEN
+    end if;
+  elsif rising_edge(clk) and en = '1' then
     q <= d;
-  END IF;
-END PROCESS;
-END ARCHITECTURE;
+  end if;
+end process;
+end architecture;
 
-CONFIGURATION cfg_dff_behavioral OF dff IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_dff_behavioral of dff is
+  for behavioral
+  end for;
+end configuration;

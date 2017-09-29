@@ -1,73 +1,73 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY pg_network_block IS
-  PORT (
-    in_1 : IN  STD_LOGIC;
-    in_2 : IN  STD_LOGIC;
-    pg   : OUT STD_LOGIC;
-    g    : OUT STD_LOGIC
+entity pg_network_block is
+  port (
+    in_1 : in  std_logic;
+    in_2 : in  std_logic;
+    pg   : out std_logic;
+    g    : out std_logic
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF pg_network_block IS
+architecture behavioral of pg_network_block is
 
-BEGIN
+begin
 
-  g  <= in_1 AND in_2;
-  pg <= in_1 XOR in_2;
+  g  <= in_1 and in_2;
+  pg <= in_1 xor in_2;
 
-END ARCHITECTURE;
+end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF pg_network_block IS
+architecture structural of pg_network_block is
 
-  COMPONENT and_gate IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+  component and_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
-  COMPONENT xor_gate IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+  end component;
+  component xor_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-BEGIN
-  g_and_gate : and_gate PORT MAP (
+begin
+  g_and_gate : and_gate port map (
     in_1  => in_1,
     in_2  => in_2,
     out_s => g
     );
-  pg_xor_gate : xor_gate PORT MAP (
+  pg_xor_gate : xor_gate port map (
     in_1  => in_1,
     in_2  => in_2,
     out_s => pg
     );
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_pg_network_block_behavioral OF pg_network_block IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_pg_network_block_behavioral of pg_network_block is
+  for behavioral
+  end for;
+end configuration;
 
 -- structural configuration
-CONFIGURATION cfg_pg_network_block_structural OF pg_network_block IS
-  FOR structural
-    FOR g_and_gate  : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
-    END FOR;
-    FOR pg_xor_gate : xor_gate USE CONFIGURATION work.cfg_xor_gate_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_pg_network_block_structural of pg_network_block is
+  for structural
+    for g_and_gate  : and_gate use configuration work.cfg_and_gate_behavioral;
+    end for;
+    for pg_xor_gate : xor_gate use configuration work.cfg_xor_gate_behavioral;
+    end for;
+  end for;
+end configuration;

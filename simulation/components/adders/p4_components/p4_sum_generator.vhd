@@ -1,59 +1,59 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY p4_sum_generator IS
+entity p4_sum_generator is
 
-  GENERIC (
-    n          : INTEGER := 32;
-    carry_step : INTEGER := 4
+  generic (
+    n          : integer := 32;
+    carry_step : integer := 4
     );
-  PORT (
-    in_1       : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-    in_2       : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-    carries_in : IN  STD_LOGIC_VECTOR (n/carry_step DOWNTO 0);
-    sum        : OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0)
+  port (
+    in_1       : in  std_logic_vector (n-1 downto 0);
+    in_2       : in  std_logic_vector (n-1 downto 0);
+    carries_in : in  std_logic_vector (n/carry_step downto 0);
+    sum        : out std_logic_vector (n-1 downto 0)
     );
 
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- structural architecture
-ARCHITECTURE structural OF p4_sum_generator IS
+architecture structural of p4_sum_generator is
 
-  COMPONENT p4_carry_select_block IS
-    GENERIC (
-      n : INTEGER
+  component p4_carry_select_block is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1      : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      in_2      : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      carry_sel : IN  STD_LOGIC;
-      sum       : OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0)
+    port (
+      in_1      : in  std_logic_vector (n-1 downto 0);
+      in_2      : in  std_logic_vector (n-1 downto 0);
+      carry_sel : in  std_logic;
+      sum       : out std_logic_vector (n-1 downto 0)
       );
-  END COMPONENT;
-BEGIN
+  end component;
+begin
 
-  csb_gen : FOR i IN 0 TO n/carry_step-1 GENERATE
+  csb_gen : for i in 0 to n/carry_step-1 generate
     csbx : p4_carry_select_block
-      GENERIC MAP (
+      generic map (
         n => carry_step
         )
-      PORT MAP (
-        in_1      => in_1((i+1)*carry_step-1 DOWNTO (i)*carry_step),
-        in_2      => in_2((i+1)*carry_step-1 DOWNTO (i)*carry_step),
+      port map (
+        in_1      => in_1((i+1)*carry_step-1 downto (i)*carry_step),
+        in_2      => in_2((i+1)*carry_step-1 downto (i)*carry_step),
         carry_sel => carries_in(i),
-        sum       => sum((i+1)*carry_step-1 DOWNTO (i)*carry_step)
+        sum       => sum((i+1)*carry_step-1 downto (i)*carry_step)
         );
-  END GENERATE;
+  end generate;
 
-END ARCHITECTURE;
+end architecture;
 
-CONFIGURATION cfg_p4_sum_generator_structural OF p4_sum_generator IS
-  FOR structural
-    FOR csb_gen
-      FOR ALL : p4_carry_select_block USE CONFIGURATION work.cfg_p4_carry_select_block_structural;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_p4_sum_generator_structural of p4_sum_generator is
+  for structural
+    for csb_gen
+      for all : p4_carry_select_block use configuration work.cfg_p4_carry_select_block_structural;
+      end for;
+    end for;
+  end for;
+end configuration;

@@ -1,167 +1,252 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+-- cose da fare:
+-- + inserire segnali aggiunti
+-- + estendere case per la alu
 
-USE work.alu_types.ALL;
-USE work.cu_hw_types.ALL;
-USE work.cu_hw_functions.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-ENTITY cu_hw IS
-  PORT (
+use work.alu_types.all;
+use work.cu_hw_types.all;
+use work.cu_hw_functions.all;
+
+entity cu_hw is
+  port (
     -- cw
-    -- first pipe stage outputs
-    ir_latch_en      : OUT STD_LOGIC;
-    npc_latch_en     : OUT STD_LOGIC;
-    -- second pipe stage outputs
-    reg_a_latch_en   : OUT STD_LOGIC;
-    reg_b_latch_en   : OUT STD_LOGIC;
-    reg_imm_latch_en : OUT STD_LOGIC;
-    mux_a_sel        : OUT STD_LOGIC;
-    mux_b_sel        : OUT STD_LOGIC;
-    -- third pipe stage outputs
-    alu_out          : OUT alu_array;
-    alu_out_reg_en   : OUT STD_LOGIC;
-    eq_cond          : OUT STD_LOGIC;
-    jump_en          : OUT STD_LOGIC;
-    -- fourth pipe stage outputs
-    dram_we          : OUT STD_LOGIC;
-    lmd_latch_en     : OUT STD_LOGIC;
-    pc_latch_en      : OUT STD_LOGIC;
-    branch_taken     : IN  STD_LOGIC;
-    -- fifth pipe stage outputs
-    rf_latch_en      : OUT STD_LOGIC;
-    wb_mux_sel       : OUT STD_LOGIC;
+    -- first pipe stage outputs: fetch
+    pc_reset          : out std_logic;
+    pc_en             : out std_logic;
+    npc_reset         : out std_logic;
+    npc_en            : out std_logic;
+    ir_reset          : out std_logic;
+    ir_en             : out std_logic;
+    -- second pipe stage outputs: decode
+    reg_file_reset    : out std_logic;
+    reg_file_en       : out std_logic;
+    reg_file_out_1    : out std_logic;
+    reg_file_out_2    : out std_logic;
+    pc_to_in_1        : out std_logic;
+    pc_offset_to_in_2 : out std_logic;
+    pc_store_reg_31   : out std_logic;
+    branch_en         : out std_logic;
+    -- eq_cond          : out std_logic;
+    jump_en           : out std_logic;
+    jump_reg          : out std_logic;
+    sign_ext_en       : out std_logic;
+    reg_out_1_reset   : out std_logic;
+    reg_out_1_en      : out std_logic;
+    reg_out_2_reset   : out std_logic;
+    reg_out_2_en      : out std_logic;
+    reg_imm_reset     : out std_logic;
+    reg_imm_en        : out std_logic;
+    -- third pipe stage outputs: execute
+    alu_sel           : out alu_array;
+    alu_get_imm_in    : out std_logic;
+    alu_for_in_1_en   : out std_logic;
+    alu_for_in_2_en   : out std_logic;
+    alu_mem_reg_reset : out std_logic;
+    alu_mem_reg_en    : out std_logic;
+    alu_reg_1_for_add : out std_logic_vector(reg_addr_size-1 downto 0);
+    alu_reg_2_for_add : out std_logic_vector(reg_addr_size-1 downto 0);
+    bypass_imm        : out std_logic;
+    alu_out_reg_reset : out std_logic;
+    alu_out_reg_en    : out std_logic;
+    -- fourth pipe stage outputs: memory
+    dram_write_en     : out std_logic;
+    dram_read_en      : out std_logic;
+    lmd_reg_reset     : out std_logic;
+    lmd_reg_en        : out std_logic;
+    alu_out_for       : out std_logic;
+    -- fifth pipe stage outputs: write back
+    rf_latch_en       : out std_logic;
+    wb_mux_sel        : out std_logic;
+    wb_en             : out std_logic;
     -- inputs
-    opcode           : IN  opcode_array;
-    func             : IN  func_array;
-    clk              : IN  STD_LOGIC;
-    rst              : IN  STD_LOGIC
+    branch_taken      : in  std_logic;
+    opcode            : in  opcode_array;
+    func              : in  func_array;
+    clk               : in  std_logic;
+    rst               : in  std_logic
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
--- behavioral architecture with static lut
-ARCHITECTURE behavioral_static OF cu_hw IS
+-- behavioral architecture
+architecture behavioral of cu_hw is
 
   -- lut for control word
-  SIGNAL cw_mem : cw_mem_matrix := (
+  signal cw_mem : cw_mem_matrix := (
     0      => cw_nop,                   -- nop
     1      => ,                         -- rtype
     2      => ,
     3      => ,
     4      => ,
-    OTHERS => cw_nop                    -- instructions not defined
+    others => cw_nop                    -- instructions not defined
     );
   -- control word from lut
-  SIGNAL cw               : cw_array                                    := (OTHERS => '0');
+  signal cw               : cw_array                                    := (others => '0');
   -- split cw in stages
-  CONSTANT cw1_array_size : INTEGER                                     := cw_array_size;
-  SIGNAL cw1              : cw_array                                    := (OTHERS => '0');
-  CONSTANT cw2_array_size : INTEGER                                     := cw1_array_size-2;
-  SIGNAL cw2              : STD_LOGIC_VECTOR(cw2_array_size-1 DOWNTO 0) := (OTHERS => '0');
-  CONSTANT cw3_array_size : INTEGER                                     := cw2_array_size-5;
-  SIGNAL cw3              : STD_LOGIC_VECTOR(cw3_array_size-1 DOWNTO 0) := (OTHERS => '0');
-  CONSTANT cw4_array_size : INTEGER                                     := cw3_array_size-3;
-  SIGNAL cw4              : STD_LOGIC_VECTOR(cw4_array_size-1 DOWNTO 0) := (OTHERS => '0');
-  CONSTANT cw5_array_size : INTEGER                                     := cw4_array_size-3;
-  SIGNAL cw5              : STD_LOGIC_VECTOR(cw5_array_size-1 DOWNTO 0) := (OTHERS => '0');
+  constant cw1_array_size : integer                                     := cw_array_size;
+  signal cw1              : cw_array                                    := (others => '0');
+  constant cw2_array_size : integer                                     := cw1_array_size-6;
+  signal cw2              : std_logic_vector(cw2_array_size-1 downto 0) := (others => '0');
+  constant cw3_array_size : integer                                     := cw2_array_size-17;
+  signal cw3              : std_logic_vector(cw3_array_size-1 downto 0) := (others => '0');
+  constant cw4_array_size : integer                                     := cw3_array_size-11;
+  signal cw4              : std_logic_vector(cw4_array_size-1 downto 0) := (others => '0');
+  constant cw5_array_size : integer                                     := cw4_array_size-5;
+  signal cw5              : std_logic_vector(cw5_array_size-1 downto 0) := (others => '0');
   -- delay alu control word
-  SIGNAL alu1, alu2, alu3 : alu_array                                   := (OTHERS => '0');
+  signal alu1, alu2, alu3 : alu_array                                   := (others => '0');
   -- signals to manage cw words
-  SIGNAL alu              : alu_array                                   := (OTHERS => '0');  -- alu code from func
+  signal alu              : alu_array                                   := (others => '0');  -- alu code from func
 
-BEGIN
+begin
   -- get output from luts
-  cw <= cw_mem(conv_integer(UNSIGNED(opcode)));
+  cw <= cw_mem(conv_integer(unsigned(opcode)));
 
 -- todo
   -- first pipe stage outputs
-  ir_latch_en      <= cw1(cw1_array_size-1);
-  npc_latch_en     <= cw1(cw1_array_size-2);
+  pc_reset          <= cw1(cw1_array_size-1);
+  pc_en             <= cw1(cw1_array_size-2);
+  npc_reset         <= cw1(cw1_array_size-3);
+  npc_en            <= cw1(cw1_array_size-4);
+  ir_reset          <= cw1(cw1_array_size-5);
+  ir_en             <= cw1(cw1_array_size-6);
   -- second pipe stage outputs
-  reg_a_latch_en   <= cw2(cw2_array_size-1);
-  reg_b_latch_en   <= cw2(cw2_array_size-2);
-  reg_imm_latch_en <= cw2(cw2_array_size-3);
-  mux_a_sel        <= cw2(cw2_array_size-4);
-  mux_b_sel        <= cw2(cw2_array_size-5);
+  reg_file_reset    <= cw2(cw2_array_size-1);
+  reg_file_en       <= cw2(cw2_array_size-2);
+  reg_file_out_1    <= cw2(cw2_array_size-3);
+  reg_file_out_2    <= cw2(cw2_array_size-4);
+  pc_to_in_1        <= cw2(cw2_array_size-5);
+  pc_offset_to_in_2 <= cw2(cw2_array_size-6);
+  pc_store_reg_31   <= cw2(cw2_array_size-7);
+  branch_en         <= cw2(cw2_array_size-8);
+  jump_en           <= cw2(cw2_array_size-9);
+  jump_reg          <= cw2(cw2_array_size-10);
   -- third pipe stage outputs
-  alu_out          <= alu3;
-  alu_out_reg_en   <= cw3(cw3_array_size-1);
-  eq_cond          <= cw3(cw3_array_size-2);
-  jump_en          <= cw3(cw3_array_size-3);
+  alu_get_imm_in    <= alu3;
+  alu_for_in_1_en   <= cw3(cw3_array_size-1);
+  alu_for_in_2_en   <= cw3(cw3_array_size-2);
+  alu_mem_reg_reset <= cw3(cw3_array_size-3);
+  alu_mem_reg_en    <= cw3(cw3_array_size-4);
+  alu_reg_1_for_add <= cw3(cw3_array_size-5);
+  alu_reg_2_for_add <= cw3(cw3_array_size-6);
+  bypass_imm        <= cw3(cw3_array_size-7);
   -- fourth pipe stage outputs
-  dram_we          <= cw4(cw4_array_size-1);
-  lmd_latch_en     <= cw4(cw4_array_size-2);
-  pc_latch_en      <= cw4(cw4_array_size-3);
+  dram_write_en     <= cw4(cw4_array_size-1);
+  dram_read_en      <= cw4(cw4_array_size-2);
+  lmd_reg_reset     <= cw4(cw4_array_size-3);
+  lmd_reg_en        <= cw4(cw4_array_size-4);
   -- fifth pipe stage outputs
-  rf_latch_en      <= cw5(cw5_array_size-1);
-  wb_mux_sel       <= cw5(cw5_array_size-2);
+  rf_latch_en       <= cw5(cw5_array_size-1);
+  wb_mux_sel        <= cw5(cw5_array_size-2);
+  wb_en             <= cw5(cw5_array_size-3);
 
   -- process to pipeline control words
-  cw_pipe : PROCESS (clk, rst)
-  BEGIN
-    IF rst = '0' THEN                   -- asynchronous reset (active low)
-      cw1  <= (OTHERS => '0');
-      cw2  <= (OTHERS => '0');
-      cw3  <= (OTHERS => '0');
-      cw4  <= (OTHERS => '0');
-      cw5  <= (OTHERS => '0');
-      alu1 <= (OTHERS => '0');
-      alu2 <= (OTHERS => '0');
-      alu3 <= (OTHERS => '0');
-    ELSIF rising_edge(clk) THEN         -- rising clock edge
-      IF branch_taken = '0' THEN
+  cw_pipe : process (clk, rst)
+  begin
+    if rst = '0' then                   -- asynchronous reset (active low)
+      cw1  <= (others => '0');
+      cw2  <= (others => '0');
+      cw3  <= (others => '0');
+      cw4  <= (others => '0');
+      cw5  <= (others => '0');
+      alu1 <= (others => '0');
+      alu2 <= (others => '0');
+      alu3 <= (others => '0');
+    elsif rising_edge(clk) then         -- rising clock edge
+      if branch_taken = '0' then
         cw1  <= cw;
         alu1 <= alu;
-        cw2  <= cw1(cw2_array_size-1 DOWNTO 0);
+        cw2  <= cw1(cw2_array_size-1 downto 0);
         alu2 <= alu1;
-        cw3  <= cw2(cw3_array_size-1 DOWNTO 0);
+        cw3  <= cw2(cw3_array_size-1 downto 0);
         alu3 <= alu2;
-      ELSE
+      else
         cw1  <= cw_nop;
         alu1 <= alu_nop;
         cw1  <= cw_nop;
         alu2 <= alu_nop;
-        cw2  <= cw_nop(cw2'LENGTH-1 DOWNTO 0);
+        cw2  <= cw_nop(cw2_array_size-1 downto 0);
         alu3 <= alu_nop;
-        cw3  <= cw_nop(cw3'LENGTH-1 DOWNTO 0);
-      END IF;
-      cw4            <= cw3(cw4_array_size-1 DOWNTO 0);
-      cw5_array_size <= cw4(cw5_array_size-1 DOWNTO 0);
-    END IF;
-  END PROCESS;
+        cw3  <= cw_nop(cw3_array_size-1 downto 0);
+      end if;
+      cw4 <= cw3(cw4_array_size-1 downto 0);
+      cw5 <= cw4(cw5_array_size-1 downto 0);
+    end if;
+  end process;
 
 -- process to get alu control word
-  alu_get_code : PROCESS (opcode, func)
-  BEGIN
-    CASE opcode IS
-      WHEN rtype =>
-        CASE func IS
-          WHEN rtype_add => alu <= alu_add;
-          WHEN rtype_sub => alu <= alu_sub;
-          WHEN rtype_and => alu <= alu_and;
-          WHEN rtype_or  => alu <= alu_or;
-          WHEN OTHERS    => alu <= alu_nop;
-        END CASE;
-      WHEN itype_addin1 | itype_addi2  => alu <= alu_add;
-      WHEN itype_subin1 | itype_subi2  => alu <= alu_sub;
-      WHEN itype_andin1 | itype_andi2  => alu <= alu_and;
-      WHEN itype_orin1 | itype_ori2    => alu <= alu_or;
-      WHEN itype_s_reg1 | itype_s_reg2 => alu <= alu_add;
-      -- when itype_s_mem1 => alu <= alu_add;
-      WHEN itype_s_mem2                => alu <= alu_add;
-      WHEN itype_l_mem1 | itype_l_mem2 => alu <= alu_add;
-      WHEN OTHERS                      => alu <= alu_nop;
-    END CASE;
-  END PROCESS;
-END ARCHITECTURE;
+  alu_get_code : process (opcode, func)
+  begin
+    case opcode is
+      when rtype =>
+        case func is
+          when rtype_add | rtype_addu => alu <= alu_add;
+          when rtype_sub | rtype_subu => alu <= alu_sub;
+          when rtype_mul              => alu <= alu_mul;
+          when rtype_sll              => alu <= alu_sll;
+          when rtype_srl              => alu <= alu_srl;
+          when rtype_sra              => alu <= alu_sra;
+          when rtype_slt              => alu <= alu_slt;
+          when rtype_sltu             => alu <= alu_sltu;
+          when rtype_sle              => alu <= alu_sle;
+          when rtype_sleu             => alu <= alu_sleu;
+          when rtype_sgt              => alu <= alu_sgt;
+          when rtype_sgtu             => alu <= alu_sgtu;
+          when rtype_sge              => alu <= alu_sge;
+          when rtype_sgeu             => alu <= alu_sgeu;
+          when rtype_sne              => alu <= alu_sne;
+          when rtype_seq              => alu <= alu_seq;
+          when rtype_and              => alu <= alu_and;
+          when rtype_or               => alu <= alu_or;
+          when rtype_xor              => alu <= alu_xor;
+          when others                 => alu <= alu_nop;
+        end case;
+      -- itype
+      when itype_addi | itype_addui => alu <= alu_add;
+      when itype_subi | itype_subui => alu <= alu_sub;
+      when itype_muli               => alu <= alu_mul;
+      when itype_slli               => alu <= alu_sll;
+      when itype_srli               => alu <= alu_srl;
+      when itype_srai               => alu <= alu_sra;
+      when itype_slti               => alu <= alu_slt;
+      when itype_sltui              => alu <= alu_sltu;
+      when itype_slei               => alu <= alu_sle;
+      when itype_sleui              => alu <= alu_sleu;
+      when itype_sgti               => alu <= alu_sgt;
+      when itype_sgtui              => alu <= alu_sgtu;
+      when itype_sgei               => alu <= alu_sge;
+      when itype_sgeui              => alu <= alu_sgeu;
+      when itype_snei               => alu <= alu_sne;
+      when itype_seqi               => alu <= alu_seq;
+      when itype_andi               => alu <= alu_and;
+      when itype_ori                => alu <= alu_or;
+      when itype_xori               => alu <= alu_xor;
+      -- jump
+      when jr | jar                 => alu <= alu_add;
+      when jl | jal                 => alu <= alu_nop;
+      -- branch
+      when beqz                     => alu <= alu_nop;
+      when bnez                     => alu <= alu_nop;
+      -- store
+      when sb | sw                  => alu <= alu_add;
+      -- load
+      when lb | lbu                 => alu <= alu_add;
+      when lh | lhu                 => alu <= alu_add;
+      when lw                       => alu <= alu_add;
+      when others                   => alu <= alu_nop;
+    end case;
+  end process;
+end architecture;
 
 -- configurations
 
 -- static behavioral configuration
-CONFIGURATION cfg_cu_hw_behavioral OF cu_hw IS
-  FOR behavioral_static
-  END FOR;
-END CONFIGURATION;
+configuration cfg_cu_hw_behavioral of cu_hw is
+  for behavioral
+  end for;
+end configuration;

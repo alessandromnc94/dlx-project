@@ -1,58 +1,58 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY p4_carries_generator IS
-  GENERIC (
-    n          : INTEGER := 32;
-    carry_step : INTEGER := 4
+entity p4_carries_generator is
+  generic (
+    n          : integer := 32;
+    carry_step : integer := 4
     );
-  PORT (
-    in_1        : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-    in_2        : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-    carry_in    : IN  STD_LOGIC;
-    carries_out : OUT STD_LOGIC_VECTOR (n/carry_step DOWNTO 0)
+  port (
+    in_1        : in  std_logic_vector (n-1 downto 0);
+    in_2        : in  std_logic_vector (n-1 downto 0);
+    carry_in    : in  std_logic;
+    carries_out : out std_logic_vector (n/carry_step downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- structural architecture
-ARCHITECTURE structural OF p4_carries_generator IS
+architecture structural of p4_carries_generator is
 
-  COMPONENT pg_network IS
-    GENERIC (
-      n : INTEGER
+  component pg_network is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1 : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      in_2 : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      pg   : OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      g    : OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0)
+    port (
+      in_1 : in  std_logic_vector (n-1 downto 0);
+      in_2 : in  std_logic_vector (n-1 downto 0);
+      pg   : out std_logic_vector (n-1 downto 0);
+      g    : out std_logic_vector (n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT p4_carries_logic_network IS
-    GENERIC (
-      n          : INTEGER;
-      carry_step : INTEGER
+  component p4_carries_logic_network is
+    generic (
+      n          : integer;
+      carry_step : integer
       );
-    PORT (
-      pg          : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      g           : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-      carry_in    : IN  STD_LOGIC;
-      carries_out : OUT STD_LOGIC_VECTOR (n/carry_step DOWNTO 0)
+    port (
+      pg          : in  std_logic_vector (n-1 downto 0);
+      g           : in  std_logic_vector (n-1 downto 0);
+      carry_in    : in  std_logic;
+      carries_out : out std_logic_vector (n/carry_step downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL pg0_s, g0_s : STD_LOGIC_VECTOR (n-1 DOWNTO 0);
+  signal pg0_s, g0_s : std_logic_vector (n-1 downto 0);
 
-BEGIN
+begin
 
   pg_net : pg_network
-    GENERIC MAP (
+    generic map (
       n => n
       )
-    PORT MAP (
+    port map (
       in_1 => in_1,
       in_2 => in_2,
       pg   => pg0_s,
@@ -60,26 +60,26 @@ BEGIN
       );
 
   cl_net : p4_carries_logic_network
-    GENERIC MAP (
+    generic map (
       n          => n,
       carry_step => carry_step
       )
-    PORT MAP (
+    port map (
       pg          => pg0_s,
       g           => g0_s,
       carry_in    => carry_in,
       carries_out => carries_out
       );
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- structural configuration
-CONFIGURATION cfg_p4_carries_generator_structural OF p4_carries_generator IS
-  FOR structural
-    FOR pg_net : pg_network USE CONFIGURATION work.cfg_pg_network_structural_2;
-    END FOR;
-    FOR cl_net : p4_carries_logic_network USE CONFIGURATION work.cfg_p4_carries_logic_network_structural;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_p4_carries_generator_structural of p4_carries_generator is
+  for structural
+    for pg_net : pg_network use configuration work.cfg_pg_network_structural_2;
+    end for;
+    for cl_net : p4_carries_logic_network use configuration work.cfg_p4_carries_logic_network_structural;
+    end for;
+  end for;
+end configuration;

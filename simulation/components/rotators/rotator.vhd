@@ -1,39 +1,39 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-ENTITY rotator IS
-  GENERIC (
-    n : INTEGER := 8
+entity rotator is
+  generic (
+    n : integer := 8
     );
-  PORT (
-    base_vector     : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    rotate_by_value : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    left_rotation   : IN  STD_LOGIC;
-    out_s           : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    base_vector     : in  std_logic_vector(n-1 downto 0);
+    rotate_by_value : in  std_logic_vector(n-1 downto 0);
+    left_rotation   : in  std_logic;
+    out_s           : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF rotator IS
-  SIGNAL out_s_tmp, base_vector_casted : BIT_VECTOR(n-1 DOWNTO 0);
-  SIGNAL rotate_by_value_casted        : INTEGER;
-BEGIN
+architecture behavioral of rotator is
+  signal out_s_tmp, base_vector_casted : bit_vector(n-1 downto 0);
+  signal rotate_by_value_casted        : integer;
+begin
   base_vector_casted     <= to_bitvector(base_vector);
   rotate_by_value_casted <= conv_integer(rotate_by_value);
   out_s                  <= to_stdlogicvector(out_s_tmp);
-  out_s_tmp              <= base_vector_casted ROL rotate_by_value_casted WHEN left_rotation = '1' ELSE
-               base_vector_casted ROR rotate_by_value_casted;
+  out_s_tmp              <= base_vector_casted rol rotate_by_value_casted when left_rotation = '1' else
+               base_vector_casted ror rotate_by_value_casted;
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_rotator_behavioral OF rotator IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_rotator_behavioral of rotator is
+  for behavioral
+  end for;
+end configuration;

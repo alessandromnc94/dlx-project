@@ -1,87 +1,87 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
 
-ENTITY tb_register_file_win IS
-  GENERIC (
-    width_data         : INTEGER := 4;
-    n_global_registers : INTEGER := 1;
-    n_local_registers  : INTEGER := 1;
-    windows            : INTEGER := 4
+entity tb_register_file_win is
+  generic (
+    width_data         : integer := 4;
+    n_global_registers : integer := 1;
+    n_local_registers  : integer := 1;
+    windows            : integer := 4
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE testbench OF tb_register_file_win IS
-  CONSTANT clk_period : TIME := 1 NS;
+architecture testbench of tb_register_file_win is
+  constant clk_period : time := 1 ns;
 
-  COMPONENT register_file_win IS
-    GENERIC (
-      width_data         : INTEGER := 64;
-      n_global_registers : INTEGER := 8;
-      n_local_registers  : INTEGER := 8;
-      windows            : INTEGER := 4
+  component register_file_win is
+    generic (
+      width_data         : integer := 64;
+      n_global_registers : integer := 8;
+      n_local_registers  : integer := 8;
+      windows            : integer := 4
       );
-    PORT (
-      clk              : IN  STD_LOGIC;
-      reset            : IN  STD_LOGIC;
-      enable           : IN  STD_LOGIC;
-      rd1              : IN  STD_LOGIC;
-      rd2              : IN  STD_LOGIC;
-      wr               : IN  STD_LOGIC;
-      add_wr           : IN  STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0);
-      add_rd1          : IN  STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0);
-      add_rd2          : IN  STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0);
-      datain           : IN  STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-      out1             : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-      out2             : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-      sub_call         : IN  STD_LOGIC;
-      sub_ret          : IN  STD_LOGIC;
-      spill            : OUT STD_LOGIC;
-      fill             : OUT STD_LOGIC;
-      to_memory_data   : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-      from_memory_data : IN  STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)
+    port (
+      clk              : in  std_logic;
+      reset            : in  std_logic;
+      enable           : in  std_logic;
+      rd1              : in  std_logic;
+      rd2              : in  std_logic;
+      wr               : in  std_logic;
+      add_wr           : in  std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0);
+      add_rd1          : in  std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0);
+      add_rd2          : in  std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0);
+      datain           : in  std_logic_vector(width_data-1 downto 0);
+      out1             : out std_logic_vector(width_data-1 downto 0);
+      out2             : out std_logic_vector(width_data-1 downto 0);
+      sub_call         : in  std_logic;
+      sub_ret          : in  std_logic;
+      spill            : out std_logic;
+      fill             : out std_logic;
+      to_memory_data   : out std_logic_vector(width_data-1 downto 0);
+      from_memory_data : in  std_logic_vector(width_data-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL clk              : STD_LOGIC                                                                    := '0';
-  SIGNAL reset            : STD_LOGIC                                                                    := '0';
-  SIGNAL enable           : STD_LOGIC                                                                    := '0';
-  SIGNAL rd1              : STD_LOGIC                                                                    := '0';
-  SIGNAL rd2              : STD_LOGIC                                                                    := '0';
-  SIGNAL wr               : STD_LOGIC                                                                    := '0';
-  SIGNAL add_wr           : STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0) := (OTHERS => '0');
-  SIGNAL add_rd1          : STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0) := (OTHERS => '0');
-  SIGNAL add_rd2          : STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0) := (OTHERS => '0');
-  SIGNAL datain           : STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)                                      := (OTHERS => '0');
-  SIGNAL out1             : STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)                                      := (OTHERS => '0');
-  SIGNAL out2             : STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)                                      := (OTHERS => '0');
-  SIGNAL sub_call         : STD_LOGIC                                                                    := '0';
-  SIGNAL sub_ret          : STD_LOGIC                                                                    := '0';
-  SIGNAL spill            : STD_LOGIC                                                                    := '0';
-  SIGNAL fill             : STD_LOGIC                                                                    := '0';
-  SIGNAL to_memory_data   : STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)                                      := (OTHERS => '0');
-  SIGNAL from_memory_data : STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)                                      := (OTHERS => '0');
+  signal clk              : std_logic                                                                    := '0';
+  signal reset            : std_logic                                                                    := '0';
+  signal enable           : std_logic                                                                    := '0';
+  signal rd1              : std_logic                                                                    := '0';
+  signal rd2              : std_logic                                                                    := '0';
+  signal wr               : std_logic                                                                    := '0';
+  signal add_wr           : std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0) := (others => '0');
+  signal add_rd1          : std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0) := (others => '0');
+  signal add_rd2          : std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0) := (others => '0');
+  signal datain           : std_logic_vector(width_data-1 downto 0)                                      := (others => '0');
+  signal out1             : std_logic_vector(width_data-1 downto 0)                                      := (others => '0');
+  signal out2             : std_logic_vector(width_data-1 downto 0)                                      := (others => '0');
+  signal sub_call         : std_logic                                                                    := '0';
+  signal sub_ret          : std_logic                                                                    := '0';
+  signal spill            : std_logic                                                                    := '0';
+  signal fill             : std_logic                                                                    := '0';
+  signal to_memory_data   : std_logic_vector(width_data-1 downto 0)                                      := (others => '0');
+  signal from_memory_data : std_logic_vector(width_data-1 downto 0)                                      := (others => '0');
 
   -- signals for testbench
-  SIGNAL windows_in_memory : INTEGER := 0;
-  SIGNAL windows_in_rf     : INTEGER := 1;
+  signal windows_in_memory : integer := 0;
+  signal windows_in_rf     : integer := 1;
 
   -- signal added only for show the clk_period during simulation
-  SIGNAL clk_period_s : TIME := clk_period;
-BEGIN
+  signal clk_period_s : time := clk_period;
+begin
   -- clock signal
-  clk              <= NOT clk AFTER clk_period/2;
+  clk              <= not clk after clk_period/2;
   -- 'from_memory_data' is always the # of windows in rf
-  from_memory_data <= conv_std_logic_vector(windows_in_rf, from_memory_data'LENGTH);
+  from_memory_data <= conv_std_logic_vector(windows_in_rf, from_memory_data'length);
 
   dut : register_file_win
-    GENERIC MAP (
+    generic map (
       n_global_registers => n_global_registers,
       n_local_registers  => n_local_registers,
       width_data         => width_data,
       windows            => windows
       )
-    PORT MAP (
+    port map (
       clk              => clk,
       reset            => reset,
       enable           => enable,
@@ -102,143 +102,143 @@ BEGIN
       from_memory_data => from_memory_data
       );
 
-  PROCESS(spill, fill, reset)
-  BEGIN
-    IF reset = '1' THEN
+  process(spill, fill, reset)
+  begin
+    if reset = '1' then
       windows_in_memory <= 0;
-    ELSIF rising_edge(spill) THEN
+    elsif rising_edge(spill) then
       windows_in_memory <= windows_in_memory + 1;
-    ELSIF rising_edge(fill) THEN
+    elsif rising_edge(fill) then
       windows_in_memory <= windows_in_memory - 1;
-    END IF;
-  END PROCESS;
+    end if;
+  end process;
 
-  PROCESS (sub_ret, sub_call, reset) IS
-  BEGIN
-    IF reset = '1' THEN
+  process (sub_ret, sub_call, reset) is
+  begin
+    if reset = '1' then
       windows_in_rf <= 1;
-    ELSIF rising_edge(sub_call) THEN
+    elsif rising_edge(sub_call) then
       windows_in_rf <= windows_in_rf + 1;
-    ELSIF rising_edge(sub_ret) THEN
-      IF windows_in_rf > 1 THEN
+    elsif rising_edge(sub_ret) then
+      if windows_in_rf > 1 then
         windows_in_rf <= windows_in_rf - 1;
-      ELSE
-        REPORT "no window in rf!!!" SEVERITY WARNING;
-      END IF;
-    END IF;
-  END PROCESS;
+      else
+        report "no window in rf!!!" severity warning;
+      end if;
+    end if;
+  end process;
 
-  PROCESS
-  BEGIN
+  process
+  begin
     -- reset the register file
-    REPORT "reset the register file in order to write on globals registers (the value of register is its address)" SEVERITY NOTE;
+    report "reset the register file in order to write on globals registers (the value of register is its address)" severity note;
     reset  <= '1';
-    WAIT UNTIL falling_edge(clk);
-    WAIT FOR 5 * clk_period;
+    wait until falling_edge(clk);
+    wait for 5 * clk_period;
     -- enable 
     reset  <= '0';
     enable <= '1';
     -- outputs are setted to high impedence
-    WAIT FOR 5 * clk_period;
+    wait for 5 * clk_period;
     -- write in all global registers their indexes starting from 1
     wr     <= '1';
-    FOR i IN 0 TO n_global_registers-1 LOOP
-      add_wr <= conv_std_logic_vector(i, add_wr'LENGTH);
-      datain <= conv_std_logic_vector(i, datain'LENGTH);
-      WAIT FOR clk_period;
-    END LOOP;
+    for i in 0 to n_global_registers-1 loop
+      add_wr <= conv_std_logic_vector(i, add_wr'length);
+      datain <= conv_std_logic_vector(i, datain'length);
+      wait for clk_period;
+    end loop;
 
-    REPORT "write on the first window registers (the value of register is its address in the section preceded by 3 bits: '001' is for in registers, '010' is for local and '100' is for out)" SEVERITY FAILURE;
-    WAIT UNTIL falling_edge(clk);
-    WAIT FOR 5 * clk_period;
+    report "write on the first window registers (the value of register is its address in the section preceded by 3 bits: '001' is for in registers, '010' is for local and '100' is for out)" severity failure;
+    wait until falling_edge(clk);
+    wait for 5 * clk_period;
     reset <= '1';
-    WAIT FOR clk_period;
+    wait for clk_period;
     reset <= '0';
-    WAIT FOR clk_period;
+    wait for clk_period;
     -- test writing on first window
-    FOR i IN 0 TO n_local_registers-1 LOOP
-      datain <= "001" & conv_std_logic_vector(i, datain'LENGTH-3);
-      add_wr <= conv_std_logic_vector(n_global_registers+i, add_wr'LENGTH);
-      WAIT FOR clk_period;
-      datain <= "010" & conv_std_logic_vector(i, datain'LENGTH-3);
-      add_wr <= conv_std_logic_vector(n_global_registers+n_local_registers+i, add_wr'LENGTH);
-      WAIT FOR clk_period;
-      datain <= "100" & conv_std_logic_vector(i, datain'LENGTH-3);
-      add_wr <= conv_std_logic_vector(n_global_registers+2*n_local_registers+i, add_wr'LENGTH);
-      WAIT FOR clk_period;
-    END LOOP;
+    for i in 0 to n_local_registers-1 loop
+      datain <= "001" & conv_std_logic_vector(i, datain'length-3);
+      add_wr <= conv_std_logic_vector(n_global_registers+i, add_wr'length);
+      wait for clk_period;
+      datain <= "010" & conv_std_logic_vector(i, datain'length-3);
+      add_wr <= conv_std_logic_vector(n_global_registers+n_local_registers+i, add_wr'length);
+      wait for clk_period;
+      datain <= "100" & conv_std_logic_vector(i, datain'length-3);
+      add_wr <= conv_std_logic_vector(n_global_registers+2*n_local_registers+i, add_wr'length);
+      wait for clk_period;
+    end loop;
     wr     <= '0';
-    WAIT FOR clk_period;
-    REPORT "reset register file to test call and ret subroutine: registers in a window contains its number" SEVERITY FAILURE;
-    WAIT FOR 1 US;
-    WAIT UNTIL falling_edge(clk);
+    wait for clk_period;
+    report "reset register file to test call and ret subroutine: registers in a window contains its number" severity failure;
+    wait for 1 us;
+    wait until falling_edge(clk);
     reset  <= '1';
-    datain <= (OTHERS => '0');
-    WAIT FOR clk_period;
+    datain <= (others => '0');
+    wait for clk_period;
     reset  <= '0';
-    WAIT FOR clk_period;
+    wait for clk_period;
 
     -- test call routine 'windows'+1 times
     -- 2 spills done
-    FOR i IN 0 TO windows + 1 LOOP
-      datain <= conv_std_logic_vector(windows_in_rf, datain'LENGTH);
-      WAIT FOR clk_period;
+    for i in 0 to windows + 1 loop
+      datain <= conv_std_logic_vector(windows_in_rf, datain'length);
+      wait for clk_period;
       -- set registers as # of window
       wr     <= '1';
-      FOR k IN 0 TO n_global_registers + 3 * n_local_registers -1 LOOP
-        add_wr <= conv_std_logic_vector(n_global_registers+k, add_wr'LENGTH);
-        WAIT FOR clk_period;
-      END LOOP;
+      for k in 0 to n_global_registers + 3 * n_local_registers -1 loop
+        add_wr <= conv_std_logic_vector(n_global_registers+k, add_wr'length);
+        wait for clk_period;
+      end loop;
       wr       <= '0';
-      WAIT FOR clk_period;
+      wait for clk_period;
       sub_call <= '1';
-      WAIT FOR clk_period;
+      wait for clk_period;
       sub_call <= '0';
-      WAIT FOR clk_period;
-      IF spill = '1' THEN
-        WAIT UNTIL spill = '0';
-        WAIT FOR clk_period;
-      END IF;
-      WAIT FOR 5 * clk_period;
-    END LOOP;
-    WAIT FOR 5 * clk_period;
+      wait for clk_period;
+      if spill = '1' then
+        wait until spill = '0';
+        wait for clk_period;
+      end if;
+      wait for 5 * clk_period;
+    end loop;
+    wait for 5 * clk_period;
 
     -- test ret routine 3 times
     -- no fills done
-    FOR i IN 0 TO 2 LOOP
+    for i in 0 to 2 loop
       sub_ret <= '1';
-      WAIT FOR clk_period;
+      wait for clk_period;
       sub_ret <= '0';
-      WAIT FOR clk_period;
-      IF fill = '1' THEN
-        WAIT UNTIL fill = '0';
-        WAIT FOR clk_period;
-      END IF;
-    END LOOP;
+      wait for clk_period;
+      if fill = '1' then
+        wait until fill = '0';
+        wait for clk_period;
+      end if;
+    end loop;
 
-    WAIT FOR 10 * clk_period;
+    wait for 10 * clk_period;
 
     -- test ret routine all windows
     -- 2 fills done
-    WHILE windows_in_memory > 0 LOOP
+    while windows_in_memory > 0 loop
       sub_ret <= '1';
-      WAIT FOR clk_period;
+      wait for clk_period;
       sub_ret <= '0';
-      WAIT FOR clk_period;
-      IF fill = '1' THEN
-        WAIT UNTIL fill = '0';
-        WAIT FOR clk_period;
-      END IF;
-      WAIT FOR 5 * clk_period;
-    END LOOP;
-    REPORT "testbench finished" SEVERITY FAILURE;
-    WAIT;
-  END PROCESS;
-END ARCHITECTURE;
+      wait for clk_period;
+      if fill = '1' then
+        wait until fill = '0';
+        wait for clk_period;
+      end if;
+      wait for 5 * clk_period;
+    end loop;
+    report "testbench finished" severity failure;
+    wait;
+  end process;
+end architecture;
 
-CONFIGURATION cfg_tb_register_file_win_behavioral OF tb_register_file_win
-  FOR testbench
-  FOR dut : register_file_win USE CONFIGURATION work.cfg_register_file_win_behavioral;
-END FOR;
-END FOR;
-END CONFIGURATION;
+configuration cfg_tb_register_file_win_behavioral of tb_register_file_win
+  for testbench
+  for dut : register_file_win use configuration work.cfg_register_file_win_behavioral;
+end for;
+end for;
+end configuration;

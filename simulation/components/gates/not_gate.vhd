@@ -1,19 +1,19 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY not_gate IS
-  PORT (
-    in_s  : IN  STD_LOGIC;
-    out_s : OUT STD_LOGIC
+entity not_gate is
+  port (
+    in_s  : in  std_logic;
+    out_s : out std_logic
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE behavioral OF not_gate IS
-BEGIN
-  out_s <= NOT in_s;
-END ARCHITECTURE;
+architecture behavioral of not_gate is
+begin
+  out_s <= not in_s;
+end architecture;
 
-CONFIGURATION cfg_not_gate_behavioral OF not_gate IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_not_gate_behavioral of not_gate is
+  for behavioral
+  end for;
+end configuration;

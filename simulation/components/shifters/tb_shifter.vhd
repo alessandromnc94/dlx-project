@@ -1,32 +1,32 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY tb_shifter IS
-END ENTITY;
+entity tb_shifter is
+end entity;
 
-ARCHITECTURE behavioral OF tb_shifter IS
-  CONSTANT n : INTEGER := 8;
-  COMPONENT shifter IS
-    GENERIC (
-      n : INTEGER
+architecture behavioral of tb_shifter is
+  constant n : integer := 8;
+  component shifter is
+    generic (
+      n : integer
       );
-    PORT (
-      base_vector    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      shift_by_value : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      left_shift     : IN  STD_LOGIC;
-      arith_shift    : IN  STD_LOGIC;
-      out_s          : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      base_vector    : in  std_logic_vector(n-1 downto 0);
+      shift_by_value : in  std_logic_vector(n-1 downto 0);
+      left_shift     : in  std_logic;
+      arith_shift    : in  std_logic;
+      out_s          : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL base_vector, shift_by_value, out_s : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL left_shift, arith_shift            : STD_LOGIC;
+  signal base_vector, shift_by_value, out_s : std_logic_vector(n-1 downto 0);
+  signal left_shift, arith_shift            : std_logic;
 
-BEGIN
+begin
 
-  dut : shifter GENERIC MAP (
+  dut : shifter generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       base_vector    => base_vector,
       shift_by_value => shift_by_value,
       left_shift     => left_shift,
@@ -34,35 +34,35 @@ BEGIN
       out_s          => out_s
       );
 
-  PROCESS
-  BEGIN
+  process
+  begin
 
-    base_vector                 <= (n-1 DOWNTO 0 => '0');
+    base_vector                 <= (n-1 downto 0 => '0');
     base_vector(2)              <= '1';
-    shift_by_value              <= (n-1 DOWNTO 2 => '0') & "01";
+    shift_by_value              <= (n-1 downto 2 => '0') & "01";
     left_shift                  <= '1';
     arith_shift                 <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     left_shift                  <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     arith_shift                 <= '1';
-    WAIT FOR 1 NS;
-    base_vector(n-1 DOWNTO n-2) <= "11";
+    wait for 1 ns;
+    base_vector(n-1 downto n-2) <= "11";
     left_shift                  <= '1';
     arith_shift                 <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     left_shift                  <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     arith_shift                 <= '1';
-    WAIT FOR 1 NS;
-    ASSERT FALSE REPORT "testbench finished!" SEVERITY FAILURE;
-  END PROCESS;
+    wait for 1 ns;
+    assert false report "testbench finished!" severity failure;
+  end process;
 
-END ARCHITECTURE;
+end architecture;
 
-CONFIGURATION cfg_tb_shifter_behavioral OF tb_shifter IS
-  FOR behavioral
-    FOR dut : shifter USE CONFIGURATION work.cfg_shifter_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_tb_shifter_behavioral of tb_shifter is
+  for behavioral
+    for dut : shifter use configuration work.cfg_shifter_behavioral;
+    end for;
+  end for;
+end configuration;

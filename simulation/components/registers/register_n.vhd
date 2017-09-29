@@ -1,86 +1,86 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY register_n IS
-  GENERIC (
-    n : INTEGER := 8
+entity register_n is
+  generic (
+    n : integer := 8
     );
-  PORT (
-    din  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    clk  : IN  STD_LOGIC;
-    rst  : IN  STD_LOGIC;
-    set  : IN  STD_LOGIC;
-    en   : IN  STD_LOGIC;
-    dout : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    din  : in  std_logic_vector(n-1 downto 0);
+    clk  : in  std_logic;
+    rst  : in  std_logic;
+    set  : in  std_logic;
+    en   : in  std_logic;
+    dout : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF register_n IS
-BEGIN
+architecture behavioral of register_n is
+begin
 
-  PROCESS (clk, rst, set)
-  BEGIN
+  process (clk, rst, set)
+  begin
 -- asynchronous set and reset
-    IF rst = '1' OR set = '1' THEN
+    if rst = '1' or set = '1' then
       -- if rst and set are equal to '1'
       -- forbidden input
-      IF rst = set THEN
-        dout <= (OTHERS => 'x');
-      ELSIF rst = '1'
-        dout <= (OTHERS => '0');
-    ELSE
-      dout <= (OTHERS => '1');
-    END IF;
-  ELSIF rising_edge(clk) AND en = '1' THEN
+      if rst = set then
+        dout <= (others => 'x');
+      elsif rst = '1'
+        dout <= (others => '0');
+    else
+      dout <= (others => '1');
+    end if;
+  elsif rising_edge(clk) and en = '1' then
     dout <= din;
-  END IF;
-END PROCESS;
-END ARCHITECTURE;
+  end if;
+end process;
+end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF register_n IS
+architecture structural of register_n is
 
-  COMPONENT dff IS
-    PORT (
-      d   : IN  STD_LOGIC;
-      clk : IN  STD_LOGIC;
-      rst : IN  STD_LOGIC;
-      set : IN  STD_LOGIC;
-      en  : IN  STD_LOGIC;
-      q   : OUT STD_LOGIC
+  component dff is
+    port (
+      d   : in  std_logic;
+      clk : in  std_logic;
+      rst : in  std_logic;
+      set : in  std_logic;
+      en  : in  std_logic;
+      q   : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-BEGIN
+begin
 
-  dff_generation : FOR i IN 0 TO n-1 GENERATE
+  dff_generation : for i in 0 to n-1 generate
     dffx : dff
-      PORT MAP (
+      port map (
         d   => din(i),
         clk => clk,
         rst => rst,
         set => set,
         q   => dout(i)
         );
-  END GENERATE;
-END ARCHITECTURE;
+  end generate;
+end architecture;
 
 -- configurations
 
-CONFIGURATION cfg_register_n_behavioral OF register_n IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_register_n_behavioral of register_n is
+  for behavioral
+  end for;
+end configuration;
 
-CONFIGURATION cfg_register_n_structural OF register_n IS
-  FOR structural
-    FOR dff_generation
-      FOR dffx : dff
-        USE CONFIGURATION work.cfg_dff_behavioral;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_register_n_structural of register_n is
+  for structural
+    for dff_generation
+      for dffx : dff
+        use configuration work.cfg_dff_behavioral;
+      end for;
+    end for;
+  end for;
+end configuration;

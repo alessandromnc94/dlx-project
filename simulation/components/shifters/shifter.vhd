@@ -1,41 +1,41 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-ENTITY shifter IS
-  GENERIC (
-    n : INTEGER := 8
+entity shifter is
+  generic (
+    n : integer := 8
     );
-  PORT (
-    base_vector    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    shift_by_value : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    left_shift     : IN  STD_LOGIC;
-    arith_shift    : IN  STD_LOGIC;
-    out_s          : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    base_vector    : in  std_logic_vector(n-1 downto 0);
+    shift_by_value : in  std_logic_vector(n-1 downto 0);
+    left_shift     : in  std_logic;
+    arith_shift    : in  std_logic;
+    out_s          : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF shifter IS
-  SIGNAL out_s_tmp, base_vector_casted : BIT_VECTOR(n-1 DOWNTO 0);
-  SIGNAL shift_by_value_casted         : INTEGER;
-BEGIN
+architecture behavioral of shifter is
+  signal out_s_tmp, base_vector_casted : bit_vector(n-1 downto 0);
+  signal shift_by_value_casted         : integer;
+begin
   base_vector_casted    <= to_bitvector(base_vector);
   shift_by_value_casted <= conv_integer(shift_by_value);
   out_s                 <= to_stdlogicvector(out_s_tmp);
-  out_s_tmp             <= base_vector_casted SLL shift_by_value_casted WHEN left_shift = '1' ELSE
-               base_vector_casted SRL shift_by_value_casted WHEN arith_shift = '0' ELSE
-               base_vector_casted SRA shift_by_value_casted;
+  out_s_tmp             <= base_vector_casted sll shift_by_value_casted when left_shift = '1' else
+               base_vector_casted srl shift_by_value_casted when arith_shift = '0' else
+               base_vector_casted sra shift_by_value_casted;
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_shifter_behavioral OF shifter IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_shifter_behavioral of shifter is
+  for behavioral
+  end for;
+end configuration;

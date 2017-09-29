@@ -1,38 +1,38 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY tb_comparator IS
-END ENTITY;
+entity tb_comparator is
+end entity;
 
-ARCHITECTURE behavioral OF tb_comparator IS
-  COMPONENT comparator IS
-    PORT (
-      zero_out          : IN  STD_LOGIC;
-      carry_out         : IN  STD_LOGIC;
-      signed_comparison : IN  STD_LOGIC;
-      eq_out            : OUT STD_LOGIC;
-      gr_out            : OUT STD_LOGIC;
-      lo_out            : OUT STD_LOGIC;
-      ge_out            : OUT STD_LOGIC;
-      le_out            : OUT STD_LOGIC;
-      ne_out            : OUT STD_LOGIC
+architecture behavioral of tb_comparator is
+  component comparator is
+    port (
+      zero_out          : in  std_logic;
+      carry_out         : in  std_logic;
+      signed_comparison : in  std_logic;
+      eq_out            : out std_logic;
+      gr_out            : out std_logic;
+      lo_out            : out std_logic;
+      ge_out            : out std_logic;
+      le_out            : out std_logic;
+      ne_out            : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL zero_out          : STD_LOGIC;
-  SIGNAL carry_out         : STD_LOGIC;
-  SIGNAL signed_comparison : STD_LOGIC;
-  SIGNAL eq_out            : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL gr_out            : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL lo_out            : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL ge_out            : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL le_out            : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL ne_out            : STD_LOGIC_VECTOR(0 DOWNTO 0);
+  signal zero_out          : std_logic;
+  signal carry_out         : std_logic;
+  signal signed_comparison : std_logic;
+  signal eq_out            : std_logic_vector(0 downto 0);
+  signal gr_out            : std_logic_vector(0 downto 0);
+  signal lo_out            : std_logic_vector(0 downto 0);
+  signal ge_out            : std_logic_vector(0 downto 0);
+  signal le_out            : std_logic_vector(0 downto 0);
+  signal ne_out            : std_logic_vector(0 downto 0);
 
-BEGIN
+begin
 
 
-  dut : comparator PORT MAP (
+  dut : comparator port map (
     zero_out          => zero_out,
     carry_out         => carry_out,
     signed_comparison => signed_comparison,
@@ -44,47 +44,47 @@ BEGIN
     ne_out            => ne_out (0)
     );
 
-  PROCESS
-  BEGIN
+  process
+  begin
     zero_out          <= '0';
     carry_out         <= '0';
     signed_comparison <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     zero_out          <= '1';
     carry_out         <= '0';
     signed_comparison <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     zero_out          <= '0';
     carry_out         <= '1';
     signed_comparison <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     zero_out          <= '1';
     carry_out         <= '1';
     signed_comparison <= '0';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     zero_out          <= '0';
     carry_out         <= '0';
     signed_comparison <= '1';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     zero_out          <= '1';
     carry_out         <= '0';
     signed_comparison <= '1';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     zero_out          <= '0';
     carry_out         <= '1';
     signed_comparison <= '1';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     zero_out          <= '1';
     carry_out         <= '1';
     signed_comparison <= '1';
-    WAIT FOR 1 NS;
-    ASSERT FALSE REPORT "testbench finished!" SEVERITY FAILURE;
-  END PROCESS;
-END ARCHITECTURE;
+    wait for 1 ns;
+    assert false report "testbench finished!" severity failure;
+  end process;
+end architecture;
 
-CONFIGURATION cfg_tb_comparator_behavioral OF tb_comparator IS
-  FOR behavioral
-    FOR dut : comparator USE CONFIGURATION work.cfg_comparator_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_tb_comparator_behavioral of tb_comparator is
+  for behavioral
+    for dut : comparator use configuration work.cfg_comparator_behavioral;
+    end for;
+  end for;
+end configuration;

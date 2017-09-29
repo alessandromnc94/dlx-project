@@ -1,161 +1,161 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-USE work.booth_generator_types.ALL;
+use work.booth_generator_types.all;
 
-ENTITY booth_multiplier IS
-  GENERIC (
-    n : INTEGER := 8
+entity booth_multiplier is
+  generic (
+    n : integer := 8
     );
-  PORT (
-    in_1       : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2       : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    signed_mul : IN  STD_LOGIC;
-    out_s      : OUT STD_LOGIC_VECTOR(2*n-1 DOWNTO 0)
+  port (
+    in_1       : in  std_logic_vector(n-1 downto 0);
+    in_2       : in  std_logic_vector(n-1 downto 0);
+    signed_mul : in  std_logic;
+    out_s      : out std_logic_vector(2*n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- structural architecture
-ARCHITECTURE structural OF booth_multiplier IS
+architecture structural of booth_multiplier is
 
-  COMPONENT booth_encoder IS
-    GENERIC(
-      n : INTEGER
+  component booth_encoder is
+    generic(
+      n : integer
       );
-    PORT(
-      in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      out_s : OUT STD_LOGIC_VECTOR(3*((n/2) + n MOD 2) - 1 DOWNTO 0)
+    port(
+      in_s  : in  std_logic_vector(n-1 downto 0);
+      out_s : out std_logic_vector(3*((n/2) + n mod 2) - 1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT booth_generator IS
-    GENERIC(
-      n_in  : INTEGER;
-      n_out : INTEGER
+  component booth_generator is
+    generic(
+      n_in  : integer;
+      n_out : integer
       );
-    PORT(
-      in_s    : IN  STD_LOGIC_VECTOR(n_in-1 DOWNTO 0);
-      pos_out : OUT STD_LOGIC_VECTOR(n_out-1 DOWNTO 0);
-      neg_out : OUT STD_LOGIC_VECTOR(n_out-1 DOWNTO 0)
+    port(
+      in_s    : in  std_logic_vector(n_in-1 downto 0);
+      pos_out : out std_logic_vector(n_out-1 downto 0);
+      neg_out : out std_logic_vector(n_out-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
 -- in_0 : 0
 -- in_1 : 1 x k
 -- in_2 : -1 x k
 -- in_3 : 2 x k
 -- in_4 : -2 x k
-  COMPONENT mux_n_5_1 IS
-    GENERIC (
-      n : INTEGER
+  component mux_n_5_1 is
+    generic (
+      n : integer
       );
-    PORT (
-      in_0  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_3  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_4  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      s     : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);  -- selector
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_0  : in  std_logic_vector(n-1 downto 0);
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      in_3  : in  std_logic_vector(n-1 downto 0);
+      in_4  : in  std_logic_vector(n-1 downto 0);
+      s     : in  std_logic_vector(2 downto 0);  -- selector
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT rca_n IS
-    GENERIC (
-      n : INTEGER
+  component rca_n is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      carry_in  : IN  STD_LOGIC;
-      sum       : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      carry_out : OUT STD_LOGIC
+    port (
+      in_1      : in  std_logic_vector(n-1 downto 0);
+      in_2      : in  std_logic_vector(n-1 downto 0);
+      carry_in  : in  std_logic;
+      sum       : out std_logic_vector(n-1 downto 0);
+      carry_out : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  CONSTANT n_prime : INTEGER := n+2;
+  constant n_prime : integer := n+2;
 
-  CONSTANT n_level   : INTEGER := n_prime/2 + n_prime MOD 2;
-  CONSTANT n_shifted : INTEGER := 3*n_prime;
+  constant n_level   : integer := n_prime/2 + n_prime mod 2;
+  constant n_shifted : integer := 3*n_prime;
 
-  TYPE signal_matrix IS ARRAY(0 TO n_level-1) OF STD_LOGIC_VECTOR(2*n_prime-1 DOWNTO 0);
-  SIGNAL encoder_out                      : STD_LOGIC_VECTOR(3*n_level-1 DOWNTO 0);
-  SIGNAL gen_pos_out, gen_neg_out         : STD_LOGIC_VECTOR(n_shifted-1 DOWNTO 0);
-  SIGNAL mux_out_matrix, adder_out_matrix : signal_matrix;
+  type signal_matrix is array(0 to n_level-1) of std_logic_vector(2*n_prime-1 downto 0);
+  signal encoder_out                      : std_logic_vector(3*n_level-1 downto 0);
+  signal gen_pos_out, gen_neg_out         : std_logic_vector(n_shifted-1 downto 0);
+  signal mux_out_matrix, adder_out_matrix : signal_matrix;
 
-  SIGNAL in_1_bis, in_2_bis               : STD_LOGIC_VECTOR(n_prime-1 DOWNTO 0);
-  SIGNAL sign_extender_1, sign_extender_2 : STD_LOGIC;
-BEGIN
-  sign_extender_1 <= in_1(n-1) AND signed_mul;
-  sign_extender_2 <= in_2(n-1) AND signed_mul;
+  signal in_1_bis, in_2_bis               : std_logic_vector(n_prime-1 downto 0);
+  signal sign_extender_1, sign_extender_2 : std_logic;
+begin
+  sign_extender_1 <= in_1(n-1) and signed_mul;
+  sign_extender_2 <= in_2(n-1) and signed_mul;
   in_1_bis        <= sign_extender_1 & sign_extender_1 & in_1;
   in_2_bis        <= sign_extender_2 & sign_extender_2 & in_2;
 
-  booth_encoder_comp : booth_encoder GENERIC MAP (
+  booth_encoder_comp : booth_encoder generic map (
     n => n_prime
-    ) PORT MAP (
+    ) port map (
       in_s  => in_2_bis,
       out_s => encoder_out
       );
 
-  booth_generator_comp : booth_generator GENERIC MAP (
+  booth_generator_comp : booth_generator generic map (
     n_in  => n_prime,
     n_out => n_shifted
-    ) PORT MAP (
+    ) port map (
       in_s    => in_1_bis,
       pos_out => gen_pos_out,
       neg_out => gen_neg_out
       );
 
-  muxes_gen : FOR i IN 0 TO n_level-1 GENERATE
-    mux_x : mux_n_5_1 GENERIC MAP (
+  muxes_gen : for i in 0 to n_level-1 generate
+    mux_x : mux_n_5_1 generic map (
       n => 2*n_prime
-      ) PORT MAP (
-        in_0  => (OTHERS => '0'),       -- 0
-        in_1  => gen_pos_out(n_shifted-2*i-1 DOWNTO n_shifted-2*i-2*n_prime),  -- 1x(2^(i+1))
-        in_2  => gen_pos_out(n_shifted-2*i-2 DOWNTO n_shifted-2*i-1-2*n_prime),  -- 2x(2^(i+1))
-        in_3  => gen_neg_out(n_shifted-2*i-1 DOWNTO n_shifted-2*i-2*n_prime),  -- -1x(2^(i+1))
-        in_4  => gen_neg_out(n_shifted-2*i-2 DOWNTO n_shifted-2*i-1-2*n_prime),  -- -2x(2^(i+1))
-        s     => encoder_out(i*3+2 DOWNTO i*3),
+      ) port map (
+        in_0  => (others => '0'),       -- 0
+        in_1  => gen_pos_out(n_shifted-2*i-1 downto n_shifted-2*i-2*n_prime),  -- 1x(2^(i+1))
+        in_2  => gen_pos_out(n_shifted-2*i-2 downto n_shifted-2*i-1-2*n_prime),  -- 2x(2^(i+1))
+        in_3  => gen_neg_out(n_shifted-2*i-1 downto n_shifted-2*i-2*n_prime),  -- -1x(2^(i+1))
+        in_4  => gen_neg_out(n_shifted-2*i-2 downto n_shifted-2*i-1-2*n_prime),  -- -2x(2^(i+1))
+        s     => encoder_out(i*3+2 downto i*3),
         out_s => mux_out_matrix(i)
         );
-  END GENERATE;
+  end generate;
 
-  adders_gen : FOR i IN 1 TO n_level-1 GENERATE
-    adder_0_gen : IF i = 1 GENERATE
-      adder_0 : rca_n GENERIC MAP (
+  adders_gen : for i in 1 to n_level-1 generate
+    adder_0_gen : if i = 1 generate
+      adder_0 : rca_n generic map (
         n => 2*n_prime
-        ) PORT MAP (
+        ) port map (
           in_1      => mux_out_matrix(1),
           in_2      => mux_out_matrix(0),
           carry_in  => '0',
           sum       => adder_out_matrix(1),
-          carry_out => OPEN
+          carry_out => open
           );
-    END GENERATE;
-    adder_x_gen : IF i > 1 GENERATE
-      adder_x : rca_n GENERIC MAP (
+    end generate;
+    adder_x_gen : if i > 1 generate
+      adder_x : rca_n generic map (
         n => 2*n_prime
-        ) PORT MAP (
+        ) port map (
           in_1      => mux_out_matrix(i),
           in_2      => adder_out_matrix(i-1),
           carry_in  => '0',
           sum       => adder_out_matrix(i),
-          carry_out => OPEN
+          carry_out => open
           );
-    END GENERATE;
-  END GENERATE;
+    end generate;
+  end generate;
 
-  out_s <= adder_out_matrix(n_level-1)(2*n-1 DOWNTO 0);
+  out_s <= adder_out_matrix(n_level-1)(2*n-1 downto 0);
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- structural configuration
-CONFIGURATION cfg_booth_multiplier_structural OF booth_multiplier IS
-  FOR structural
-  END FOR;
-END CONFIGURATION;
+configuration cfg_booth_multiplier_structural of booth_multiplier is
+  for structural
+  end for;
+end configuration;

@@ -1,102 +1,102 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY full_adder IS
-  PORT (
-    in_1      : IN  STD_LOGIC;
-    in_2      : IN  STD_LOGIC;
-    carry_in  : IN  STD_LOGIC;
-    sum       : OUT STD_LOGIC;
-    carry_out : OUT STD_LOGIC
+entity full_adder is
+  port (
+    in_1      : in  std_logic;
+    in_2      : in  std_logic;
+    carry_in  : in  std_logic;
+    sum       : out std_logic;
+    carry_out : out std_logic
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF full_adder IS
-BEGIN
-  sum       <= in_1 XOR in_2 XOR carry_in;
-  carry_out <= (in_1 AND (in_2 XOR carry_in)) OR (in_2 AND carry_in);
-END ARCHITECTURE;
+architecture behavioral of full_adder is
+begin
+  sum       <= in_1 xor in_2 xor carry_in;
+  carry_out <= (in_1 and (in_2 xor carry_in)) or (in_2 and carry_in);
+end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF full_adder IS
+architecture structural of full_adder is
 
-  COMPONENT xor_gate IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+  component xor_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT or_gate IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+  component or_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT and_gate IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+  component and_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL in_2_xor_carry_in, in_2_and_carry_in, in_1_and_in_2_xor_carry_in : STD_LOGIC := '0';
+  signal in_2_xor_carry_in, in_2_and_carry_in, in_1_and_in_2_xor_carry_in : std_logic := '0';
 
-BEGIN
-  in_2_xor_carry_in_gate : xor_gate PORT MAP (
+begin
+  in_2_xor_carry_in_gate : xor_gate port map (
     in_1  => in_2,
     in_2  => carry_in,
     out_s => in_2_xor_carry_in
     );
-  sum_xor_gate : xor_gate PORT MAP(
+  sum_xor_gate : xor_gate port map(
     in_1  => in_1,
     in_2  => in_2_xor_carry_in,
     out_s => sum
     );
-  in_1_and_in_2_xor_carry_in_gate : and_gate PORT MAP (
+  in_1_and_in_2_xor_carry_in_gate : and_gate port map (
     in_1  => in_1,
     in_2  => in_2_xor_carry_in,
     out_s => in_1_and_in_2_xor_carry_in
     );
-  in_2_and_carry_in_gate : and_gate PORT MAP (
+  in_2_and_carry_in_gate : and_gate port map (
     in_1  => in_2,
     in_2  => carry_in,
     out_s => in_2_and_carry_in
     );
-  carry_out_or_gate : or_gate PORT MAP (
+  carry_out_or_gate : or_gate port map (
     in_1  => in_1_and_in_2_xor_carry_in,
     in_2  => in_2_and_carry_in,
     out_s => carry_out
     );
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_full_adder_behavioral OF full_adder IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_full_adder_behavioral of full_adder is
+  for behavioral
+  end for;
+end configuration;
 
 -- structural configuration
-CONFIGURATION cfg_full_adder_structural OF full_adder IS
-  FOR structural
-    FOR in_2_xor_carry_in_gate          : xor_gate USE CONFIGURATION work.cfg_xor_gate_behavioral;
-    END FOR;
-    FOR sum_xor_gate                    : xor_gate USE CONFIGURATION work.cfg_xor_gate_behavioral;
-    END FOR;
-    FOR in_2_and_carry_in_gate          : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
-    END FOR;
-    FOR in_1_and_in_2_xor_carry_in_gate : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
-    END FOR;
-    FOR carry_out_or_gate               : or_gate USE CONFIGURATION work.cfg_or_gate_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_full_adder_structural of full_adder is
+  for structural
+    for in_2_xor_carry_in_gate          : xor_gate use configuration work.cfg_xor_gate_behavioral;
+    end for;
+    for sum_xor_gate                    : xor_gate use configuration work.cfg_xor_gate_behavioral;
+    end for;
+    for in_2_and_carry_in_gate          : and_gate use configuration work.cfg_and_gate_behavioral;
+    end for;
+    for in_1_and_in_2_xor_carry_in_gate : and_gate use configuration work.cfg_and_gate_behavioral;
+    end for;
+    for carry_out_or_gate               : or_gate use configuration work.cfg_or_gate_behavioral;
+    end for;
+  end for;
+end configuration;

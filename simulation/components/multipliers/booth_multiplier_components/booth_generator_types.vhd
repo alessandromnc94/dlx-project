@@ -1,6 +1,6 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-PACKAGE booth_generator_types IS
-  CONSTANT shifted_pos : INTEGER := 8;
-END PACKAGE;
+package booth_generator_types is
+  constant shifted_pos : integer := 8;
+end package;

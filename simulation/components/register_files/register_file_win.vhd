@@ -1,203 +1,203 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-USE work.my_arith_functions.ALL;
+use work.my_arith_functions.all;
 
-ENTITY register_file_win IS
-  GENERIC (
-    width_data         : INTEGER := 64;
-    n_global_registers : INTEGER := 8;
-    n_local_registers  : INTEGER := 8;
-    windows            : INTEGER := 8);
-  PORT (
-    clk              : IN  STD_LOGIC;
-    reset            : IN  STD_LOGIC;
-    enable           : IN  STD_LOGIC;
-    rd1              : IN  STD_LOGIC;
-    rd2              : IN  STD_LOGIC;
-    wr               : IN  STD_LOGIC;
-    add_wr           : IN  STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0);
-    add_rd1          : IN  STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0);
-    add_rd2          : IN  STD_LOGIC_VECTOR(log2int(3*n_local_registers+n_global_registers)-1 DOWNTO 0);
-    datain           : IN  STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-    out1             : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-    out2             : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-    sub_call         : IN  STD_LOGIC;
-    sub_ret          : IN  STD_LOGIC;
-    spill            : OUT STD_LOGIC;
-    fill             : OUT STD_LOGIC;
-    to_memory_data   : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-    from_memory_data : IN  STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)
+entity register_file_win is
+  generic (
+    width_data         : integer := 64;
+    n_global_registers : integer := 8;
+    n_local_registers  : integer := 8;
+    windows            : integer := 8);
+  port (
+    clk              : in  std_logic;
+    reset            : in  std_logic;
+    enable           : in  std_logic;
+    rd1              : in  std_logic;
+    rd2              : in  std_logic;
+    wr               : in  std_logic;
+    add_wr           : in  std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0);
+    add_rd1          : in  std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0);
+    add_rd2          : in  std_logic_vector(log2int(3*n_local_registers+n_global_registers)-1 downto 0);
+    datain           : in  std_logic_vector(width_data-1 downto 0);
+    out1             : out std_logic_vector(width_data-1 downto 0);
+    out2             : out std_logic_vector(width_data-1 downto 0);
+    sub_call         : in  std_logic;
+    sub_ret          : in  std_logic;
+    spill            : out std_logic;
+    fill             : out std_logic;
+    to_memory_data   : out std_logic_vector(width_data-1 downto 0);
+    from_memory_data : in  std_logic_vector(width_data-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF register_file_win IS
+architecture behavioral of register_file_win is
   -- define constants
   -- offset_cwp is used to shift pointers swp and cwp
-  CONSTANT offset_cwp            : INTEGER := 2 * n_local_registers;
+  constant offset_cwp            : integer := 2 * n_local_registers;
   -- n_window_registers contains the number of registers (except global) of a window (in + local + out)
-  CONSTANT n_window_registers    : INTEGER := 3 * n_local_registers;
+  constant n_window_registers    : integer := 3 * n_local_registers;
   -- width_add contains the number of bits to address registers in a window (global + in + local + out )
-  CONSTANT width_add             : INTEGER := log2int(n_window_registers + n_global_registers);
+  constant width_add             : integer := log2int(n_window_registers + n_global_registers);
   -- total_registers contains the number of all registers (except global)
-  CONSTANT n_total_win_registers : INTEGER := windows * offset_cwp;
+  constant n_total_win_registers : integer := windows * offset_cwp;
 
   -- define type for registers array
-  TYPE reg_array IS (NATURAL RANGE <>) OF STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
+  type reg_array is (natural range <>) of std_logic_vector(width_data-1 downto 0);
 
   -- define signals
   -- 'global_registers' is the collection of global registers
-  SIGNAL global_registers        : reg_array(0 TO n_global_registers-1)    := (OTHERS => (OTHERS => '0'));
+  signal global_registers        : reg_array(0 to n_global_registers-1)    := (others => (others => '0'));
   -- 'win_registers' is the collection of in, local (and out) registers
-  SIGNAL win_registers           : reg_array(0 TO n_total_win_registers-1) := (OTHERS => (OTHERS => '0'));
+  signal win_registers           : reg_array(0 to n_total_win_registers-1) := (others => (others => '0'));
   -- 'swp' and 'cwp' contains the address of the 1st register of stored window and current window
-  SIGNAL cwp, swp                : INTEGER                                 := 0;
+  signal cwp, swp                : integer                                 := 0;
   -- 'in_spilling' and 'in_filling' are signals used to check which operation is in execution.
   -- they are needed because 'spill' and 'fill' outputs can be only modified but not checked in 'if' conditions
-  SIGNAL in_spilling, in_filling : STD_LOGIC                               := '0';
+  signal in_spilling, in_filling : std_logic                               := '0';
   -- 'rf_cycles' contains how many times cycles are started.
   -- it is used to check if at the least one window is stored in memory
-  SIGNAL rf_cycles               : INTEGER                                 := 0;
+  signal rf_cycles               : integer                                 := 0;
   -- 'memory_cnt' is an offset used during filling and spilling operation
-  SIGNAL memory_cnt              : INTEGER                                 := 0;
+  signal memory_cnt              : integer                                 := 0;
 
-BEGIN
+begin
 
   spill <= in_spilling;
   fill  <= in_filling;
 
-  PROCESS (clk)
-  BEGIN
-    IF rising_edge(clk) THEN
+  process (clk)
+  begin
+    if rising_edge(clk) then
       -- reset operation is synchronous
-      IF reset = '1' THEN
-        win_registers    <= (OTHERS => (OTHERS => '0'));
-        global_registers <= (OTHERS => (OTHERS => '0'));
-        out1             <= (OTHERS => 'z');
-        out2             <= (OTHERS => 'z');
+      if reset = '1' then
+        win_registers    <= (others => (others => '0'));
+        global_registers <= (others => (others => '0'));
+        out1             <= (others => 'z');
+        out2             <= (others => 'z');
         cwp              <= 0;
         swp              <= 0;
         in_spilling      <= '0';
         in_filling       <= '0';
-        to_memory_data   <= (OTHERS => 'z');
+        to_memory_data   <= (others => 'z');
         rf_cycles        <= 0;
-      ELSIF enable = '1' THEN
-        IF in_spilling = '1' THEN
+      elsif enable = '1' then
+        if in_spilling = '1' then
           -- continue the spill operation if the number of stored registers is lower than the number of registers in e local in a windows
           -- else terminate it
-          IF memory_cnt < offset_cwp THEN
+          if memory_cnt < offset_cwp then
             to_memory_data <= win_registers(getregpointer(swp, memory_cnt, windows, n_local_registers));
             memory_cnt     <= memory_cnt + 1;
-          ELSE
+          else
             in_spilling <= '0';
             -- if swp is 0
             -- increase rf_cycles
             -- (new cycle started)
-            IF swp = 0 THEN
+            if swp = 0 then
               rf_cycles <= rf_cycles + 1;
-            END IF;
+            end if;
             -- change pointers values
             swp <= getregpointer(swp, offset_cwp, windows, n_local_registers);
             cwp <= getregpointer(cwp, offset_cwp, windows, n_local_registers);
-          END IF;
-        ELSIF in_filling = '1' THEN
+          end if;
+        elsif in_filling = '1' then
           -- like before but starting from the top
-          IF memory_cnt > 0 THEN
+          if memory_cnt > 0 then
             win_registers(getregpointer(swp, memory_cnt-1-offset_cwp, windows, n_local_registers)) <= from_memory_data;
             memory_cnt                                                                             <= memory_cnt - 1;
-          ELSE
+          else
             in_filling <= '0';
             -- if swp = offset_cwp
             -- decrease rf_cycles
             -- (a cycle is completed)
-            IF swp = offset_cwp THEN
+            if swp = offset_cwp then
               rf_cycles <= rf_cycles - 1;
-            END IF;
+            end if;
             -- change pointers values
             swp <= getregpointer(swp, -offset_cwp, windows, n_local_registers);
             cwp <= getregpointer(cwp, -offset_cwp, windows, n_local_registers);
-          END IF;
+          end if;
         -- call sub-routine
-        ELSIF sub_call = '1' THEN
+        elsif sub_call = '1' then
           -- the next condition checks if the next window is the last available
           -- thus if cwp+2*(offset_cwp) is equal to swp do a spill
           -- else increase cwp by offset_cwp
-          IF getregpointer(cwp, 2*offset_cwp, windows, n_local_registers) = swp THEN
+          if getregpointer(cwp, 2*offset_cwp, windows, n_local_registers) = swp then
             in_spilling <= '1';
             memory_cnt  <= 0;
-          ELSE
+          else
             cwp <= getregpointer(cwp, offset_cwp, windows, n_local_registers);
-          END IF;
+          end if;
         -- ret sub-routine
-        ELSIF sub_ret = '1' THEN
+        elsif sub_ret = '1' then
           -- the next condition checks if it is possible do a ret
           -- checking how many times t-he swp has to change its value from offset_cwp (poiter to the 2nd window)
           -- to 0 (pointer to the 1st window).
           -- if it is greater than 0 a ret is possible
           -- else report a warning to console
-          IF rf_cycles > 0 THEN
+          if rf_cycles > 0 then
             -- if cwp = swp a fill operation must be executed
             -- else decrease cwp by offset_cwp
-            IF cwp = swp THEN
+            if cwp = swp then
               in_filling <= '1';
               -- memory_cnt <= n_window_registers;
               memory_cnt <= offset_cwp;
-            ELSE
+            else
               cwp <= getregpointer(cwp, -offset_cwp, windows, n_local_registers);
-            END IF;
-          ELSE
-            REPORT "no ret routine: no window to return!" SEVERITY WARNING;
-          END IF;
-        ELSE
+            end if;
+          else
+            report "no ret routine: no window to return!" severity warning;
+          end if;
+        else
           -- write operation
-          IF wr = '1' THEN
+          if wr = '1' then
             -- if 'add_wr' is lower than 'n_global_registers' read global register
-            IF conv_integer(add_wr) < n_global_registers THEN
+            if conv_integer(add_wr) < n_global_registers then
               -- global registers
               global_registers(conv_integer(add_wr)) <= datain;
             -- else read a register of the window
-            ELSE
+            else
               -- window registers (in, local, out)
               win_registers(getregpointer(cwp, conv_integer(add_wr)-n_global_registers, windows, n_local_registers)) <= datain;
-            END IF;
-          END IF;
+            end if;
+          end if;
           -- read from out1 operation
-          IF rd1 = '1' THEN
+          if rd1 = '1' then
             -- as before
-            IF conv_integer(add_rd1) < n_global_registers THEN
+            if conv_integer(add_rd1) < n_global_registers then
               -- global registers
               out1 <= global_registers(conv_integer(add_rd1));
-            ELSE
+            else
               -- window registers (in, local, out)
               out1 <= win_registers(getregpointer(cwp, conv_integer(add_rd1)-n_global_registers, windows, n_local_registers));
-            END IF;
-          END IF;
+            end if;
+          end if;
           -- read from out2 operation
-          IF rd2 = '1' THEN
+          if rd2 = '1' then
             -- as before
-            IF conv_integer(add_rd2) < n_global_registers THEN
+            if conv_integer(add_rd2) < n_global_registers then
               -- global registers
               out2 <= global_registers(conv_integer(add_rd2));
-            ELSE
+            else
               -- window registers (in, local, out)
               out2 <= win_registers(getregpointer(cwp, conv_integer(add_rd2)-n_global_registers, windows, n_local_registers));
-            END IF;
-          END IF;
-        END IF;
-      END IF;
-    END IF;
-  END PROCESS;
-END ARCHITECTURE;
+            end if;
+          end if;
+        end if;
+      end if;
+    end if;
+  end process;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_register_file_win_behavioral OF register_file_win IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_register_file_win_behavioral of register_file_win is
+  for behavioral
+  end for;
+end configuration;

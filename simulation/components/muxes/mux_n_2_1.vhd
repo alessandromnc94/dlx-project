@@ -1,116 +1,116 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY mux_n_2_1 IS
-  GENERIC (
-    n : INTEGER := 1
+entity mux_n_2_1 is
+  generic (
+    n : integer := 1
     );
-  PORT (
-    in_0  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    s     : IN  STD_LOGIC;
-    out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    in_0  : in  std_logic_vector(n-1 downto 0);
+    in_1  : in  std_logic_vector(n-1 downto 0);
+    s     : in  std_logic;
+    out_s : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF mux_n_2_1 IS
-BEGIN
-  out_s <= in_0 WHEN s = '0' ELSE in_1;
-END ARCHITECTURE;
+architecture behavioral of mux_n_2_1 is
+begin
+  out_s <= in_0 when s = '0' else in_1;
+end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF mux_n_2_1 IS
+architecture structural of mux_n_2_1 is
 
-  COMPONENT and_gate_n IS
-    GENERIC (
-      n : INTEGER
+  component and_gate_n is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT or_gate_n IS
-    GENERIC (
-      n : INTEGER
+  component or_gate_n is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT not_gate IS
-    PORT (
-      in_s  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+  component not_gate is
+    port (
+      in_s  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL not_sel, sel               : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
-  SIGNAL in_0_and_out, in_1_and_out : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
+  signal not_sel, sel               : std_logic_vector(n-1 downto 0) := (others => '0');
+  signal in_0_and_out, in_1_and_out : std_logic_vector(n-1 downto 0) := (others => '0');
 
-BEGIN
+begin
 
-  sel <= (OTHERS => s);
-  not_sel_generate : FOR i IN 1 TO n-1 GENERATE
+  sel <= (others => s);
+  not_sel_generate : for i in 1 to n-1 generate
     not_sel(i) <= not_sel(0);
-  END GENERATE;
+  end generate;
 
   not_sel_gate : not_gate
-    PORT MAP(
+    port map(
       in_s  => s,
       out_s => not_sel(0)
       );
 
-  in_0_and_gate_n : and_gate_n GENERIC MAP (
+  in_0_and_gate_n : and_gate_n generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_1  => in_0,
       in_2  => not_sel,
       out_s => in_0_and_out
       );
 
-  in_1_and_gate_n : and_gate_n GENERIC MAP (
+  in_1_and_gate_n : and_gate_n generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_1  => in_1,
       in_2  => sel,
       out_s => in_1_and_out
       );
 
-  out_or_gate_n : or_gate_n GENERIC MAP (
+  out_or_gate_n : or_gate_n generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_1  => in_0_and_out,
       in_2  => in_1_and_out,
       out_s => out_s
       );
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
-CONFIGURATION cfg_mux_n_2_1_behavioral OF mux_n_2_1 IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_mux_n_2_1_behavioral of mux_n_2_1 is
+  for behavioral
+  end for;
+end configuration;
 
-CONFIGURATION cfg_mux_n_2_1_structural OF mux_n_2_1 IS
-  FOR structural
-    FOR not_sel_gate    : not_gate USE CONFIGURATION work.cfg_not_gate_behavioral;
-    END FOR;
-    FOR in_0_and_gate_n : and_gate_n USE CONFIGURATION work.cfg_and_gate_n_behavioral;
-    END FOR;
-    FOR in_1_and_gate_n : and_gate_n USE CONFIGURATION work.cfg_and_gate_n_behavioral;
-    END FOR;
-    FOR out_or_gate_n   : or_gate_n USE CONFIGURATION work.cfg_or_gate_n_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_mux_n_2_1_structural of mux_n_2_1 is
+  for structural
+    for not_sel_gate    : not_gate use configuration work.cfg_not_gate_behavioral;
+    end for;
+    for in_0_and_gate_n : and_gate_n use configuration work.cfg_and_gate_n_behavioral;
+    end for;
+    for in_1_and_gate_n : and_gate_n use configuration work.cfg_and_gate_n_behavioral;
+    end for;
+    for out_or_gate_n   : or_gate_n use configuration work.cfg_or_gate_n_behavioral;
+    end for;
+  end for;
+end configuration;

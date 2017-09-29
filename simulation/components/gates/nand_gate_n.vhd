@@ -1,30 +1,30 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY nand_gate_n IS
-  GENERIC (
-    n : INTEGER := 1
+entity nand_gate_n is
+  generic (
+    n : integer := 1
     );
-  PORT (
-    in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    in_1  : in  std_logic_vector(n-1 downto 0);
+    in_2  : in  std_logic_vector(n-1 downto 0);
+    out_s : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF nand_gate_n IS
-  SIGNAL tmp_out_s : STD_LOGIC;
-BEGIN
-  out_s <= in_1 NAND in_2;
-END ARCHITECTURE;
+architecture behavioral of nand_gate_n is
+  signal tmp_out_s : std_logic;
+begin
+  out_s <= in_1 nand in_2;
+end architecture;
 
-CONFIGURATION cfg_nand_gate_n_behavioral OF nand_gate_n IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_nand_gate_n_behavioral of nand_gate_n is
+  for behavioral
+  end for;
+end configuration;
 
 -- structural configuration
 -- configuration cfg_nand_gate_n_structural of nand_gate_n is

@@ -1,20 +1,20 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY nor_gate IS
-  PORT (
-    in_1  : IN  STD_LOGIC;
-    in_2  : IN  STD_LOGIC;
-    out_s : OUT STD_LOGIC
+entity nor_gate is
+  port (
+    in_1  : in  std_logic;
+    in_2  : in  std_logic;
+    out_s : out std_logic
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE behavioral OF nor_gate IS
-BEGIN
-  out_s <= in_1 NOR in_2;
-END ARCHITECTURE;
+architecture behavioral of nor_gate is
+begin
+  out_s <= in_1 nor in_2;
+end architecture;
 
-CONFIGURATION cfg_nor_gate_behavioral OF nor_gate IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_nor_gate_behavioral of nor_gate is
+  for behavioral
+  end for;
+end configuration;

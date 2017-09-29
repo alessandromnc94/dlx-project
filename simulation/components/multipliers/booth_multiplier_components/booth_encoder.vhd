@@ -1,51 +1,51 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY booth_encoder IS
-  GENERIC(
-    n : INTEGER := 8
+entity booth_encoder is
+  generic(
+    n : integer := 8
     );
-  PORT(
-    in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    out_s : OUT STD_LOGIC_VECTOR(3*((n/2) + n MOD 2) - 1 DOWNTO 0)
+  port(
+    in_s  : in  std_logic_vector(n-1 downto 0);
+    out_s : out std_logic_vector(3*((n/2) + n mod 2) - 1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- structural architecture
-ARCHITECTURE structural OF booth_encoder IS
-  COMPONENT booth_encoder_block IS
-    PORT(
-      in_s  : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-      out_s : OUT STD_LOGIC_VECTOR(2 DOWNTO 0)
+architecture structural of booth_encoder is
+  component booth_encoder_block is
+    port(
+      in_s  : in  std_logic_vector(2 downto 0);
+      out_s : out std_logic_vector(2 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  CONSTANT n_encoders_block : INTEGER                                       := n/2 + n MOD 2;
-  SIGNAL in_s_tmp           : STD_LOGIC_VECTOR(2*n_encoders_block DOWNTO 0) := (OTHERS => '0');
-BEGIN
-  in_s_tmp(n DOWNTO 1) <= in_s;
+  constant n_encoders_block : integer                                       := n/2 + n mod 2;
+  signal in_s_tmp           : std_logic_vector(2*n_encoders_block downto 0) := (others => '0');
+begin
+  in_s_tmp(n downto 1) <= in_s;
 
-  blck_gen : FOR i IN 0 TO n_encoders_block-1 GENERATE
-    blck_x : booth_encoder_block PORT MAP (
-      in_s  => in_s_tmp(2*i+2 DOWNTO 2*i),
-      out_s => out_s(3*i+2 DOWNTO 3*i)
+  blck_gen : for i in 0 to n_encoders_block-1 generate
+    blck_x : booth_encoder_block port map (
+      in_s  => in_s_tmp(2*i+2 downto 2*i),
+      out_s => out_s(3*i+2 downto 3*i)
       );
-  END GENERATE;
+  end generate;
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- structural configuration with behavioral components
-CONFIGURATION cfg_booth_encoder_structural_1 OF booth_encoder IS
-  FOR structural
-  END FOR;
-END CONFIGURATION;
+configuration cfg_booth_encoder_structural_1 of booth_encoder is
+  for structural
+  end for;
+end configuration;
 
 -- structural configuration with structural components
-CONFIGURATION cfg_booth_encoder_structural_2 OF booth_encoder IS
-  FOR structural
-  END FOR;
-END CONFIGURATION;
+configuration cfg_booth_encoder_structural_2 of booth_encoder is
+  for structural
+  end for;
+end configuration;

@@ -1,220 +1,220 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_signed.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_signed.all;
+use ieee.std_logic_arith.all;
 
-USE work.logicals_types.ALL;
-USE work.alu_types.ALL;
-USE work.my_arith_functions.ALL;
+use work.logicals_types.all;
+use work.alu_types.all;
+use work.my_arith_functions.all;
 
-ENTITY alu IS
-  GENERIC (
-    n : INTEGER := 32
+entity alu is
+  generic (
+    n : integer := 32
     );
-  PORT (
-    in_1   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    op_sel : IN  alu_array;
+  port (
+    in_1   : in  std_logic_vector(n-1 downto 0);
+    in_2   : in  std_logic_vector(n-1 downto 0);
+    op_sel : in  alu_array;
     -- outputs
-    out_s  : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    out_s  : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- structural architecture
-ARCHITECTURE behavioral OF alu IS
-  COMPONENT mux_n_2_1 IS
-    GENERIC (
-      n : INTEGER
+architecture behavioral of alu is
+  component mux_n_2_1 is
+    generic (
+      n : integer
       );
-    PORT (
-      in_0  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      s     : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_0  : in  std_logic_vector(n-1 downto 0);
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      s     : in  std_logic;
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL mux_in_2_select : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
+  end component;
+  signal mux_in_2_select : std_logic_vector(n-1 downto 0) := (others => '0');
 
 -- mux_n_6_1 for: output mux and comparator mux
-  COMPONENT mux_n_6_1 IS
-    GENERIC (
-      n : INTEGER
+  component mux_n_6_1 is
+    generic (
+      n : integer
       );
-    PORT (
-      in_0  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_3  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_4  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_5  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      s     : IN  STD_LOGIC_VECTOR(2 DOWNTO 0);
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_0  : in  std_logic_vector(n-1 downto 0);
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      in_3  : in  std_logic_vector(n-1 downto 0);
+      in_4  : in  std_logic_vector(n-1 downto 0);
+      in_5  : in  std_logic_vector(n-1 downto 0);
+      s     : in  std_logic_vector(2 downto 0);
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL out_mux_sel  : STD_LOGIC_VECTOR(2 DOWNTO 0) := (OTHERS => '0');
-  SIGNAL comp_mux_sel : STD_LOGIC_VECTOR(2 DOWNTO 0) := (OTHERS => '0');
+  end component;
+  signal out_mux_sel  : std_logic_vector(2 downto 0) := (others => '0');
+  signal comp_mux_sel : std_logic_vector(2 downto 0) := (others => '0');
 
-  COMPONENT not_gate_n IS
-    GENERIC (
-      n : INTEGER
+  component not_gate_n is
+    generic (
+      n : integer
       );
-    PORT (
-      in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_s  : in  std_logic_vector(n-1 downto 0);
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL not_in_2 : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  end component;
+  signal not_in_2 : std_logic_vector(n-1 downto 0);
 
-  COMPONENT logicals_n IS
-    GENERIC (
-      n : INTEGER
+  component logicals_n is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      logic : IN  logicals_array;
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      logic : in  logicals_array;
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL logicals_mode : logicals_array := (OTHERS => '0');
-  SIGNAL logicals_out  : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  end component;
+  signal logicals_mode : logicals_array := (others => '0');
+  signal logicals_out  : std_logic_vector(n-1 downto 0);
 
-  COMPONENT booth_multiplier IS
-    GENERIC (
-      n : INTEGER
+  component booth_multiplier is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1       : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2       : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      signed_mul : IN  STD_LOGIC;
-      out_s      : OUT STD_LOGIC_VECTOR(2*n-1 DOWNTO 0)
+    port (
+      in_1       : in  std_logic_vector(n-1 downto 0);
+      in_2       : in  std_logic_vector(n-1 downto 0);
+      signed_mul : in  std_logic;
+      out_s      : out std_logic_vector(2*n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL mul_out    : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL signed_mul : STD_LOGIC := '0';
+  end component;
+  signal mul_out    : std_logic_vector(n-1 downto 0);
+  signal signed_mul : std_logic := '0';
 
-  COMPONENT p4_adder IS
-    GENERIC (
-      n          : INTEGER;
-      carry_step : INTEGER
+  component p4_adder is
+    generic (
+      n          : integer;
+      carry_step : integer
       );
-    PORT (
-      in_1      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      carry_in  : IN  STD_LOGIC;
-      sum       : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      carry_out : OUT STD_LOGIC
+    port (
+      in_1      : in  std_logic_vector(n-1 downto 0);
+      in_2      : in  std_logic_vector(n-1 downto 0);
+      carry_in  : in  std_logic;
+      sum       : out std_logic_vector(n-1 downto 0);
+      carry_out : out std_logic
       );
-  END COMPONENT;
-  SIGNAL addsub_out       : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL addsub_carry_out : STD_LOGIC;
-  SIGNAL addsub_sel_in    : STD_LOGIC := '0';
+  end component;
+  signal addsub_out       : std_logic_vector(n-1 downto 0);
+  signal addsub_carry_out : std_logic;
+  signal addsub_sel_in    : std_logic := '0';
 
-  COMPONENT zero_comparator IS
-    GENERIC (
-      n : INTEGER
+  component zero_comparator is
+    generic (
+      n : integer
       );
-    PORT (
-      in_s  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      out_s : OUT STD_LOGIC
+    port (
+      in_s  : in  std_logic_vector(n-1 downto 0);
+      out_s : out std_logic
       );
-  END COMPONENT;
-  SIGNAL zero_comp_out : STD_LOGIC;
+  end component;
+  signal zero_comp_out : std_logic;
 
-  COMPONENT comparator IS
-    PORT (
-      zero_out          : IN  STD_LOGIC;
-      carry_out         : IN  STD_LOGIC;
-      sign_out          : IN  STD_LOGIC;
-      signed_comparison : IN  STD_LOGIC;
-      eq_out            : OUT STD_LOGIC;
-      gr_out            : OUT STD_LOGIC;
-      lo_out            : OUT STD_LOGIC;
-      ge_out            : OUT STD_LOGIC;
-      le_out            : OUT STD_LOGIC;
-      ne_out            : OUT STD_LOGIC
+  component comparator is
+    port (
+      zero_out          : in  std_logic;
+      carry_out         : in  std_logic;
+      sign_out          : in  std_logic;
+      signed_comparison : in  std_logic;
+      eq_out            : out std_logic;
+      gr_out            : out std_logic;
+      lo_out            : out std_logic;
+      ge_out            : out std_logic;
+      le_out            : out std_logic;
+      ne_out            : out std_logic
       );
-  END COMPONENT;
+  end component;
 
   -- insert shifter/rotator component declaration
-  COMPONENT shifter IS
-    GENERIC (
-      n : INTEGER
+  component shifter is
+    generic (
+      n : integer
       );
-    PORT (
-      base_vector    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      shift_by_value : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      left_shift     : IN  STD_LOGIC;
-      arith_shift    : IN  STD_LOGIC;
-      out_s          : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      base_vector    : in  std_logic_vector(n-1 downto 0);
+      shift_by_value : in  std_logic_vector(n-1 downto 0);
+      left_shift     : in  std_logic;
+      arith_shift    : in  std_logic;
+      out_s          : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL shift_out   : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL left_shift  : STD_LOGIC := '0';
-  SIGNAL arith_shift : STD_LOGIC := '0';
+  end component;
+  signal shift_out   : std_logic_vector(n-1 downto 0);
+  signal left_shift  : std_logic := '0';
+  signal arith_shift : std_logic := '0';
 -- insert rotator component declaration (re-used left_shift to reduce signals)
-  COMPONENT rotator IS
-    GENERIC (
-      n : INTEGER
+  component rotator is
+    generic (
+      n : integer
       );
-    PORT (
-      base_vector     : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      rotate_by_value : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      left_rotation   : IN  STD_LOGIC;
-      out_s           : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      base_vector     : in  std_logic_vector(n-1 downto 0);
+      rotate_by_value : in  std_logic_vector(n-1 downto 0);
+      left_rotation   : in  std_logic;
+      out_s           : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  SIGNAL rotate_out : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+  end component;
+  signal rotate_out : std_logic_vector(n-1 downto 0);
 
-  SIGNAL zero_out          : STD_LOGIC;
-  SIGNAL comp_mode         : STD_LOGIC_VECTOR(2 DOWNTO 0)   := (OTHERS => '0');
-  SIGNAL signed_comparison : STD_LOGIC                      := '0';
-  SIGNAL comp_eq_out       : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL comp_gr_out       : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL comp_lo_out       : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL comp_ge_out       : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL comp_le_out       : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL comp_ne_out       : STD_LOGIC_VECTOR(0 DOWNTO 0);
-  SIGNAL comp_mux_out      : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
-  CONSTANT comp_eq_sel     : STD_LOGIC_VECTOR(2 DOWNTO 0)   := "000";
-  CONSTANT comp_ne_sel     : STD_LOGIC_VECTOR(2 DOWNTO 0)   := "001";
-  CONSTANT comp_gr_sel     : STD_LOGIC_VECTOR(2 DOWNTO 0)   := "010";
-  CONSTANT comp_ge_sel     : STD_LOGIC_VECTOR(2 DOWNTO 0)   := "011";
-  CONSTANT comp_lo_sel     : STD_LOGIC_VECTOR(2 DOWNTO 0)   := "100";
-  CONSTANT comp_le_sel     : STD_LOGIC_VECTOR(2 DOWNTO 0)   := "101";
+  signal zero_out          : std_logic;
+  signal comp_mode         : std_logic_vector(2 downto 0)   := (others => '0');
+  signal signed_comparison : std_logic                      := '0';
+  signal comp_eq_out       : std_logic_vector(0 downto 0);
+  signal comp_gr_out       : std_logic_vector(0 downto 0);
+  signal comp_lo_out       : std_logic_vector(0 downto 0);
+  signal comp_ge_out       : std_logic_vector(0 downto 0);
+  signal comp_le_out       : std_logic_vector(0 downto 0);
+  signal comp_ne_out       : std_logic_vector(0 downto 0);
+  signal comp_mux_out      : std_logic_vector(n-1 downto 0) := (others => '0');
+  constant comp_eq_sel     : std_logic_vector(2 downto 0)   := "000";
+  constant comp_ne_sel     : std_logic_vector(2 downto 0)   := "001";
+  constant comp_gr_sel     : std_logic_vector(2 downto 0)   := "010";
+  constant comp_ge_sel     : std_logic_vector(2 downto 0)   := "011";
+  constant comp_lo_sel     : std_logic_vector(2 downto 0)   := "100";
+  constant comp_le_sel     : std_logic_vector(2 downto 0)   := "101";
 
-  CONSTANT out_adder_value_sel    : STD_LOGIC_VECTOR(2 DOWNTO 0) := "000";
-  CONSTANT out_logicals_value_sel : STD_LOGIC_VECTOR(2 DOWNTO 0) := "001";
-  CONSTANT out_comp_value_sel     : STD_LOGIC_VECTOR(2 DOWNTO 0) := "010";
-  CONSTANT out_mul_value_sel      : STD_LOGIC_VECTOR(2 DOWNTO 0) := "011";
-  CONSTANT out_shift_value_sel    : STD_LOGIC_VECTOR(2 DOWNTO 0) := "100";
-  CONSTANT out_rotate_value_sel   : STD_LOGIC_VECTOR(2 DOWNTO 0) := "101";
+  constant out_adder_value_sel    : std_logic_vector(2 downto 0) := "000";
+  constant out_logicals_value_sel : std_logic_vector(2 downto 0) := "001";
+  constant out_comp_value_sel     : std_logic_vector(2 downto 0) := "010";
+  constant out_mul_value_sel      : std_logic_vector(2 downto 0) := "011";
+  constant out_shift_value_sel    : std_logic_vector(2 downto 0) := "100";
+  constant out_rotate_value_sel   : std_logic_vector(2 downto 0) := "101";
 
-  SIGNAL comparator_eq_out  : STD_LOGIC;
-  SIGNAL comparator_gr_out  : STD_LOGIC;
-  SIGNAL comparator_lo_out  : STD_LOGIC;
-  SIGNAL comparator_ge_out  : STD_LOGIC;
-  SIGNAL comparator_le_out  : STD_LOGIC;
-  SIGNAL comparator_ne_out  : STD_LOGIC;
-  SIGNAL comparator_mux_out : STD_LOGIC_VECTOR(n-1 DOWNTO 0) := (OTHERS => '0');
+  signal comparator_eq_out  : std_logic;
+  signal comparator_gr_out  : std_logic;
+  signal comparator_lo_out  : std_logic;
+  signal comparator_ge_out  : std_logic;
+  signal comparator_le_out  : std_logic;
+  signal comparator_ne_out  : std_logic;
+  signal comparator_mux_out : std_logic_vector(n-1 downto 0) := (others => '0');
 
-BEGIN
+begin
 
 -- negated version od in_2 is used for sub operation
-  not_in_2_gate : not_gate_n GENERIC MAP (
+  not_in_2_gate : not_gate_n generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_s  => in_2,
       out_s => not_in_2
       );
 
 -- this mux select the input for p4_adder: s = 0 means in_2 (adding) else not in_2 (subtracting)
-  mux_in_2_select_comp : mux_n_2_1 GENERIC MAP (
+  mux_in_2_select_comp : mux_n_2_1 generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_0  => in_2,
       in_1  => not_in_2,
       s     => addsub_sel_in,
@@ -222,20 +222,20 @@ BEGIN
       );
 
 -- booth multiplier
-  booth_multiplier_comp : booth_multiplier GENERIC MAP (
+  booth_multiplier_comp : booth_multiplier generic map (
     n => n/2
-    ) PORT MAP (
-      in_1       => in_1(n/2-1 DOWNTO 0),
-      in_2       => in_2(n/2-1 DOWNTO 0),
+    ) port map (
+      in_1       => in_1(n/2-1 downto 0),
+      in_2       => in_2(n/2-1 downto 0),
       signed_mul => signed_mul,
       out_s      => mul_out
       );
 
 -- this adder is used for adding or subtracting two values (addsub_sel_in select the operation)
-  p4_adder_comp : p4_adder GENERIC MAP (
+  p4_adder_comp : p4_adder generic map (
     n          => n,
     carry_step => 4
-    ) PORT MAP (
+    ) port map (
       in_1      => in_1,
       in_2      => mux_in_2_select,
       carry_in  => addsub_sel_in,
@@ -244,9 +244,9 @@ BEGIN
       );
 
 -- this component does the logic operation between inputs
-  logicals_comp : logicals_n GENERIC MAP (
+  logicals_comp : logicals_n generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_1  => in_1,
       in_2  => in_2,
       logic => logicals_mode,
@@ -254,16 +254,16 @@ BEGIN
       );
 
   -- this zero_comparator is used for the comparator
-  adder_out_zero_comp : zero_comparator GENERIC MAP (
+  adder_out_zero_comp : zero_comparator generic map (
     n => n-1
-    ) PORT MAP (
-      in_s  => addsub_out(n-2 DOWNTO 0),
+    ) port map (
+      in_s  => addsub_out(n-2 downto 0),
       out_s => zero_comp_out
       );
 
   -- this comparator compares the carry out from adder and the zero_out from zero_comparator
   -- which kind comparison is choosen externally
-  comparator_comp : comparator PORT MAP (
+  comparator_comp : comparator port map (
     zero_out          => zero_comp_out,
     carry_out         => addsub_carry_out,
     sign_out          => addsub_out(n-1),
@@ -277,9 +277,9 @@ BEGIN
     );
 
 -- shifter
-  shifter_comp : shifter GENERIC MAP (
+  shifter_comp : shifter generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       base_vector    => in_1,
       shift_by_value => in_2,
       left_shift     => left_shift,
@@ -287,18 +287,18 @@ BEGIN
       out_s          => shift_out
       );
 -- rotator
-  rotator_comp : rotator GENERIC MAP (
+  rotator_comp : rotator generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       base_vector     => in_1,
       rotate_by_value => in_2,
       left_rotation   => left_shift,
       out_s           => rotate_out
       );
 -- insert: comparator_mux (6 inputs -> 1 outputs (1 bit))
-  comp_mux : mux_n_6_1 GENERIC MAP (
+  comp_mux : mux_n_6_1 generic map (
     n => 1
-    ) PORT MAP (
+    ) port map (
       in_0  => comp_eq_out,
       in_1  => comp_ne_out,
       in_2  => comp_gr_out,
@@ -306,12 +306,12 @@ BEGIN
       in_4  => comp_lo_out,
       in_5  => comp_le_out,
       s     => comp_mux_sel,
-      out_s => comp_mux_out(0 DOWNTO 0)
+      out_s => comp_mux_out(0 downto 0)
       );
 -- output_mux
-  out_mux : mux_n_6_1 GENERIC MAP (
+  out_mux : mux_n_6_1 generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_0  => addsub_out,
       in_1  => logicals_out,
       in_2  => comp_mux_out,
@@ -323,145 +323,145 @@ BEGIN
       );
 --
 
-  PROCESS(op_sel)
-  BEGIN
-    CASE op_sel IS
-      WHEN alu_add =>
+  process(op_sel)
+  begin
+    case op_sel is
+      when alu_add =>
         addsub_sel_in <= '0';
         out_mux_sel   <= out_adder_value_sel;
-      WHEN alu_sub =>
+      when alu_sub =>
         addsub_sel_in <= '1';
         out_mux_sel   <= out_adder_value_sel;
 
-      WHEN alu_and =>
+      when alu_and =>
         logicals_mode <= logicals_and;
         out_mux_sel   <= out_logicals_value_sel;
-      WHEN alu_or =>
+      when alu_or =>
         logicals_mode <= logicals_or;
         out_mux_sel   <= out_logicals_value_sel;
-      WHEN alu_xor =>
+      when alu_xor =>
         logicals_mode <= logicals_xor;
         out_mux_sel   <= out_logicals_value_sel;
-      WHEN alu_nand =>
+      when alu_nand =>
         logicals_mode <= logicals_nand;
         out_mux_sel   <= out_logicals_value_sel;
-      WHEN alu_nor =>
+      when alu_nor =>
         logicals_mode <= logicals_nor;
         out_mux_sel   <= out_logicals_value_sel;
-      WHEN alu_xnor =>
+      when alu_xnor =>
         logicals_mode <= logicals_xnor;
         out_mux_sel   <= out_logicals_value_sel;
 
-      WHEN alu_mul_signed =>
+      when alu_mul_signed =>
         out_mux_sel <= out_mul_value_sel;
         signed_mul  <= '1';
 
-      WHEN alu_mul =>
+      when alu_mul =>
         out_mux_sel <= out_mul_value_sel;
         signed_mul  <= '0';
 
-      WHEN alu_sll =>
+      when alu_sll =>
         left_shift  <= '1';
         arith_shift <= '0';
         out_mux_sel <= out_shift_value_sel;
-      WHEN alu_srl =>
+      when alu_srl =>
         left_shift  <= '0';
         arith_shift <= '0';
         out_mux_sel <= out_shift_value_sel;
-      WHEN alu_sra =>
+      when alu_sra =>
         left_shift  <= '0';
         arith_shift <= '1';
         out_mux_sel <= out_shift_value_sel;
 
-      WHEN alu_rol =>
+      when alu_rol =>
         left_shift  <= '1';
         out_mux_sel <= out_rotate_value_sel;
-      WHEN alu_ror =>
+      when alu_ror =>
         left_shift  <= '0';
         out_mux_sel <= out_rotate_value_sel;
 
-      WHEN alu_comp_eq =>
+      when alu_comp_eq =>
         addsub_sel_in     <= '1';
         signed_comparison <= '0';
         comp_mux_sel      <= comp_eq_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_ne =>
+      when alu_comp_ne =>
         addsub_sel_in     <= '1';
         signed_comparison <= '0';
         comp_mux_sel      <= comp_ne_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_gr =>
+      when alu_comp_gr =>
         addsub_sel_in     <= '1';
         signed_comparison <= '0';
         comp_mux_sel      <= comp_gr_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_ge =>
+      when alu_comp_ge =>
         addsub_sel_in     <= '1';
         signed_comparison <= '0';
         comp_mux_sel      <= comp_ge_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_lo =>
+      when alu_comp_lo =>
         addsub_sel_in     <= '1';
         signed_comparison <= '0';
         comp_mux_sel      <= comp_lo_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_le =>
+      when alu_comp_le =>
         addsub_sel_in     <= '1';
         signed_comparison <= '0';
         comp_mux_sel      <= comp_le_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_gr_signed =>
+      when alu_comp_gr_signed =>
         addsub_sel_in     <= '1';
         signed_comparison <= '1';
         comp_mux_sel      <= comp_gr_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_ge_signed =>
+      when alu_comp_ge_signed =>
         addsub_sel_in     <= '1';
         signed_comparison <= '1';
         comp_mux_sel      <= comp_ge_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_lo_signed =>
+      when alu_comp_lo_signed =>
         addsub_sel_in     <= '1';
         signed_comparison <= '1';
         comp_mux_sel      <= comp_lo_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN alu_comp_le_signed =>
+      when alu_comp_le_signed =>
         addsub_sel_in     <= '1';
         signed_comparison <= '1';
         comp_mux_sel      <= comp_le_sel;
         out_mux_sel       <= out_comp_value_sel;
-      WHEN OTHERS => NULL;
-    END CASE;
-  END PROCESS;
+      when others => null;
+    end case;
+  end process;
 
 --
 -- insert: divider
 --
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- structural configuration with behavioral components
-CONFIGURATION cfg_alu_behavioral OF alu IS
-  FOR behavioral
-    FOR not_in_2_gate         : not_gate_n USE CONFIGURATION work.cfg_not_gate_n_behavioral;
-    END FOR;
-    FOR mux_in_2_select_comp  : mux_n_2_1 USE CONFIGURATION work.cfg_mux_n_2_1_structural;
-    END FOR;
-    FOR booth_multiplier_comp : booth_multiplier USE CONFIGURATION work.cfg_booth_multiplier_structural;
-    END FOR;
-    FOR p4_adder_comp         : p4_adder USE CONFIGURATION work.cfg_p4_adder_structural;
-    END FOR;
-    FOR logicals_comp         : logicals_n USE CONFIGURATION work.cfg_logicals_n_structural_2;
-    END FOR;
-    FOR adder_out_zero_comp   : zero_comparator USE CONFIGURATION work.cfg_zero_comparator_behavioral;
-    END FOR;
-    FOR comparator_comp       : comparator USE CONFIGURATION work.cfg_comparator_behavioral;
-    END FOR;
-    FOR comp_mux              : mux_n_6_1 USE CONFIGURATION work.cfg_mux_n_6_1_behavioral;
-    END FOR;
-    FOR out_mux               : mux_n_6_1 USE CONFIGURATION work.cfg_mux_n_6_1_behavioral;
-    END FOR;
+configuration cfg_alu_behavioral of alu is
+  for behavioral
+    for not_in_2_gate         : not_gate_n use configuration work.cfg_not_gate_n_behavioral;
+    end for;
+    for mux_in_2_select_comp  : mux_n_2_1 use configuration work.cfg_mux_n_2_1_structural;
+    end for;
+    for booth_multiplier_comp : booth_multiplier use configuration work.cfg_booth_multiplier_structural;
+    end for;
+    for p4_adder_comp         : p4_adder use configuration work.cfg_p4_adder_structural;
+    end for;
+    for logicals_comp         : logicals_n use configuration work.cfg_logicals_n_structural_2;
+    end for;
+    for adder_out_zero_comp   : zero_comparator use configuration work.cfg_zero_comparator_behavioral;
+    end for;
+    for comparator_comp       : comparator use configuration work.cfg_comparator_behavioral;
+    end for;
+    for comp_mux              : mux_n_6_1 use configuration work.cfg_mux_n_6_1_behavioral;
+    end for;
+    for out_mux               : mux_n_6_1 use configuration work.cfg_mux_n_6_1_behavioral;
+    end for;
 
-  END FOR;
-END CONFIGURATION;
+  end for;
+end configuration;

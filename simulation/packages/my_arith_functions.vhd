@@ -1,37 +1,37 @@
-LIBRARY ieee;
-USE ieee.math_real.ALL;
+library ieee;
+use ieee.math_real.all;
 
-PACKAGE my_arith_functions IS
-  FUNCTION log2int (
-    n : INTEGER
+package my_arith_functions is
+  function log2int (
+    n : integer
     )
-    RETURN INTEGER;
-  FUNCTION log2int_own (
-    n : INTEGER
+    return integer;
+  function log2int_own (
+    n : integer
     )
-    RETURN INTEGER;
-END PACKAGE;
+    return integer;
+end package;
 
-PACKAGE BODY my_arith_functions IS
-  FUNCTION log2int (
-    n : INTEGER
-    ) RETURN INTEGER IS
-  BEGIN
-    RETURN INTEGER(ceil(log2(REAL(n))));
+package body my_arith_functions is
+  function log2int (
+    n : integer
+    ) return integer is
+  begin
+    return integer(ceil(log2(real(n))));
 
-  END FUNCTION;
+  end function;
 
-  FUNCTION log2int_own (
-    n : INTEGER
+  function log2int_own (
+    n : integer
     )
-    RETURN INTEGER IS
-    VARIABLE tmp : INTEGER := n;
-    VARIABLE ret : INTEGER := 0;
-  BEGIN
-    WHILE tmp > 0 LOOP
+    return integer is
+    variable tmp : integer := n;
+    variable ret : integer := 0;
+  begin
+    while tmp > 0 loop
       tmp := tmp/2;
       ret := ret + 1;
-    END LOOP;
-    RETURN ret;
-  END FUNCTION;
-END PACKAGE BODY;
+    end loop;
+    return ret;
+  end function;
+end package body;

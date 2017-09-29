@@ -1,64 +1,64 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
-ENTITY tb_booth_multiplier IS
-END ENTITY;
+entity tb_booth_multiplier is
+end entity;
 
-ARCHITECTURE behavioral OF tb_booth_multiplier IS
-  CONSTANT n : INTEGER := 4;
-  COMPONENT booth_multiplier IS
-    GENERIC (
-      n : INTEGER
+architecture behavioral of tb_booth_multiplier is
+  constant n : integer := 4;
+  component booth_multiplier is
+    generic (
+      n : integer
       );
-    PORT (
-      in_1       : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2       : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      signed_mul : IN  STD_LOGIC;
-      out_s      : OUT STD_LOGIC_VECTOR(2*n-1 DOWNTO 0)
+    port (
+      in_1       : in  std_logic_vector(n-1 downto 0);
+      in_2       : in  std_logic_vector(n-1 downto 0);
+      signed_mul : in  std_logic;
+      out_s      : out std_logic_vector(2*n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL in_1, in_2 : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL signed_mul : STD_LOGIC;
-  SIGNAL out_s      : STD_LOGIC_VECTOR(2*n-1 DOWNTO 0);
-BEGIN
+  signal in_1, in_2 : std_logic_vector(n-1 downto 0);
+  signal signed_mul : std_logic;
+  signal out_s      : std_logic_vector(2*n-1 downto 0);
+begin
 
 
-  dut : booth_multiplier GENERIC MAP (
+  dut : booth_multiplier generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       in_1       => in_1,
       in_2       => in_2,
       signed_mul => signed_mul,
       out_s      => out_s
       );
 
-  PROCESS
-  BEGIN
-    FOR k IN 0 TO 1 LOOP
-      IF k = 0 THEN
+  process
+  begin
+    for k in 0 to 1 loop
+      if k = 0 then
         signed_mul <= '0';
-      ELSE
+      else
         signed_mul <= '1';
-      END IF;
-      FOR i IN -1 TO 1 LOOP
+      end if;
+      for i in -1 to 1 loop
         in_1 <= conv_std_logic_vector(i, n);
-        FOR j IN -1 TO 1 LOOP
+        for j in -1 to 1 loop
           in_2 <= conv_std_logic_vector(j, n);
-          WAIT FOR 100 PS;
-        END LOOP;
-      END LOOP;
-    END LOOP;
-    ASSERT FALSE REPORT "testbench finished" SEVERITY FAILURE;
-  END PROCESS;
+          wait for 100 ps;
+        end loop;
+      end loop;
+    end loop;
+    assert false report "testbench finished" severity failure;
+  end process;
 
-END ARCHITECTURE;
+end architecture;
 
-CONFIGURATION cfg_tb_booth_multiplier_behavioral OF tb_booth_multiplier IS
-  FOR behavioral
-    FOR dut : booth_multiplier USE CONFIGURATION work.cfg_booth_multiplier_structural;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_tb_booth_multiplier_behavioral of tb_booth_multiplier is
+  for behavioral
+    for dut : booth_multiplier use configuration work.cfg_booth_multiplier_structural;
+    end for;
+  end for;
+end configuration;

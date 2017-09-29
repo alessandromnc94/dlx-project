@@ -1,8 +1,8 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-PACKAGE register_file_types IS
+package register_file_types is
 
-  TYPE reg_array IS (NATURAL RANGE <>) OF STD_LOGIC_VECTOR;
+  type reg_array is (natural range <>) of std_logic_vector;
 
-END PACKAGE;
+end package;

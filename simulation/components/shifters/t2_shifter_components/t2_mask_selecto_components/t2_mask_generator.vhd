@@ -1,106 +1,106 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_arith.ALL;
-USE ieee.std_logic_unsigned.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
 
-ENTITY t2_mask_generator IS
-  GENERIC (
-    n           : INTEGER := 32;
-    mask_offset : INTEGER := 3
+entity t2_mask_generator is
+  generic (
+    n           : integer := 32;
+    mask_offset : integer := 3
     );
-  PORT (
-    base_vector : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    left_shift  : IN  STD_LOGIC;
-    arith_shift : IN  STD_LOGIC;
-    out_s       : OUT STD_LOGIC_VECTOR(3*n+2**(mask_offset+1)-1 DOWNTO 0)
+  port (
+    base_vector : in  std_logic_vector(n-1 downto 0);
+    left_shift  : in  std_logic;
+    arith_shift : in  std_logic;
+    out_s       : out std_logic_vector(3*n+2**(mask_offset+1)-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF t2_mask_generator IS
+architecture behavioral of t2_mask_generator is
 
-BEGIN
-  out_s(3*n+2**(mask_offset+1)-1 DOWNTO 2*n+2**mask_offset) <= (OTHERS => arith_shift AND base_vector(n-1));
-  out_s(n+2**mask_offset-1 DOWNTO 0)                        <= (OTHERS => '0');
-  out_s(2*n+2**mask_offset-1 DOWNTO n+2*mask_offset)        <= base_vector;
+begin
+  out_s(3*n+2**(mask_offset+1)-1 downto 2*n+2**mask_offset) <= (others => arith_shift and base_vector(n-1));
+  out_s(n+2**mask_offset-1 downto 0)                        <= (others => '0');
+  out_s(2*n+2**mask_offset-1 downto n+2*mask_offset)        <= base_vector;
 
-END ARCHITECTURE;
+end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF t2_mask_generator IS
-  SIGNAL left_shift_mask, right_shift_mask : STD_LOGIC_VECTOR(2*n+2**mask_offset-1 DOWNTO 0);
+architecture structural of t2_mask_generator is
+  signal left_shift_mask, right_shift_mask : std_logic_vector(2*n+2**mask_offset-1 downto 0);
 
-  COMPONENT and_gate IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+  component and_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
-  COMPONENT mux_n_2_1 IS
-    GENERIC (
-      n : INTEGER
+  end component;
+  component mux_n_2_1 is
+    generic (
+      n : integer
       );
-    PORT (
-      in_0  : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_1  : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      s     : STD_LOGIC;
-      out_s : STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_0  : std_logic_vector(n-1 downto 0);
+      in_1  : std_logic_vector(n-1 downto 0);
+      s     : std_logic;
+      out_s : std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL extended_bit         : STD_LOGIC;
-  SIGNAL out_mux_1, out_mux_2 : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-BEGIN
+  signal extended_bit         : std_logic;
+  signal out_mux_1, out_mux_2 : std_logic_vector(n-1 downto 0);
+begin
 
-  extended_bit_and_gate : and_gate PORT MAP (
+  extended_bit_and_gate : and_gate port map (
     in_1  => base_vector(n-1),
     in_2  => arith_shift,
     out_s => extended_bit
     );
 
-  out_mux : mux_n_2_1 GENERIC MAP (
+  out_mux : mux_n_2_1 generic map (
     n => 2*n+2**mask_offset
-    ) PORT MAP (
+    ) port map (
       in_0  => right_shift_mask,
       in_1  => left_shift_mask,
       s     => left_shift,
       out_s => out_s
       );
 
-  left_shift_mask(n+2**mask_offset-1 DOWNTO 0)                 <= (OTHERS => '0');
-  left_shift_mask(2*n+2**mask_offset-1 DOWNTO n+2*mask_offset) <= base_vector;
-  right_shift_mask(n-1 DOWNTO 0)                               <= base_vector;
-  right_shift_mask(2*n+2**mask_offset-1 DOWNTO n)              <= (OTHERS => extended_bit);
+  left_shift_mask(n+2**mask_offset-1 downto 0)                 <= (others => '0');
+  left_shift_mask(2*n+2**mask_offset-1 downto n+2*mask_offset) <= base_vector;
+  right_shift_mask(n-1 downto 0)                               <= base_vector;
+  right_shift_mask(2*n+2**mask_offset-1 downto n)              <= (others => extended_bit);
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_t2_mask_generator_behavioral OF t2_mask_generator IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_t2_mask_generator_behavioral of t2_mask_generator is
+  for behavioral
+  end for;
+end configuration;
 
 -- structural configuration with behavioral components
-CONFIGURATION cfg_t2_mask_generator_structural_1 OF t2_mask_generator IS
-  FOR structural
-    FOR extended_bit_and_gate : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
-    END FOR;
-    FOR out_mux               : mux_n_2_1 USE CONFIGURATION work.cfg_mux_n_2_1_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_t2_mask_generator_structural_1 of t2_mask_generator is
+  for structural
+    for extended_bit_and_gate : and_gate use configuration work.cfg_and_gate_behavioral;
+    end for;
+    for out_mux               : mux_n_2_1 use configuration work.cfg_mux_n_2_1_behavioral;
+    end for;
+  end for;
+end configuration;
 
 -- structural configuration with structural components
-CONFIGURATION cfg_t2_mask_generator_structural_2 OF t2_mask_generator IS
-  FOR structural
-    FOR extended_bit_and_gate : and_gate USE CONFIGURATION work.cfg_and_gate_behavioral;
-    END FOR;
-    FOR out_mux               : mux_n_2_1 USE CONFIGURATION work.cfg_mux_n_2_1_structural;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_t2_mask_generator_structural_2 of t2_mask_generator is
+  for structural
+    for extended_bit_and_gate : and_gate use configuration work.cfg_and_gate_behavioral;
+    end for;
+    for out_mux               : mux_n_2_1 use configuration work.cfg_mux_n_2_1_structural;
+    end for;
+  end for;
+end configuration;

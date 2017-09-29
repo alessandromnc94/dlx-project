@@ -1,49 +1,49 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY comparator IS
-  PORT (
-    zero_out          : IN  STD_LOGIC;
-    carry_out         : IN  STD_LOGIC;
-    sign_out          : IN  STD_LOGIC;
-    signed_comparison : IN  STD_LOGIC;
-    eq_out            : OUT STD_LOGIC;
-    gr_out            : OUT STD_LOGIC;
-    lo_out            : OUT STD_LOGIC;
-    ge_out            : OUT STD_LOGIC;
-    le_out            : OUT STD_LOGIC;
-    ne_out            : OUT STD_LOGIC
+entity comparator is
+  port (
+    zero_out          : in  std_logic;
+    carry_out         : in  std_logic;
+    sign_out          : in  std_logic;
+    signed_comparison : in  std_logic;
+    eq_out            : out std_logic;
+    gr_out            : out std_logic;
+    lo_out            : out std_logic;
+    ge_out            : out std_logic;
+    le_out            : out std_logic;
+    ne_out            : out std_logic
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF comparator IS
-  SIGNAL c_out, z_out : STD_LOGIC;
+architecture behavioral of comparator is
+  signal c_out, z_out : std_logic;
 
-BEGIN
+begin
 -- unsigned comparison needs the value of carry_out
 -- signed comparison needs the negate value of carry_out
   -- c_out  <= signed_comparison xor carry_out;
-  c_out <= carry_out WHEN signed_comparison = '0' ELSE NOT sign_out;
-  z_out <= NOT sign_out AND zero_out;
+  c_out <= carry_out when signed_comparison = '0' else not sign_out;
+  z_out <= not sign_out and zero_out;
 
   eq_out <= z_out;
-  ne_out <= NOT z_out;
+  ne_out <= not z_out;
   ge_out <= c_out;
   -- ge_out <= c_out or zero_out;
-  lo_out <= (NOT c_out);
+  lo_out <= (not c_out);
   -- lo_out <= (not c_out) and (not zero_out);
-  gr_out <= ((NOT z_out) AND c_out);
-  le_out <= ((NOT c_out) OR z_out);
+  gr_out <= ((not z_out) and c_out);
+  le_out <= ((not c_out) or z_out);
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_comparator_behavioral OF comparator IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_comparator_behavioral of comparator is
+  for behavioral
+  end for;
+end configuration;

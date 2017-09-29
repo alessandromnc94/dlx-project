@@ -1,63 +1,63 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY pg_network IS
-  GENERIC (
-    n : INTEGER := 8
+entity pg_network is
+  generic (
+    n : integer := 8
     );
-  PORT (
-    in_1 : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-    in_2 : IN  STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-    pg   : OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-    g    : OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0)
+  port (
+    in_1 : in  std_logic_vector (n-1 downto 0);
+    in_2 : in  std_logic_vector (n-1 downto 0);
+    pg   : out std_logic_vector (n-1 downto 0);
+    g    : out std_logic_vector (n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- structural architecture
-ARCHITECTURE structural OF pg_network IS
-  COMPONENT pg_network_block IS
-    PORT (
-      in_1 : IN  STD_LOGIC;
-      in_2 : IN  STD_LOGIC;
-      pg   : OUT STD_LOGIC;
-      g    : OUT STD_LOGIC
+architecture structural of pg_network is
+  component pg_network_block is
+    port (
+      in_1 : in  std_logic;
+      in_2 : in  std_logic;
+      pg   : out std_logic;
+      g    : out std_logic
       );
-  END COMPONENT;
-BEGIN
+  end component;
+begin
 
-  pg_block_gen : FOR i IN 0 TO n-1 GENERATE
+  pg_block_gen : for i in 0 to n-1 generate
     pg_blockx : pg_network_block
-      PORT MAP (
+      port map (
         in_1 => in_1(i),
         in_2 => in_2(i),
         pg   => pg(i),
         g    => g(i)
         );
-  END GENERATE;
-END ARCHITECTURE;
+  end generate;
+end architecture;
 
 -- configurations
 
 -- structural configuration with behavioral components
-CONFIGURATION cfg_pg_network_structural_1 OF pg_network IS
-  FOR structural
-    FOR pg_block_gen
-      FOR ALL : pg_network_block
-        USE CONFIGURATION work.cfg_pg_network_block_behavioral;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_pg_network_structural_1 of pg_network is
+  for structural
+    for pg_block_gen
+      for all : pg_network_block
+        use configuration work.cfg_pg_network_block_behavioral;
+      end for;
+    end for;
+  end for;
+end configuration;
 
 -- structural configuration with structural components
-CONFIGURATION cfg_pg_network_structural_2 OF pg_network IS
-  FOR structural
-    FOR pg_block_gen
-      FOR ALL : pg_network_block
-        USE CONFIGURATION work.cfg_pg_network_block_structural;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_pg_network_structural_2 of pg_network is
+  for structural
+    for pg_block_gen
+      for all : pg_network_block
+        use configuration work.cfg_pg_network_block_structural;
+      end for;
+    end for;
+  end for;
+end configuration;

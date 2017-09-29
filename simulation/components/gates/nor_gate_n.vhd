@@ -1,61 +1,61 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY nor_gate_n IS
-  GENERIC (
-    n : INTEGER := 1
+entity nor_gate_n is
+  generic (
+    n : integer := 1
     )
-    PORT (
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF nor_gate_n IS
+architecture behavioral of nor_gate_n is
 
-  SIGNAL tmp_out_s : STD_LOGIC;
-BEGIN
-  out_s <= in_1 NOR in_2;
-END ARCHITECTURE;
+  signal tmp_out_s : std_logic;
+begin
+  out_s <= in_1 nor in_2;
+end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF nor_gate_n IS
-  COMPONENT nor_gate IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC
+architecture structural of nor_gate_n is
+  component nor_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-BEGIN
-  gate_gen : FOR i IN 0 TO n-1 GENERATE
-    nor_gate_x : nor_gate PORT MAP (
+begin
+  gate_gen : for i in 0 to n-1 generate
+    nor_gate_x : nor_gate port map (
       in_1  => in_1(i),
       in_2  => in_2(i),
       out_s => out_s(i)
       );
-  END GENERATE;
-END ARCHITECTURE;
+  end generate;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_nor_gate_n_behavioral OF nor_gate_n IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_nor_gate_n_behavioral of nor_gate_n is
+  for behavioral
+  end for;
+end configuration;
 
 -- structural configuration
-CONFIGURATION cfg_nor_gate_n_structural OF nor_gate_n IS
-  FOR structural
-    FOR gate_gen
-      FOR nor_gate_x : nor_gate USE CONFIGURATION work.cfg_nor_gate_behavioral;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_nor_gate_n_structural of nor_gate_n is
+  for structural
+    for gate_gen
+      for nor_gate_x : nor_gate use configuration work.cfg_nor_gate_behavioral;
+      end for;
+    end for;
+  end for;
+end configuration;

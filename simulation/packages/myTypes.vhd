@@ -1,13 +1,13 @@
-LIBRARY ieee;
+library ieee;
 
-PACKAGE mytypes IS
+package mytypes is
 
-  CONSTANT addrsize : INTEGER := 32;
-  SUBTYPE addregtype IS STD_LOGIC_VECTOR(addrsize-1 DOWNTO 0);
+  constant addrsize : integer := 32;
+  subtype addregtype is std_logic_vector(addrsize-1 downto 0);
 
-  CONSTANT regsize : INTEGER := 32;
-  SUBTYPE regtype IS STD_LOGIC_VECTOR(regsize-1 DOWNTO 0);
+  constant regsize : integer := 32;
+  subtype regtype is std_logic_vector(regsize-1 downto 0);
 
-  CONSTANT zero : addregtype := (OTHERS => '0');
+  constant zero : addregtype := (others => '0');
 
-END PACKAGE;
+end package;

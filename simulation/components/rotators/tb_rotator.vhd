@@ -1,60 +1,60 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY tb_rotator IS
-END ENTITY;
+entity tb_rotator is
+end entity;
 
-ARCHITECTURE behavioral OF tb_rotator IS
-  CONSTANT n : INTEGER := 4;
-  COMPONENT rotator IS
-    GENERIC (
-      n : INTEGER
+architecture behavioral of tb_rotator is
+  constant n : integer := 4;
+  component rotator is
+    generic (
+      n : integer
       );
-    PORT (
-      base_vector     : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      rotate_by_value : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      left_rotation   : IN  STD_LOGIC;
-      out_s           : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      base_vector     : in  std_logic_vector(n-1 downto 0);
+      rotate_by_value : in  std_logic_vector(n-1 downto 0);
+      left_rotation   : in  std_logic;
+      out_s           : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  SIGNAL base_vector, rotate_by_value, out_s : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL left_rotation                       : STD_LOGIC;
+  signal base_vector, rotate_by_value, out_s : std_logic_vector(n-1 downto 0);
+  signal left_rotation                       : std_logic;
 
-BEGIN
+begin
 
-  dut : rotator GENERIC MAP (
+  dut : rotator generic map (
     n => n
-    ) PORT MAP (
+    ) port map (
       base_vector     => base_vector,
       rotate_by_value => rotate_by_value,
       left_rotation   => left_rotation,
       out_s           => out_s
       );
 
-  PROCESS
-  BEGIN
+  process
+  begin
 
-    base_vector                 <= (n-1 DOWNTO 0 => '0');
+    base_vector                 <= (n-1 downto 0 => '0');
     base_vector(2)              <= '1';
-    rotate_by_value             <= (n-1 DOWNTO 2 => '0') & "11";
+    rotate_by_value             <= (n-1 downto 2 => '0') & "11";
     left_rotation               <= '1';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     left_rotation               <= '0';
-    WAIT FOR 1 NS;
-    base_vector(n-1 DOWNTO n-2) <= "11";
+    wait for 1 ns;
+    base_vector(n-1 downto n-2) <= "11";
     left_rotation               <= '1';
-    WAIT FOR 1 NS;
+    wait for 1 ns;
     left_rotation               <= '0';
-    WAIT FOR 1 NS;
-    ASSERT FALSE REPORT "testbench finished!" SEVERITY FAILURE;
-  END PROCESS;
+    wait for 1 ns;
+    assert false report "testbench finished!" severity failure;
+  end process;
 
-END ARCHITECTURE;
+end architecture;
 
-CONFIGURATION cfg_tb_rotator_behavioral OF tb_rotator IS
-  FOR behavioral
-    FOR dut : rotator USE CONFIGURATION work.cfg_rotator_behavioral;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_tb_rotator_behavioral of tb_rotator is
+  for behavioral
+    for dut : rotator use configuration work.cfg_rotator_behavioral;
+    end for;
+  end for;
+end configuration;

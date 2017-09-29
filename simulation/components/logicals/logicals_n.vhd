@@ -1,91 +1,91 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-USE work.logicals_types.ALL;
+use work.logicals_types.all;
 
-ENTITY logicals_n IS
-  GENERIC (
-    n : INTEGER := 8
+entity logicals_n is
+  generic (
+    n : integer := 8
     );
-  PORT (
-    in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    in_2  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    logic : IN  logicals_array;
-    out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    in_1  : in  std_logic_vector(n-1 downto 0);
+    in_2  : in  std_logic_vector(n-1 downto 0);
+    logic : in  logicals_array;
+    out_s : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
 -- architectures
 
 -- behavioral architecture
-ARCHITECTURE behavioral OF logicals_n IS
-  SIGNAL not_in_1, not_in_2 : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL nands_0            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL nands_1            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL nands_2            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-  SIGNAL nands_3            : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-BEGIN
+architecture behavioral of logicals_n is
+  signal not_in_1, not_in_2 : std_logic_vector(n-1 downto 0);
+  signal nands_0            : std_logic_vector(n-1 downto 0);
+  signal nands_1            : std_logic_vector(n-1 downto 0);
+  signal nands_2            : std_logic_vector(n-1 downto 0);
+  signal nands_3            : std_logic_vector(n-1 downto 0);
+begin
 
-  not_in_1 <= NOT in_1;
-  not_in_2 <= NOT in_2;
+  not_in_1 <= not in_1;
+  not_in_2 <= not in_2;
 
-  nands_0 <= NOT ((n-1 DOWNTO 0 => logic(0)) AND not_in_1 AND not_in_2);
-  nands_1 <= NOT ((n-1 DOWNTO 0 => logic(1)) AND not_in_1 AND (in_2));
-  nands_2 <= NOT ((n-1 DOWNTO 0 => logic(2)) AND in_1 AND not_in_2);
-  nands_3 <= NOT ((n-1 DOWNTO 0 => logic(3)) AND in_1 AND in_2);
+  nands_0 <= not ((n-1 downto 0 => logic(0)) and not_in_1 and not_in_2);
+  nands_1 <= not ((n-1 downto 0 => logic(1)) and not_in_1 and (in_2));
+  nands_2 <= not ((n-1 downto 0 => logic(2)) and in_1 and not_in_2);
+  nands_3 <= not ((n-1 downto 0 => logic(3)) and in_1 and in_2);
 
-  out_s <= NOT (nands_0 AND nands_1 AND nands_2 AND nands_3);
+  out_s <= not (nands_0 and nands_1 and nands_2 and nands_3);
 
-END ARCHITECTURE;
+end architecture;
 
 -- structural architecture
-ARCHITECTURE structural OF logicals_n IS
-  COMPONENT logicals IS
-    PORT (
-      in_1  : IN  STD_LOGIC;
-      in_2  : IN  STD_LOGIC;
-      logic : IN  logicals_array;
-      out_s : OUT STD_LOGIC
+architecture structural of logicals_n is
+  component logicals is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      logic : in  logicals_array;
+      out_s : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-BEGIN
+begin
 
-  logicals_gen : FOR i IN 0 TO n-1 GENERATE
-    logicals_x : logicals PORT MAP (
+  logicals_gen : for i in 0 to n-1 generate
+    logicals_x : logicals port map (
       in_1  => in_1(i),
       in_2  => in_2(i),
       logic => logic,
       out_s => out_s(i)
       );
-  END GENERATE;
+  end generate;
 
-END ARCHITECTURE;
+end architecture;
 
 -- configurations
 
 -- behavioral configuration
-CONFIGURATION cfg_logicals_n_behavioral OF logicals_n IS
-  FOR behavioral
-  END FOR;
-END CONFIGURATION;
+configuration cfg_logicals_n_behavioral of logicals_n is
+  for behavioral
+  end for;
+end configuration;
 
 -- structural configuration with behavioral components
-CONFIGURATION cfg_logicals_n_structural_1 OF logicals_n IS
-  FOR structural
-    FOR logicals_gen
-      FOR logicals_x : logicals USE CONFIGURATION work.cfg_logicals_behavioral;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_logicals_n_structural_1 of logicals_n is
+  for structural
+    for logicals_gen
+      for logicals_x : logicals use configuration work.cfg_logicals_behavioral;
+      end for;
+    end for;
+  end for;
+end configuration;
 
 -- structural configuration with structural components
-CONFIGURATION cfg_logicals_n_structural_2 OF logicals_n IS
-  FOR structural
-    FOR logicals_gen
-      FOR logicals_x : logicals USE CONFIGURATION work.cfg_logicals_structural;
-      END FOR;
-    END FOR;
-  END FOR;
-END CONFIGURATION;
+configuration cfg_logicals_n_structural_2 of logicals_n is
+  for structural
+    for logicals_gen
+      for logicals_x : logicals use configuration work.cfg_logicals_structural;
+      end for;
+    end for;
+  end for;
+end configuration;
