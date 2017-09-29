@@ -44,13 +44,23 @@ begin
         registers <= (others => (others => '0'));
       elsif enable = '1' then
         if wr = '1' then
-          registers(conv_integer(add_wr)) <= datain;
+          if conv_integer(add_wr) /= 0 then
+            registers(conv_integer(add_wr)) <= datain;
+          end if;
         end if;
         if rd1 = '1' then
-          out1 <= registers(conv_integer(add_rd1));
+          if conv_integer(add_rd1) = 0 then
+            out1 <= (OTHERS => '0');
+          else
+            out1 <= registers(conv_integer(add_rd1));
+          end if;
         end if;
         if rd2 = '1' then
-          out2 <= registers(conv_integer(add_rd2));
+          if conv_integer(add_rd2) = 0 then
+            out2 <= (OTHERS => '0');
+          else
+            out2 <= registers(conv_integer(add_rd2));
+        end if;
         end if;
       end if;
     end if;
