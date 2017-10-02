@@ -55,6 +55,7 @@ ENTITY datapath IS
     m3s    : IN     STD_LOGIC;          --mux 3 selector
     aor    : IN     STD_LOGIC;          --alu_out register reset
     aoe    : IN     STD_LOGIC;          --alu_out registes enable
+    msksel1: IN     STD_LOGIC_VECTOR(1 DOWNTO 0); --selector for store byte mask
     mer    : IN     STD_LOGIC;          --me register reset
     mee    : IN     STD_LOGIC;          --me register enable
     mps    : IN     STD_LOGIC;          --mux from PC selector
@@ -62,6 +63,7 @@ ENTITY datapath IS
     -- 4th stage
     r1r    : IN     STD_LOGIC;          --register 1 reset
     r1e    : IN     STD_LOGIC;          --register 1 enable
+    msksel2: IN     STD_LOGIC_VECTOR(1 DOWNTO 0); --selector for load byte mask
     lmdr   : IN     STD_LOGIC;          --lmd register reset
     lmde   : IN     STD_LOGIC;          --lmd register reset
     m4s    : IN     STD_LOGIC;          --mux 5 selector
@@ -195,12 +197,23 @@ ARCHITECTURE structural OF datapath IS
       out_s  : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
       );
   END COMPONENT;
+  
+  COMPONENT Mask IS
+    GENERIC (
+      n : INTEGER := 32
+      );
+    PORT (
+      a   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
+      sel : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
+      b   : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+      );
+  END COMPONENT;
 
   SIGNAL pcin, npcin, npcout, pcregout                                                    : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
   SIGNAL irout                                                                            : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
   SIGNAL om5, ain, bin, immin, aout, bout, immout, fuo1, fuo2, fuo3                       : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
   SIGNAL fuo4, om1, om2, om3, om4, oalu, r1out, lmdout, ompc                              : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
-  SIGNAL omopc, wri                                                                       : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
+  SIGNAL omopc, wri, msk1out, msk2out                                                     : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
   SIGNAL fum                                                                              : STD_LOGIC_VECTOR(1 DOWNTO 0);
   
 BEGIN
@@ -244,8 +257,10 @@ BEGIN
     PORT MAP(om1, pcregout, mps, ompc);
   muxoffpc : mux_n_2_1 GENERIC MAP(n => n_bit)
     PORT MAP(om3, offconst, mss, omopc);
+  mask01 : Mask GENERIC MAP(n => n_bit)
+    PORT MAP(bout, msksel1, msk1out);
   me : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(bout, clk, mer, '0', mee, meout);
+    PORT MAP(msk1out, clk, mer, '0', mee, meout);
   aluinst : alu GENERIC MAP(n => n_bit)
     PORT MAP(ompc, omopc, alusel, oalu);
   aluoutinst : register_n GENERIC MAP(n => n_bit)
@@ -256,8 +271,10 @@ BEGIN
   --memory stage
   reg1inst : register_n GENERIC MAP(n => n_bit)
     PORT MAP(aluout, clk, r1r, '0', r1e, r1out);
+  mask02 : Mask GENERIC MAP(n => n_bit)
+    PORT MAP(lmdin, msksel2, msk2out);
   lmd : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(lmdin, clk, lmdr, '0', lmde, lmdout);
+    PORT MAP(msk2out, clk, lmdr, '0', lmde, lmdout);
   mux4 : mux_n_2_1 GENERIC MAP(n => n_bit)
     PORT MAP(r1out, lmdout, m4s, om4);
 
