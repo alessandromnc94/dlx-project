@@ -56,6 +56,7 @@ ENTITY datapath IS
     aor    : IN     STD_LOGIC;          --alu_out register reset
     aoe    : IN     STD_LOGIC;          --alu_out registes enable
     msksel1: IN     STD_LOGIC_VECTOR(1 DOWNTO 0); --selector for store byte mask
+    msksigned1 : in std_logic; -- mask is signed if enabled
     mer    : IN     STD_LOGIC;          --me register reset
     mee    : IN     STD_LOGIC;          --me register enable
     mps    : IN     STD_LOGIC;          --mux from PC selector
@@ -64,6 +65,7 @@ ENTITY datapath IS
     r1r    : IN     STD_LOGIC;          --register 1 reset
     r1e    : IN     STD_LOGIC;          --register 1 enable
     msksel2: IN     STD_LOGIC_VECTOR(1 DOWNTO 0); --selector for load byte mask
+    msksigned2 : in std_logic; -- mask is signed if enabled
     lmdr   : IN     STD_LOGIC;          --lmd register reset
     lmde   : IN     STD_LOGIC;          --lmd register reset
     m4s    : IN     STD_LOGIC;          --mux 5 selector
@@ -205,6 +207,7 @@ ARCHITECTURE structural OF datapath IS
     PORT (
       a   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
       sel : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
+      sign_extend : in std_logic;
       b   : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
       );
   END COMPONENT;
@@ -258,7 +261,7 @@ BEGIN
   muxoffpc : mux_n_2_1 GENERIC MAP(n => n_bit)
     PORT MAP(om3, offconst, mss, omopc);
   mask01 : Mask GENERIC MAP(n => n_bit)
-    PORT MAP(bout, msksel1, msk1out);
+    PORT MAP(bout, msksel1, msksigned1, msk1out);
   me : register_n GENERIC MAP(n => n_bit)
     PORT MAP(msk1out, clk, mer, '0', mee, meout);
   aluinst : alu GENERIC MAP(n => n_bit)
@@ -272,7 +275,7 @@ BEGIN
   reg1inst : register_n GENERIC MAP(n => n_bit)
     PORT MAP(aluout, clk, r1r, '0', r1e, r1out);
   mask02 : Mask GENERIC MAP(n => n_bit)
-    PORT MAP(lmdin, msksel2, msk2out);
+    PORT MAP(lmdin, msksel2, msksigned2, msk2out);
   lmd : register_n GENERIC MAP(n => n_bit)
     PORT MAP(msk2out, clk, lmdr, '0', lmde, lmdout);
   mux4 : mux_n_2_1 GENERIC MAP(n => n_bit)

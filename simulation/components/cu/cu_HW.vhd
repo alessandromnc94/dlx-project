@@ -52,12 +52,16 @@ entity cu_hw is
     bypass_imm        : out std_logic;
     alu_out_reg_reset : out std_logic;
     alu_out_reg_en    : out std_logic;
+    alu_mem_masksel : out std_logic_vector(1 downto 0);
+    alu_mem_masksigned : out std_logic;
     -- fourth pipe stage outputs: memory
     dram_write_en     : out std_logic;
     dram_read_en      : out std_logic;
     lmd_reg_reset     : out std_logic;
     lmd_reg_en        : out std_logic;
     alu_out_for       : out std_logic;
+    lmd_masksel : out std_logic_vector(1 downto 0);
+    lmd_masksigned : out std_logic;
     -- fifth pipe stage outputs: write back
     rf_latch_en       : out std_logic;
     wb_mux_sel        : out std_logic;
@@ -92,11 +96,11 @@ architecture behavioral of cu_hw is
   signal cw1              : cw_array                                    := (others => '0');
   constant cw2_array_size : integer                                     := cw1_array_size-6;
   signal cw2              : std_logic_vector(cw2_array_size-1 downto 0) := (others => '0');
-  constant cw3_array_size : integer                                     := cw2_array_size-17;
+  constant cw3_array_size : integer                                     := cw2_array_size-10;
   signal cw3              : std_logic_vector(cw3_array_size-1 downto 0) := (others => '0');
-  constant cw4_array_size : integer                                     := cw3_array_size-11;
+  constant cw4_array_size : integer                                     := cw3_array_size-10;
   signal cw4              : std_logic_vector(cw4_array_size-1 downto 0) := (others => '0');
-  constant cw5_array_size : integer                                     := cw4_array_size-5;
+  constant cw5_array_size : integer                                     := cw4_array_size-7;
   signal cw5              : std_logic_vector(cw5_array_size-1 downto 0) := (others => '0');
   -- delay alu control word
   signal alu1, alu2, alu3 : alu_array                                   := (others => '0');
@@ -135,11 +139,15 @@ begin
   alu_reg_1_for_add <= cw3(cw3_array_size-5);
   alu_reg_2_for_add <= cw3(cw3_array_size-6);
   bypass_imm        <= cw3(cw3_array_size-7);
+  alu_mem_masksel <= cw3(cw3_array_size-8 downto cw3_array_size-9);
+  alu_mem_masksigned <= cw3(cw3_array_size-10);
   -- fourth pipe stage outputs
   dram_write_en     <= cw4(cw4_array_size-1);
   dram_read_en      <= cw4(cw4_array_size-2);
   lmd_reg_reset     <= cw4(cw4_array_size-3);
   lmd_reg_en        <= cw4(cw4_array_size-4);
+  lmd_masksel <= cw4(cw4_array_size-5 downto cw4_array_size-6);
+  lmd_masksigned <= cw4(cw4_array_size-7);
   -- fifth pipe stage outputs
   rf_latch_en       <= cw5(cw5_array_size-1);
   wb_mux_sel        <= cw5(cw5_array_size-2);
