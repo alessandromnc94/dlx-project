@@ -1,4 +1,4 @@
 # mantieni path con .gitkeep
 !.gitkeep
 # ignora cartella script personali
-scripts/ignore/
+ignore/
