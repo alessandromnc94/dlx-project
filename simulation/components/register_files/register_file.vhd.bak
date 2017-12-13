@@ -30,7 +30,7 @@ end entity;
 architecture behavioral of register_file is
 
   -- define type for registers array
-  type reg_array is array(natural range <>) of std_logic_vector(width_data-1 downto 0);
+  type reg_array is (natural range) of std_logic_vector(width_data-1 downto 0);
 
   signal registers : reg_array(0 to 2**width_add-1) := (others => (others => '0'));
 
@@ -50,17 +50,17 @@ begin
         end if;
         if rd1 = '1' then
           if conv_integer(add_rd1) = 0 then
-            out1 <= (others => '0');
+            out1 <= (OTHERS => '0');
           else
             out1 <= registers(conv_integer(add_rd1));
           end if;
         end if;
         if rd2 = '1' then
           if conv_integer(add_rd2) = 0 then
-            out2 <= (others => '0');
+            out2 <= (OTHERS => '0');
           else
             out2 <= registers(conv_integer(add_rd2));
-          end if;
+        end if;
         end if;
       end if;
     end if;

@@ -1,35 +1,35 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY Mask IS
-  GENERIC (
-    n : INTEGER := 32
+entity mask is
+  generic (
+    n : integer := 32
     );
-  PORT (
-    a   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    sel : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
-    sign_extend : in std_logic;
-    b   : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    a           : in  std_logic_vector(n-1 downto 0);
+    sel         : in  std_logic_vector(1 downto 0);
+    sign_extend : in  std_logic;
+    b           : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE behavioral OF Mask IS
-  
-  BEGIN
+architecture behavioral of mask is
 
-    PROCESS(a , sel)
-      
-      BEGIN
-        
-        CASE sel IS
-          
-          WHEN "00"   => b <= a;
-          WHEN "01"   => b(n-1 DOWNTO 8) <= (OTHERS => b(7) and sign_extend); b(7 DOWNTO 0) <= a(7 DOWNTO 0);
-          WHEN "10"   => b(n-1 DOWNTO 16) <= (OTHERS => b(15) and sign_extend); b(15 DOWNTO 0) <= a(15 DOWNTO 0);
-          WHEN OTHERS => b <= a;
-            
-          END CASE;
-        
-    END PROCESS;
-    
-END ARCHITECTURE;
+begin
+
+  process(a, sel)
+
+  begin
+
+    case sel is
+
+      when "00"   => b                <= a;
+      when "01"   => b(n-1 downto 8)  <= (others => a(7) and sign_extend); b(7 downto 0) <= a(7 downto 0);
+      when "10"   => b(n-1 downto 16) <= (others => a(15) and sign_extend); b(15 downto 0) <= a(15 downto 0);
+      when others => b                <= a;
+
+    end case;
+
+  end process;
+
+end architecture;

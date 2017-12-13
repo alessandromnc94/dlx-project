@@ -1,288 +1,288 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE work.alu_types.ALL;
-USE work.my_const.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use work.alu_types.all;
+use work.my_const.all;
 
 
-ENTITY datapath IS
-  GENERIC (
-    imm_val_size  : INTEGER := 16;
-    j_val_size    : INTEGER := 26;
-    reg_addr_size : INTEGER := 5
+entity datapath is
+  generic (
+    imm_val_size  : integer := 16;
+    j_val_size    : integer := 26;
+    reg_addr_size : integer := 5
     );
-  PORT (
+  port (
     -- input
-    instr  : IN     STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);  --current instruction from iram, feeds the ir
-    lmdin  : IN     STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);  --lmd register data input
-    clk    : IN     STD_LOGIC;          --clock signal
+    instr      : in     std_logic_vector(n_bit-1 downto 0);  --current instruction from iram, feeds the ir
+    lmdin      : in     std_logic_vector(n_bit-1 downto 0);  --lmd register data input
+    clk        : in     std_logic;      --clock signal
     -- 1st stage
-    pcr    : IN     STD_LOGIC;          --program counter reset
-    pce    : IN     STD_LOGIC;          --program counter enable
-    npcr   : IN     STD_LOGIC;          --npc reset
-    npce   : IN     STD_LOGIC;          --npc counter enable
-    irr    : IN     STD_LOGIC;          --instruction register reset
-    ire    : IN     STD_LOGIC;          --instruction register enable
+    pcr        : in     std_logic;      --program counter reset
+    pce        : in     std_logic;      --program counter enable
+    npcr       : in     std_logic;      --npc reset
+    npce       : in     std_logic;      --npc counter enable
+    irr        : in     std_logic;      --instruction register reset
+    ire        : in     std_logic;      --instruction register enable
     -- 2nd stage
     --register file signals
-    rfr    : IN     STD_LOGIC;          --reset
-    rfe    : IN     STD_LOGIC;          --enable
-    rfr1   : IN     STD_LOGIC;          --read enable 1
-    rfr2   : IN     STD_LOGIC;          --read enable 2
-    rfw    : IN     STD_LOGIC;          --write enable
+    rfr        : in     std_logic;      --reset
+    rfe        : in     std_logic;      --enable
+    rfr1       : in     std_logic;      --read enable 1
+    rfr2       : in     std_logic;      --read enable 2
+    rfw        : in     std_logic;      --write enable
     --branch unit signals
-    be     : IN     STD_LOGIC;          --beqz/!bnez
-    jr     : IN     STD_LOGIC;          --jr/!nojr
-    jmp    : IN     STD_LOGIC;          --jmp/!nojmp
+    be         : in     std_logic;      --beqz/!bnez
+    jr         : in     std_logic;      --jr/!nojr
+    jmp        : in     std_logic;      --jmp/!nojmp
     --sign extender and registers signals
-    see    : IN     STD_LOGIC;          --sign extender enable
-    ar     : IN     STD_LOGIC;          --a register reset
-    ae     : IN     STD_LOGIC;          --a register enable
-    br     : IN     STD_LOGIC;          --b register reset
-    ben    : IN     STD_LOGIC;          --b register enable
-    ir     : IN     STD_LOGIC;          --immediate register enable
-    ie     : IN     STD_LOGIC;          --immediate register enable
-    prr    : IN     STD_LOGIC;          --PC pipeline reg reset
-    pre    : IN     STD_LOGIC;          --PC pipeline reg enable
+    see        : in     std_logic;      --sign extender enable
+    ar         : in     std_logic;      --a register reset
+    ae         : in     std_logic;      --a register enable
+    br         : in     std_logic;      --b register reset
+    ben        : in     std_logic;      --b register enable
+    ir         : in     std_logic;      --immediate register enable
+    ie         : in     std_logic;      --immediate register enable
+    prr        : in     std_logic;      --pc pipeline reg reset
+    pre        : in     std_logic;      --pc pipeline reg enable
     -- 3rd stage
     --forwarding unit signals
-    arf1   : IN     STD_LOGIC_VECTOR(reg_addr_size-1 DOWNTO 0);  --addresses of registers for the current operation(content of a and b registers) 
-    arf2   : IN     STD_LOGIC_VECTOR(reg_addr_size-1 DOWNTO 0);
-    exear  : IN     STD_LOGIC_VECTOR(reg_addr_size-1 DOWNTO 0);  --address of reg in execute stage
-    memar  : IN     STD_LOGIC_VECTOR(reg_addr_size-1 DOWNTO 0);  --address of reg in memory stage
+    arf1       : in     std_logic_vector(reg_addr_size-1 downto 0);  --addresses of registers for the current operation(content of a and b registers) 
+    arf2       : in     std_logic_vector(reg_addr_size-1 downto 0);
+    exear      : in     std_logic_vector(reg_addr_size-1 downto 0);  --address of reg in execute stage
+    memar      : in     std_logic_vector(reg_addr_size-1 downto 0);  --address of reg in memory stage
     --alu signals
-    alusel : IN     alu_array;          --alu operation selectors
+    alusel     : in     alu_array;      --alu operation selectors
     --muxes and registers signals
-    m3s    : IN     STD_LOGIC;          --mux 3 selector
-    aor    : IN     STD_LOGIC;          --alu_out register reset
-    aoe    : IN     STD_LOGIC;          --alu_out registes enable
-    msksel1: IN     STD_LOGIC_VECTOR(1 DOWNTO 0); --selector for store byte mask
-    msksigned1 : in std_logic; -- mask is signed if enabled
-    mer    : IN     STD_LOGIC;          --me register reset
-    mee    : IN     STD_LOGIC;          --me register enable
-    mps    : IN     STD_LOGIC;          --mux from PC selector
-    mss    : IN     STD_LOGIC;          --mux to sum 8 to PC selector
+    m3s        : in     std_logic;      --mux 3 selector
+    aor        : in     std_logic;      --alu_out register reset
+    aoe        : in     std_logic;      --alu_out registes enable
+    msksel1    : in     std_logic_vector(1 downto 0);  --selector for store byte mask
+    msksigned1 : in     std_logic;      -- mask is signed if enabled
+    mer        : in     std_logic;      --me register reset
+    mee        : in     std_logic;      --me register enable
+    mps        : in     std_logic;      --mux from pc selector
+    mss        : in     std_logic;      --mux to sum 8 to pc selector
     -- 4th stage
-    r1r    : IN     STD_LOGIC;          --register 1 reset
-    r1e    : IN     STD_LOGIC;          --register 1 enable
-    msksel2: IN     STD_LOGIC_VECTOR(1 DOWNTO 0); --selector for load byte mask
-    msksigned2 : in std_logic; -- mask is signed if enabled
-    lmdr   : IN     STD_LOGIC;          --lmd register reset
-    lmde   : IN     STD_LOGIC;          --lmd register reset
-    m4s    : IN     STD_LOGIC;          --mux 5 selector
+    r1r        : in     std_logic;      --register 1 reset
+    r1e        : in     std_logic;      --register 1 enable
+    msksel2    : in     std_logic_vector(1 downto 0);  --selector for load byte mask
+    msksigned2 : in     std_logic;      -- mask is signed if enabled
+    lmdr       : in     std_logic;      --lmd register reset
+    lmde       : in     std_logic;      --lmd register reset
+    m4s        : in     std_logic;      --mux 5 selector
     -- 5th stage
-    m5s    : IN     STD_LOGIC;          --mux 5 selector
-    mws    : IN     STD_LOGIC;          --write addr mux selector(mux is physically in decode stage, but driven in WB stage)
+    m5s        : in     std_logic;      --mux 5 selector
+    mws        : in     std_logic;  --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
     -- outputs
-    pcout  : BUFFER STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);  --program counter output per le dimensioni puoi cambiarlo, la iram puo' essere diversa dalla dram
-    aluout : BUFFER STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);  --alu outpud data
-    meout  : OUT    STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0)         --me register data out
+    pcout      : buffer std_logic_vector(n_bit-1 downto 0);  --program counter output per le dimensioni puoi cambiarlo, la iram puo' essere diversa dalla dram
+    aluout     : buffer std_logic_vector(n_bit-1 downto 0);  --alu outpud data
+    meout      : out    std_logic_vector(n_bit-1 downto 0)  --me register data out
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE structural OF datapath IS
+architecture structural of datapath is
 
-  COMPONENT register_n IS
-    GENERIC (
-      n : INTEGER := 8
+  component register_n is
+    generic (
+      n : integer := 8
       );
-    PORT (
-      din  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      clk  : IN  STD_LOGIC;
-      rst  : IN  STD_LOGIC;
-      set  : IN  STD_LOGIC;
-      en   : IN  STD_LOGIC;
-      dout : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      din  : in  std_logic_vector(n-1 downto 0);
+      clk  : in  std_logic;
+      rst  : in  std_logic;
+      set  : in  std_logic;
+      en   : in  std_logic;
+      dout : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT rca_n IS
-    GENERIC (
-      n : INTEGER := 4
+  component rca_n is
+    generic (
+      n : integer := 4
       );
-    PORT (
-      in_1      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2      : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      carry_in  : IN  STD_LOGIC;
-      sum       : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      carry_out : OUT STD_LOGIC
+    port (
+      in_1      : in  std_logic_vector(n-1 downto 0);
+      in_2      : in  std_logic_vector(n-1 downto 0);
+      carry_in  : in  std_logic;
+      sum       : out std_logic_vector(n-1 downto 0);
+      carry_out : out std_logic
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT branch_unit IS
-    GENERIC (
-      n1 : INTEGER := 32
+  component branch_unit is
+    generic (
+      n1 : integer := 32
       );
-    PORT (
-      imm : IN  STD_LOGIC_VECTOR(n1-1 DOWNTO 0);  --from datapath
-      reg : IN  STD_LOGIC_VECTOR(n1-1 DOWNTO 0);
-      npc : IN  STD_LOGIC_VECTOR(n1-1 DOWNTO 0);
-      be  : IN  STD_LOGIC;                        --from cu
-      jr  : IN  STD_LOGIC;
-      jmp : IN  STD_LOGIC;
-      pc  : OUT STD_LOGIC_VECTOR(n1-1 DOWNTO 0)
+    port (
+      imm : in  std_logic_vector(n1-1 downto 0);  --from datapath
+      reg : in  std_logic_vector(n1-1 downto 0);
+      npc : in  std_logic_vector(n1-1 downto 0);
+      be  : in  std_logic;                        --from cu
+      jr  : in  std_logic;
+      jmp : in  std_logic;
+      pc  : out std_logic_vector(n1-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT register_file IS
-    GENERIC (
-      width_add  : INTEGER := 5;
-      width_data : INTEGER := 64
+  component register_file is
+    generic (
+      width_add  : integer := 5;
+      width_data : integer := 64
       );
-    PORT (
-      clk     : IN  STD_LOGIC;
-      reset   : IN  STD_LOGIC;
-      enable  : IN  STD_LOGIC;
-      rd1     : IN  STD_LOGIC;
-      rd2     : IN  STD_LOGIC;
-      wr      : IN  STD_LOGIC;
-      add_wr  : IN  STD_LOGIC_VECTOR(width_add-1 DOWNTO 0);
-      add_rd1 : IN  STD_LOGIC_VECTOR(width_add-1 DOWNTO 0);
-      add_rd2 : IN  STD_LOGIC_VECTOR(width_add-1 DOWNTO 0);
-      datain  : IN  STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-      out1    : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0);
-      out2    : OUT STD_LOGIC_VECTOR(width_data-1 DOWNTO 0)
+    port (
+      clk     : in  std_logic;
+      reset   : in  std_logic;
+      enable  : in  std_logic;
+      rd1     : in  std_logic;
+      rd2     : in  std_logic;
+      wr      : in  std_logic;
+      add_wr  : in  std_logic_vector(width_add-1 downto 0);
+      add_rd1 : in  std_logic_vector(width_add-1 downto 0);
+      add_rd2 : in  std_logic_vector(width_add-1 downto 0);
+      datain  : in  std_logic_vector(width_data-1 downto 0);
+      out1    : out std_logic_vector(width_data-1 downto 0);
+      out2    : out std_logic_vector(width_data-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT sign_extender IS
-    GENERIC (
-      n_in  : INTEGER := 32;
-      n_out : INTEGER := 2*n_in
+  component sign_extender is
+    generic (
+      n_in  : integer := 32;
+      n_out : integer := 64
       );
-    PORT (
-      in_s  : IN  STD_LOGIC_VECTOR(n_in-1 DOWNTO 0);
-      en    : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC_VECTOR(n_out-1 DOWNTO 0)
+    port (
+      in_s  : in  std_logic_vector(n_in-1 downto 0);
+      en    : in  std_logic;
+      out_s : out std_logic_vector(n_out-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT forwarding_unit IS
-    GENERIC (
-      n : INTEGER := 32;                --address length
-      m : INTEGER := 32                 --data length
+  component forwarding_unit is
+    generic (
+      n : integer := 32;                --address length
+      m : integer := 32                 --data length
       );
-    PORT (
-      arf1    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);  --addresses of regisers for the current operation 
-      arf2    : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      exear   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);  --adrress of reg in execute stage
-      memar   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);  --adrress of reg in memory stage
-      exed    : IN  STD_LOGIC_VECTOR(m-1 DOWNTO 0);  -- data coming from execute stage
-      memd    : IN  STD_LOGIC_VECTOR(m-1 DOWNTO 0);  -- data coming from memory stage
-      clk     : IN  STD_LOGIC;
-      out_mux : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
-      dout1   : OUT STD_LOGIC_VECTOR(m-1 DOWNTO 0);  -- data to be forwarded
-      dout2   : OUT STD_LOGIC_VECTOR(m-1 DOWNTO 0)
+    port (
+      arf1    : in  std_logic_vector(n-1 downto 0);  --addresses of regisers for the current operation 
+      arf2    : in  std_logic_vector(n-1 downto 0);
+      exear   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in execute stage
+      memar   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in memory stage
+      exed    : in  std_logic_vector(m-1 downto 0);  -- data coming from execute stage
+      memd    : in  std_logic_vector(m-1 downto 0);  -- data coming from memory stage
+      clk     : in  std_logic;
+      out_mux : out std_logic_vector(1 downto 0);
+      dout1   : out std_logic_vector(m-1 downto 0);  -- data to be forwarded
+      dout2   : out std_logic_vector(m-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT mux_n_2_1 IS
-    GENERIC (
-      n : INTEGER := 1
+  component mux_n_2_1 is
+    generic (
+      n : integer := 1
       );
-    PORT (
-      in_0  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_1  : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      s     : IN  STD_LOGIC;
-      out_s : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+    port (
+      in_0  : in  std_logic_vector(n-1 downto 0);
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      s     : in  std_logic;
+      out_s : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
+  end component;
 
-  COMPONENT alu IS
-    GENERIC (
-      n : INTEGER := 32
+  component alu is
+    generic (
+      n : integer := 32
       );
-    PORT (
-      in_1   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      in_2   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      op_sel : IN  alu_array;
+    port (
+      in_1   : in  std_logic_vector(n-1 downto 0);
+      in_2   : in  std_logic_vector(n-1 downto 0);
+      op_sel : in  alu_array;
       -- outputs
-      out_s  : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+      out_s  : out std_logic_vector(n-1 downto 0)
       );
-  END COMPONENT;
-  
-  COMPONENT Mask IS
-    GENERIC (
-      n : INTEGER := 32
-      );
-    PORT (
-      a   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-      sel : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
-      sign_extend : in std_logic;
-      b   : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
-      );
-  END COMPONENT;
+  end component;
 
-  SIGNAL pcin, npcin, npcout, pcregout                                                    : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
-  SIGNAL irout                                                                            : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
-  SIGNAL om5, ain, bin, immin, aout, bout, immout, fuo1, fuo2, fuo3                       : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
-  SIGNAL fuo4, om1, om2, om3, om4, oalu, r1out, lmdout, ompc                              : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
-  SIGNAL omopc, wri, msk1out, msk2out                                                     : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0);
-  SIGNAL fum                                                                              : STD_LOGIC_VECTOR(1 DOWNTO 0);
-  
-BEGIN
-  
+  component mask is
+    generic (
+      n : integer := 32
+      );
+    port (
+      a           : in  std_logic_vector(n-1 downto 0);
+      sel         : in  std_logic_vector(1 downto 0);
+      sign_extend : in  std_logic;
+      b           : out std_logic_vector(n-1 downto 0)
+      );
+  end component;
+
+  signal pcin, npcin, npcout, pcregout                              : std_logic_vector(n_bit-1 downto 0);
+  signal irout                                                      : std_logic_vector(n_bit-1 downto 0);
+  signal om5, ain, bin, immin, aout, bout, immout, fuo1, fuo2, fuo3 : std_logic_vector(n_bit-1 downto 0);
+  signal fuo4, om1, om2, om3, om4, oalu, r1out, lmdout, ompc        : std_logic_vector(n_bit-1 downto 0);
+  signal omopc, wri, msk1out, msk2out                               : std_logic_vector(n_bit-1 downto 0);
+  signal fum                                                        : std_logic_vector(1 downto 0);
+
+begin
+
   --fetch stage
-  pc : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(pcin, clk, pcr, '0', pce, pcout);
-  inrreg : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(instr, clk, irr, '0', ire, irout);
-  add : rca_n GENERIC MAP(n => n_bit)                 
-    PORT MAP(pcout, aconst, '0', npcin, OPEN);
-  npc : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(npcin, clk, npcr, '0', npce, npcout);
+  pc : register_n generic map(n => n_bit)
+    port map(pcin, clk, pcr, '0', pce, pcout);
+  inrreg : register_n generic map(n => n_bit)
+    port map(instr, clk, irr, '0', ire, irout);
+  add : rca_n generic map(n => n_bit)
+    port map(pcout, aconst, '0', npcin, open);
+  npc : register_n generic map(n => n_bit)
+    port map(npcin, clk, npcr, '0', npce, npcout);
 
   --decode stage
-  mux31w : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(irout(n_bit-7 DOWNTO n_bit-11), raddrconst, mws, wri);
-  reg_file : register_file GENERIC MAP(width_add => reg_addr_size, width_data => n_bit)
-    PORT MAP(clk, rfr, rfe, rfr1, rfr2, rfw, wri, irout(n_bit-12 DOWNTO n_bit-16), irout(n_bit-17 DOWNTO n_bit-21), om5, ain, bin);
-  sign_extend : sign_extender GENERIC MAP(n_in => imm_val_size, n_out => n_bit)
-    PORT MAP(irout(n_bit-17 DOWNTO 0), see, immin);
-  branch : branch_unit GENERIC MAP(n1 => n_bit)
-    PORT MAP(immin, ain, npcout, be, jr, jmp, pcin);
-  areg : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(ain, clk, ar, '0', ae, aout);
-  breg : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(bin, clk, br, '0', ben, bout);
-  immreg : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(immin, clk, ir, '0', ie, immout);
-  pcpreg : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(pcout, clk, prr, '0', pre, pcregout);
+  mux31w : mux_n_2_1 generic map(n => n_bit)
+    port map(irout(n_bit-7 downto n_bit-11), raddrconst, mws, wri);
+  reg_file : register_file generic map(width_add => reg_addr_size, width_data => n_bit)
+    port map(clk, rfr, rfe, rfr1, rfr2, rfw, wri, irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), om5, ain, bin);
+  sign_extend : sign_extender generic map(n_in => imm_val_size, n_out => n_bit)
+    port map(irout(n_bit-17 downto 0), see, immin);
+  branch : branch_unit generic map(n1 => n_bit)
+    port map(immin, ain, npcout, be, jr, jmp, pcin);
+  areg : register_n generic map(n => n_bit)
+    port map(ain, clk, ar, '0', ae, aout);
+  breg : register_n generic map(n => n_bit)
+    port map(bin, clk, br, '0', ben, bout);
+  immreg : register_n generic map(n => n_bit)
+    port map(immin, clk, ir, '0', ie, immout);
+  pcpreg : register_n generic map(n => n_bit)
+    port map(pcout, clk, prr, '0', pre, pcregout);
 
   --execute stage
-  mux1 : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(aout, fuo1, fum(0), om1);
-  mux2 : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(bout, fuo2, fum(1), om2);
-  mux3 : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(om2, immout, m3s, om3);
-  muxpc : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(om1, pcregout, mps, ompc);
-  muxoffpc : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(om3, offconst, mss, omopc);
-  mask01 : Mask GENERIC MAP(n => n_bit)
-    PORT MAP(bout, msksel1, msksigned1, msk1out);
-  me : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(msk1out, clk, mer, '0', mee, meout);
-  aluinst : alu GENERIC MAP(n => n_bit)
-    PORT MAP(ompc, omopc, alusel, oalu);
-  aluoutinst : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(oalu, clk, aor, '0', aoe, aluout);
-  forwinst : forwarding_unit GENERIC MAP(n => reg_addr_size, m => n_bit)
-    PORT MAP(arf1, arf2, exear, memar, aluout, om4, clk, fum, fuo1, fuo2);
+  mux1 : mux_n_2_1 generic map(n => n_bit)
+    port map(aout, fuo1, fum(0), om1);
+  mux2 : mux_n_2_1 generic map(n => n_bit)
+    port map(bout, fuo2, fum(1), om2);
+  mux3 : mux_n_2_1 generic map(n => n_bit)
+    port map(om2, immout, m3s, om3);
+  muxpc : mux_n_2_1 generic map(n => n_bit)
+    port map(om1, pcregout, mps, ompc);
+  muxoffpc : mux_n_2_1 generic map(n => n_bit)
+    port map(om3, offconst, mss, omopc);
+  mask01 : mask generic map(n => n_bit)
+    port map(bout, msksel1, msksigned1, msk1out);
+  me : register_n generic map(n => n_bit)
+    port map(msk1out, clk, mer, '0', mee, meout);
+  aluinst : alu generic map(n => n_bit)
+    port map(ompc, omopc, alusel, oalu);
+  aluoutinst : register_n generic map(n => n_bit)
+    port map(oalu, clk, aor, '0', aoe, aluout);
+  forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
+    port map(arf1, arf2, exear, memar, aluout, om4, clk, fum, fuo1, fuo2);
 
   --memory stage
-  reg1inst : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(aluout, clk, r1r, '0', r1e, r1out);
-  mask02 : Mask GENERIC MAP(n => n_bit)
-    PORT MAP(lmdin, msksel2, msksigned2, msk2out);
-  lmd : register_n GENERIC MAP(n => n_bit)
-    PORT MAP(msk2out, clk, lmdr, '0', lmde, lmdout);
-  mux4 : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(r1out, lmdout, m4s, om4);
+  reg1inst : register_n generic map(n => n_bit)
+    port map(aluout, clk, r1r, '0', r1e, r1out);
+  mask02 : mask generic map(n => n_bit)
+    port map(lmdin, msksel2, msksigned2, msk2out);
+  lmd : register_n generic map(n => n_bit)
+    port map(msk2out, clk, lmdr, '0', lmde, lmdout);
+  mux4 : mux_n_2_1 generic map(n => n_bit)
+    port map(r1out, lmdout, m4s, om4);
 
   --write back stage
-  mux5 : mux_n_2_1 GENERIC MAP(n => n_bit)
-    PORT MAP(lmdout, r1out, m5s, om5);
+  mux5 : mux_n_2_1 generic map(n => n_bit)
+    port map(lmdout, r1out, m5s, om5);
 
-END ARCHITECTURE;
+end architecture;

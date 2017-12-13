@@ -33,7 +33,7 @@ begin
       when 3      => out_s <= in_3;
       when 4      => out_s <= in_4;
       when 5      => out_s <= in_5;
-      when others => out_s <= (others => 'z');
+      when others => out_s <= (others => 'Z');
     end case;
   end process;
 end architecture;

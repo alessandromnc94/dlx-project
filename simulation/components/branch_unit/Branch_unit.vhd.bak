@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity branch_unit is
   generic (
-    n1 : integer := 32
+    n1 : integer := 32;
     );
   port (
     imm : in  std_logic_vector(n1-1 downto 0);  --from datapath

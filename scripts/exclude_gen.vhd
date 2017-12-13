@@ -18,8 +18,8 @@ architecture behavioral of exclude_gen is
   end component;
   component cu_hw is
   end component;
-  component datapath is
-  end component;
+--  component datapath is
+--  end component;
   component divider is
   end component;
   component dff is

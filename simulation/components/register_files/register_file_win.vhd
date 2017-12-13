@@ -78,13 +78,13 @@ begin
       if reset = '1' then
         win_registers    <= (others => (others => '0'));
         global_registers <= (others => (others => '0'));
-        out1             <= (others => 'z');
-        out2             <= (others => 'z');
+        out1             <= (others => 'Z');
+        out2             <= (others => 'Z');
         cwp              <= 0;
         swp              <= 0;
         in_spilling      <= '0';
         in_filling       <= '0';
-        to_memory_data   <= (others => 'z');
+        to_memory_data   <= (others => 'Z');
         rf_cycles        <= 0;
       elsif enable = '1' then
         if in_spilling = '1' then

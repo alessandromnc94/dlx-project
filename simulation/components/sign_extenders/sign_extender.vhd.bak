@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 entity sign_extender is
   generic (
     n_in  : integer := 32;
-    n_out : integer := 64
+    n_out : integer := 2*n_in
     );
   port (
     in_s  : in  std_logic_vector(n_in-1 downto 0);

@@ -13,68 +13,68 @@ use work.cu_hw_types.all;
 
 entity cu_hw is
   generic (
-    reg_addr_size : natural := 32
-    );
+    reg_addr_size : NATURAL := 32
+  );
   port (
     -- cw
     -- first pipe stage outputs: fetch
-    pc_reset           : out std_logic;
-    pc_en              : out std_logic;
-    npc_reset          : out std_logic;
-    npc_en             : out std_logic;
-    ir_reset           : out std_logic;
-    ir_en              : out std_logic;
+    pc_reset          : out std_logic;
+    pc_en             : out std_logic;
+    npc_reset         : out std_logic;
+    npc_en            : out std_logic;
+    ir_reset          : out std_logic;
+    ir_en             : out std_logic;
     -- second pipe stage outputs: decode
-    reg_file_reset     : out std_logic;
-    reg_file_en        : out std_logic;
-    reg_file_out_1     : out std_logic;
-    reg_file_out_2     : out std_logic;
-    pc_to_in_1         : out std_logic;
-    pc_offset_to_in_2  : out std_logic;
-    pc_store_reg_31    : out std_logic;
-    branch_en          : out std_logic;
+    reg_file_reset    : out std_logic;
+    reg_file_en       : out std_logic;
+    reg_file_out_1    : out std_logic;
+    reg_file_out_2    : out std_logic;
+    pc_to_in_1        : out std_logic;
+    pc_offset_to_in_2 : out std_logic;
+    pc_store_reg_31   : out std_logic;
+    branch_en         : out std_logic;
     -- eq_cond          : out std_logic;
-    jump_en            : out std_logic;
-    jump_reg           : out std_logic;
-    sign_ext_en        : out std_logic;
-    reg_out_1_reset    : out std_logic;
-    reg_out_1_en       : out std_logic;
-    reg_out_2_reset    : out std_logic;
-    reg_out_2_en       : out std_logic;
-    reg_imm_reset      : out std_logic;
-    reg_imm_en         : out std_logic;
+    jump_en           : out std_logic;
+    jump_reg          : out std_logic;
+    sign_ext_en       : out std_logic;
+    reg_out_1_reset   : out std_logic;
+    reg_out_1_en      : out std_logic;
+    reg_out_2_reset   : out std_logic;
+    reg_out_2_en      : out std_logic;
+    reg_imm_reset     : out std_logic;
+    reg_imm_en        : out std_logic;
     -- third pipe stage outputs: execute
-    alu_sel            : out alu_array;
-    alu_get_imm_in     : out std_logic;
-    alu_for_in_1_en    : out std_logic;
-    alu_for_in_2_en    : out std_logic;
-    alu_mem_reg_reset  : out std_logic;
-    alu_mem_reg_en     : out std_logic;
-    alu_reg_1_for_add  : out std_logic_vector(reg_addr_size-1 downto 0);
-    alu_reg_2_for_add  : out std_logic_vector(reg_addr_size-1 downto 0);
-    bypass_imm         : out std_logic;
-    alu_out_reg_reset  : out std_logic;
-    alu_out_reg_en     : out std_logic;
-    alu_mem_masksel    : out std_logic_vector(1 downto 0);
+    alu_sel           : out alu_array;
+    alu_get_imm_in    : out std_logic;
+    alu_for_in_1_en   : out std_logic;
+    alu_for_in_2_en   : out std_logic;
+    alu_mem_reg_reset : out std_logic;
+    alu_mem_reg_en    : out std_logic;
+    alu_reg_1_for_add : out std_logic_vector(reg_addr_size-1 downto 0);
+    alu_reg_2_for_add : out std_logic_vector(reg_addr_size-1 downto 0);
+    bypass_imm        : out std_logic;
+    alu_out_reg_reset : out std_logic;
+    alu_out_reg_en    : out std_logic;
+    alu_mem_masksel : out std_logic_vector(1 downto 0);
     alu_mem_masksigned : out std_logic;
     -- fourth pipe stage outputs: memory
-    dram_write_en      : out std_logic;
-    dram_read_en       : out std_logic;
-    lmd_reg_reset      : out std_logic;
-    lmd_reg_en         : out std_logic;
-    alu_out_for        : out std_logic;
-    lmd_masksel        : out std_logic_vector(1 downto 0);
-    lmd_masksigned     : out std_logic;
+    dram_write_en     : out std_logic;
+    dram_read_en      : out std_logic;
+    lmd_reg_reset     : out std_logic;
+    lmd_reg_en        : out std_logic;
+    alu_out_for       : out std_logic;
+    lmd_masksel : out std_logic_vector(1 downto 0);
+    lmd_masksigned : out std_logic;
     -- fifth pipe stage outputs: write back
-    rf_latch_en        : out std_logic;
-    wb_mux_sel         : out std_logic;
-    wb_en              : out std_logic;
+    rf_latch_en       : out std_logic;
+    wb_mux_sel        : out std_logic;
+    wb_en             : out std_logic;
     -- inputs
-    branch_taken       : in  std_logic;
-    opcode             : in  opcode_array;
-    func               : in  func_array;
-    clk                : in  std_logic;
-    rst                : in  std_logic
+    branch_taken      : in  std_logic;
+    opcode            : in  opcode_array;
+    func              : in  func_array;
+    clk               : in  std_logic;
+    rst               : in  std_logic
     );
 end entity;
 
@@ -85,42 +85,9 @@ architecture behavioral of cu_hw is
 
   -- lut for control word
   signal cw_mem : cw_mem_matrix := (
-    nop         => cw_nop,              -- nop
-    rtype       => cw_nop,              -- rtype
-    itype_addi  => cw_nop,
-    itype_addui => cw_nop,
-    itype_subui => cw_nop,
-    itype_subi  => cw_nop,
-    itype_andi  => cw_nop,
-    itype_ori   => cw_nop,
-    itype_xori  => cw_nop,
-    itype_slli  => cw_nop,
-    itype_srli  => cw_nop,
-    itype_srai  => cw_nop,
-    itype_seqi  => cw_nop,
-    itype_snei  => cw_nop,
-    itype_sgti  => cw_nop,
-    itype_sgtui => cw_nop,
-    itype_sgei  => cw_nop,
-    itype_sgeui => cw_nop,
-    itype_slti  => cw_nop,
-    itype_sltui => cw_nop,
-    itype_slei  => cw_nop,
-    itype_sleui => cw_nop,
-    j           => cw_nop,
-    jal         => cw_nop,
-    jr          => cw_nop,
-    jalr        => cw_nop,
-    beqz        => cw_nop,
-    bnez        => cw_nop,
-    lhi         => cw_nop,
-    lb          => cw_nop,
-    lw          => cw_nop,
-    lbu         => cw_nop,
-    lhu         => cw_nop,
-    sb          => cw_nop,
-    sw          => cw_nop,
-    others      => cw_nop               -- instructions not defined
+    nop      => cw_nop,                   -- nop
+    rtype      => cw_nop,                         -- rtype
+    others => cw_nop                    -- instructions not defined
     );
   -- control word from lut
   signal cw               : cw_array                                    := (others => '0');
@@ -146,46 +113,46 @@ begin
 
 -- todo
   -- first pipe stage outputs
-  pc_reset           <= cw1(cw1_array_size-1);
-  pc_en              <= cw1(cw1_array_size-2);
-  npc_reset          <= cw1(cw1_array_size-3);
-  npc_en             <= cw1(cw1_array_size-4);
-  ir_reset           <= cw1(cw1_array_size-5);
-  ir_en              <= cw1(cw1_array_size-6);
+  pc_reset          <= cw1(cw1_array_size-1);
+  pc_en             <= cw1(cw1_array_size-2);
+  npc_reset         <= cw1(cw1_array_size-3);
+  npc_en            <= cw1(cw1_array_size-4);
+  ir_reset          <= cw1(cw1_array_size-5);
+  ir_en             <= cw1(cw1_array_size-6);
   -- second pipe stage outputs
-  reg_file_reset     <= cw2(cw2_array_size-1);
-  reg_file_en        <= cw2(cw2_array_size-2);
-  reg_file_out_1     <= cw2(cw2_array_size-3);
-  reg_file_out_2     <= cw2(cw2_array_size-4);
-  pc_to_in_1         <= cw2(cw2_array_size-5);
-  pc_offset_to_in_2  <= cw2(cw2_array_size-6);
-  pc_store_reg_31    <= cw2(cw2_array_size-7);
-  branch_en          <= cw2(cw2_array_size-8);
-  jump_en            <= cw2(cw2_array_size-9);
-  jump_reg           <= cw2(cw2_array_size-10);
+  reg_file_reset    <= cw2(cw2_array_size-1);
+  reg_file_en       <= cw2(cw2_array_size-2);
+  reg_file_out_1    <= cw2(cw2_array_size-3);
+  reg_file_out_2    <= cw2(cw2_array_size-4);
+  pc_to_in_1        <= cw2(cw2_array_size-5);
+  pc_offset_to_in_2 <= cw2(cw2_array_size-6);
+  pc_store_reg_31   <= cw2(cw2_array_size-7);
+  branch_en         <= cw2(cw2_array_size-8);
+  jump_en           <= cw2(cw2_array_size-9);
+  jump_reg          <= cw2(cw2_array_size-10);
   -- third pipe stage outputs
-  alu_sel            <= alu3;
-  alu_get_imm_in     <= '0';
-  alu_for_in_1_en    <= cw3(cw3_array_size-1);
-  alu_for_in_2_en    <= cw3(cw3_array_size-2);
-  alu_mem_reg_reset  <= cw3(cw3_array_size-3);
-  alu_mem_reg_en     <= cw3(cw3_array_size-4);
+  alu_sel    <= alu3;
+  alu_get_imm_in <= '0';
+  alu_for_in_1_en   <= cw3(cw3_array_size-1);
+  alu_for_in_2_en   <= cw3(cw3_array_size-2);
+  alu_mem_reg_reset <= cw3(cw3_array_size-3);
+  alu_mem_reg_en    <= cw3(cw3_array_size-4);
   --alu_reg_1_for_add <= cw3(cw3_array_size-5);
   --alu_reg_2_for_add <= cw3(cw3_array_size-6);
-  bypass_imm         <= cw3(cw3_array_size-7);
-  alu_mem_masksel    <= cw3(cw3_array_size-8 downto cw3_array_size-9);
+  bypass_imm        <= cw3(cw3_array_size-7);
+  alu_mem_masksel <= cw3(cw3_array_size-8 downto cw3_array_size-9);
   alu_mem_masksigned <= cw3(cw3_array_size-10);
   -- fourth pipe stage outputs
-  dram_write_en      <= cw4(cw4_array_size-1);
-  dram_read_en       <= cw4(cw4_array_size-2);
-  lmd_reg_reset      <= cw4(cw4_array_size-3);
-  lmd_reg_en         <= cw4(cw4_array_size-4);
-  lmd_masksel        <= cw4(cw4_array_size-5 downto cw4_array_size-6);
-  lmd_masksigned     <= cw4(cw4_array_size-7);
+  dram_write_en     <= cw4(cw4_array_size-1);
+  dram_read_en      <= cw4(cw4_array_size-2);
+  lmd_reg_reset     <= cw4(cw4_array_size-3);
+  lmd_reg_en        <= cw4(cw4_array_size-4);
+  lmd_masksel <= cw4(cw4_array_size-5 downto cw4_array_size-6);
+  lmd_masksigned <= cw4(cw4_array_size-7);
   -- fifth pipe stage outputs
-  rf_latch_en        <= cw5(cw5_array_size-1);
-  wb_mux_sel         <= cw5(cw5_array_size-2);
-  wb_en              <= cw5(cw5_array_size-3);
+  rf_latch_en       <= cw5(cw5_array_size-1);
+  wb_mux_sel        <= cw5(cw5_array_size-2);
+  wb_en             <= cw5(cw5_array_size-3);
 
   -- process to pipeline control words
   cw_pipe : process (clk, rst)
@@ -251,7 +218,7 @@ begin
       -- itype
       when itype_addi | itype_addui => alu <= alu_add;
       when itype_subi | itype_subui => alu <= alu_sub;
-      --     when itype_muli               => alu <= alu_mul;
+      when itype_muli               => alu <= alu_mul;
       when itype_slli               => alu <= alu_sll;
       when itype_srli               => alu <= alu_srl;
       when itype_srai               => alu <= alu_sra;
@@ -269,8 +236,8 @@ begin
       when itype_ori                => alu <= alu_or;
       when itype_xori               => alu <= alu_xor;
       -- jump
-      when j | jal                  => alu <= alu_add;
-      when jr | jalr                => alu <= alu_nop;
+      when jr | jar                 => alu <= alu_add;
+      when jl | jal                 => alu <= alu_nop;
       -- branch
       when beqz                     => alu <= alu_nop;
       when bnez                     => alu <= alu_nop;
@@ -278,7 +245,7 @@ begin
       when sb | sw                  => alu <= alu_add;
       -- load
       when lb | lbu                 => alu <= alu_add;
-      when lhi | lhu                => alu <= alu_add;
+      when lh | lhu                 => alu <= alu_add;
       when lw                       => alu <= alu_add;
       when others                   => alu <= alu_nop;
     end case;

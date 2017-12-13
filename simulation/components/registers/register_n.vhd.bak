@@ -31,13 +31,13 @@ begin
         dout <= (others => 'X');
       elsif rst = '1' then
         dout <= (others => '0');
-      else
-        dout <= (others => '1');
-      end if;
-    elsif rising_edge(clk) and en = '1' then
-      dout <= din;
+    else
+      dout <= (others => '1');
     end if;
-  end process;
+  elsif rising_edge(clk) and en = '1' then
+    dout <= din;
+  end if;
+end process;
 end architecture;
 
 -- structural architecture
@@ -63,7 +63,7 @@ begin
         clk => clk,
         rst => rst,
         set => set,
-        en  => en,
+        en => en,
         q   => dout(i)
         );
   end generate;

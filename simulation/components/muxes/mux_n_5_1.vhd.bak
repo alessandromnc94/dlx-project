@@ -31,7 +31,7 @@ begin
       when 2      => out_s <= in_2;
       when 3      => out_s <= in_3;
       when 4      => out_s <= in_4;
-      when others => out_s <= (others => 'Z');
+      when others => out_s <= (others => 'z');
     end case;
   end process;
 end architecture;

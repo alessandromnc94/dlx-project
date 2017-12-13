@@ -1,15 +1,15 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
-USE ieee.std_logic_unsigned.ALL;
-USE ieee.std_logic_arith.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
 
 
-PACKAGE my_const IS
+package my_const is
 
-        CONSTANT n_bit : INTEGER := 32; --size of instruction and data memories and width of each register
-        
-        CONSTANT aconst     : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0) := conv_std_logic_vector(4, n_bit);
-        CONSTANT offconst   : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0) := conv_std_logic_vector(8, n_bit);
-        CONSTANT raddrconst : STD_LOGIC_VECTOR(n_bit-1 DOWNTO 0) := conv_std_logic_vector(31, n_bit);  
-        
-END PACKAGE;
+  constant n_bit : integer := 32;  --size of instruction and data memories and width of each register
+
+  constant aconst     : std_logic_vector(n_bit-1 downto 0) := conv_std_logic_vector(4, n_bit);
+  constant offconst   : std_logic_vector(n_bit-1 downto 0) := conv_std_logic_vector(8, n_bit);
+  constant raddrconst : std_logic_vector(n_bit-1 downto 0) := conv_std_logic_vector(31, n_bit);
+
+end package;

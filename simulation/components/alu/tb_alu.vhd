@@ -84,25 +84,25 @@ begin
         op_sel <= alu_mul;
         wait for 100 ps;
 
-        op_sel <= alu_comp_eq;
+        op_sel <= alu_seq;
         wait for 100 ps;
-        op_sel <= alu_comp_ne;
+        op_sel <= alu_sne;
         wait for 100 ps;
-        op_sel <= alu_comp_gr;
+        op_sel <= alu_sgtu;
         wait for 100 ps;
-        op_sel <= alu_comp_ge;
+        op_sel <= alu_sgeu;
         wait for 100 ps;
-        op_sel <= alu_comp_lo;
+        op_sel <= alu_sltu;
         wait for 100 ps;
-        op_sel <= alu_comp_le;
+        op_sel <= alu_sleu;
         wait for 100 ps;
-        op_sel <= alu_comp_gr_signed;
+        op_sel <= alu_sgt;
         wait for 100 ps;
-        op_sel <= alu_comp_ge_signed;
+        op_sel <= alu_sge;
         wait for 100 ps;
-        op_sel <= alu_comp_lo_signed;
+        op_sel <= alu_slt;
         wait for 100 ps;
-        op_sel <= alu_comp_le_signed;
+        op_sel <= alu_sle;
         wait for 100 ps;
 
 
@@ -160,61 +160,61 @@ begin
       when alu_ror =>
         operation      <= "  ror";
         expected_out_s <= to_stdlogicvector(to_bitvector(in_1) ror conv_integer(unsigned(in_2)));
-      when alu_comp_eq =>
+      when alu_seq =>
         operation                             <= "   eq";
         expected_out_s(n-1 downto 1)          <= (others => '0');
         if in_1 = in_2 then expected_out_s(0) <= '1';
         else expected_out_s(0)                <= '0';
         end if;
-      when alu_comp_ne =>
+      when alu_sne =>
         operation                              <= "   ne";
         expected_out_s(n-1 downto 1)           <= (others => '0');
         if in_1 /= in_2 then expected_out_s(0) <= '1';
         else expected_out_s(0)                 <= '0';
         end if;
-      when alu_comp_gr =>
+      when alu_sgtu =>
         operation                                                 <= "   gr";
         expected_out_s(n-1 downto 1)                              <= (others => '0');
         if unsigned(in_1) > unsigned(in_2) then expected_out_s(0) <= '1';
         else expected_out_s(0)                                    <= '0';
         end if;
-      when alu_comp_ge =>
+      when alu_sgeu =>
         operation                                                  <= "    ge";
         expected_out_s(n-1 downto 1)                               <= (others => '0');
         if unsigned(in_1) >= unsigned(in_2) then expected_out_s(0) <= '1';
         else expected_out_s(0)                                     <= '0';
         end if;
-      when alu_comp_lo =>
+      when alu_sltu =>
         operation                                                 <= "   lo";
         expected_out_s(n-1 downto 1)                              <= (others => '0');
         if unsigned(in_1) < unsigned(in_2) then expected_out_s(0) <= '1';
         else expected_out_s(0)                                    <= '0';
         end if;
-      when alu_comp_le =>
+      when alu_sleu =>
         operation                    <= "   le";
         expected_out_s(n-1 downto 1) <= (others => '0');
         if unsigned(in_1)            <= unsigned(in_2) then expected_out_s(0) <= '1';
         else expected_out_s(0)       <= '0';
         end if;
-      when alu_comp_gr_signed =>
+      when alu_sgt =>
         operation                                             <= "s  gr";
         expected_out_s(n-1 downto 1)                          <= (others => '0');
         if signed(in_1) > signed(in_2) then expected_out_s(0) <= '1';
         else expected_out_s(0)                                <= '0';
         end if;
-      when alu_comp_ge_signed =>
+      when alu_sge =>
         operation                                              <= "s  ge";
         expected_out_s(n-1 downto 1)                           <= (others => '0');
         if signed(in_1) >= signed(in_2) then expected_out_s(0) <= '1';
         else expected_out_s(0)                                 <= '0';
         end if;
-      when alu_comp_lo_signed =>
+      when alu_slt =>
         operation                                             <= "s  lo";
         expected_out_s(n-1 downto 1)                          <= (others => '0');
         if signed(in_1) < signed(in_2) then expected_out_s(0) <= '1';
         else expected_out_s(0)                                <= '0';
         end if;
-      when alu_comp_le_signed =>
+      when alu_sle =>
         operation                    <= "s  le";
         expected_out_s(n-1 downto 1) <= (others => '0');
         if signed(in_1)              <= signed(in_2) then expected_out_s(0) <= '1';
