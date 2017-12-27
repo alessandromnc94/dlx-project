@@ -43,6 +43,8 @@ entity datapath is
     ie         : in     std_logic;      --immediate register enable
     prr        : in     std_logic;      --pc pipeline reg reset
     pre        : in     std_logic;      --pc pipeline reg enable
+    aw1r       : in     std_logic;      --Address write1 reg reset
+    aw1e       : in     std_logic;      --Address write1 reg enable
     -- 3rd stage
     --forwarding unit signals
     arf1       : in     std_logic_vector(reg_addr_size-1 downto 0);  --addresses of registers for the current operation(content of a and b registers) 
@@ -61,6 +63,8 @@ entity datapath is
     mee        : in     std_logic;      --me register enable
     mps        : in     std_logic;      --mux from pc selector
     mss        : in     std_logic;      --mux to sum 8 to pc selector
+    aw2r       : in     std_logic;      --Address write2 reg reset
+    aw2e       : in     std_logic;      --Address write2 reg enable
     -- 4th stage
     r1r        : in     std_logic;      --register 1 reset
     r1e        : in     std_logic;      --register 1 enable
@@ -69,9 +73,11 @@ entity datapath is
     lmdr       : in     std_logic;      --lmd register reset
     lmde       : in     std_logic;      --lmd register reset
     m4s        : in     std_logic;      --mux 5 selector
+    aw3r       : in     std_logic;      --Address write3 reg reset
+    aw3e       : in     std_logic;      --Address write3 reg enable
     -- 5th stage
     m5s        : in     std_logic;      --mux 5 selector
-    mws        : in     std_logic;  --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
+    mws        : in     std_logic;      --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
     -- outputs
     pcout      : buffer std_logic_vector(n_bit-1 downto 0);  --program counter output per le dimensioni puoi cambiarlo, la iram puo' essere diversa dalla dram
     aluout     : buffer std_logic_vector(n_bit-1 downto 0);  --alu outpud data
@@ -216,7 +222,7 @@ architecture structural of datapath is
   signal irout                                                      : std_logic_vector(n_bit-1 downto 0);
   signal om5, ain, bin, immin, aout, bout, immout, fuo1, fuo2, fuo3 : std_logic_vector(n_bit-1 downto 0);
   signal fuo4, om1, om2, om3, om4, oalu, r1out, lmdout, ompc        : std_logic_vector(n_bit-1 downto 0);
-  signal omopc, wri, msk1out, msk2out                               : std_logic_vector(n_bit-1 downto 0);
+  signal omopc, wri, msk1out, msk2out, aw1o, aw2o, aw3o             : std_logic_vector(n_bit-1 downto 0);
   signal fum                                                        : std_logic_vector(1 downto 0);
 
 begin
@@ -235,7 +241,7 @@ begin
   mux31w : mux_n_2_1 generic map(n => n_bit)
     port map(irout(n_bit-7 downto n_bit-11), raddrconst, mws, wri);
   reg_file : register_file generic map(width_add => reg_addr_size, width_data => n_bit)
-    port map(clk, rfr, rfe, rfr1, rfr2, rfw, wri, irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), om5, ain, bin);
+    port map(clk, rfr, rfe, rfr1, rfr2, rfw, aw3o, irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), om5, ain, bin);
   sign_extend : sign_extender generic map(n_in => imm_val_size, n_out => n_bit)
     port map(irout(n_bit-17 downto 0), see, immin);
   branch : branch_unit generic map(n1 => n_bit)
@@ -248,6 +254,8 @@ begin
     port map(immin, clk, ir, '0', ie, immout);
   pcpreg : register_n generic map(n => n_bit)
     port map(pcout, clk, prr, '0', pre, pcregout);
+  add_w1 : register_n generic map(n => n_bit)
+    port map(wri, clk, aw1r, '0', aw1e, aw1o);
 
   --execute stage
   mux1 : mux_n_2_1 generic map(n => n_bit)
@@ -270,6 +278,8 @@ begin
     port map(oalu, clk, aor, '0', aoe, aluout);
   forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
     port map(arf1, arf2, exear, memar, aluout, om4, clk, fum, fuo1, fuo2);
+  add_w2 : register_n generic map(n => n_bit)
+    port map(aw1o, clk, aw2r, '0', aw2e, aw2o);
 
   --memory stage
   reg1inst : register_n generic map(n => n_bit)
@@ -280,6 +290,8 @@ begin
     port map(msk2out, clk, lmdr, '0', lmde, lmdout);
   mux4 : mux_n_2_1 generic map(n => n_bit)
     port map(r1out, lmdout, m4s, om4);
+  add_w3 : register_n generic map(n => n_bit)
+    port map(aw2o, clk, aw3r, '0', aw3e, aw3o);
 
   --write back stage
   mux5 : mux_n_2_1 generic map(n => n_bit)
