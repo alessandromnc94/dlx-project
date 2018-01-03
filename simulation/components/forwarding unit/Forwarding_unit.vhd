@@ -9,8 +9,10 @@ entity forwarding_unit is
   port (
     arf1    : in  std_logic_vector(n-1 downto 0);  --addresses of regisers for the current operation 
     arf2    : in  std_logic_vector(n-1 downto 0);
+    aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the ALU 
     exear   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in execute stage
     memar   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in memory stage
+    alud    : in  std_logic_vector(m-1 downto 0);  -- data coming from output of ALU
     exed    : in  std_logic_vector(m-1 downto 0);  -- data coming from execute stage
     memd    : in  std_logic_vector(m-1 downto 0);  -- data coming from memory stage
     clk     : in  std_logic;
@@ -23,8 +25,8 @@ end entity;
 
 architecture behavioral of forwarding_unit is
 
-  type addrarray is array(0 to 1) of std_logic_vector(n-1 downto 0);
-  type datarray is array(0 to 1) of std_logic_vector(m-1 downto 0);
+  type addrarray is array(0 to 2) of std_logic_vector(n-1 downto 0);
+  type datarray is array(0 to 2) of std_logic_vector(m-1 downto 0);
 
   signal ar, arf : addrarray;
   signal data_in : datarray;
@@ -39,19 +41,21 @@ begin
 
   begin
 
-    ar(0) <= exear;
-    ar(1) <= memar;
+    ar(0) <= aluar;
+    ar(1) <= exear;
+    ar(2) <= memar;
 
     arf(0) <= arf1;
     arf(1) <= arf2;
 
-    data_in(0) <= exed;
-    data_in(1) <= memd;
+    data_in(0) <= alud;
+    data_in(1) <= exed;
+    data_in(2) <= memd;
 
     if(rising_edge(clk)) then
       out_mux(0) <= '0';                  --set both the muxes at normal flow
       out_mux(1) <= '0';
-      for i in 0 to 1 loop
+      for i in 0 to 2 loop
         for j in 0 to 1 loop
           if(arf(j) /= zero) then
             if(arf(j) = ar(i)) then
