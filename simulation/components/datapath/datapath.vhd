@@ -23,6 +23,12 @@ entity datapath is
     irr        : in     std_logic;      --instruction register reset
     ire        : in     std_logic;      --instruction register enable
     -- 2nd stage
+    --forwarding unit signals
+    arf1       : in     std_logic_vector(reg_addr_size-1 downto 0);  --addresses of registers for the current operation(content of a and b registers) 
+    arf2       : in     std_logic_vector(reg_addr_size-1 downto 0);
+    aluar      : in     std_logic_vector(reg_addr_size-1 downto 0);  --address of reg in output to the ALU
+    exear      : in     std_logic_vector(reg_addr_size-1 downto 0);  --address of reg in execute stage
+    memar      : in     std_logic_vector(reg_addr_size-1 downto 0);  --address of reg in memory stage
     --register file signals
     rfr        : in     std_logic;      --reset
     rfe        : in     std_logic;      --enable
@@ -46,11 +52,6 @@ entity datapath is
     aw1r       : in     std_logic;      --address write1 reg reset
     aw1e       : in     std_logic;      --address write1 reg enable
     -- 3rd stage
-    --forwarding unit signals
-    arf1       : in     std_logic_vector(reg_addr_size-1 downto 0);  --addresses of registers for the current operation(content of a and b registers) 
-    arf2       : in     std_logic_vector(reg_addr_size-1 downto 0);
-    exear      : in     std_logic_vector(reg_addr_size-1 downto 0);  --address of reg in execute stage
-    memar      : in     std_logic_vector(reg_addr_size-1 downto 0);  --address of reg in memory stage
     --alu signals
     alusel     : in     alu_array;      --alu operation selectors
     --muxes and registers signals
@@ -170,8 +171,10 @@ architecture structural of datapath is
     port (
       arf1    : in  std_logic_vector(n-1 downto 0);  --addresses of regisers for the current operation 
       arf2    : in  std_logic_vector(n-1 downto 0);
+      aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the ALU
       exear   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in execute stage
       memar   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in memory stage
+      alud    : in  std_logic_vector(m-1 downto 0);  -- data coming from output of ALU
       exed    : in  std_logic_vector(m-1 downto 0);  -- data coming from execute stage
       memd    : in  std_logic_vector(m-1 downto 0);  -- data coming from memory stage
       clk     : in  std_logic;
@@ -246,10 +249,16 @@ begin
     port map(irout(n_bit-17 downto 0), see, immin);
   branch : branch_unit generic map(n1 => n_bit)
     port map(immin, ain, npcout, be, jr, jmp, pcin);
+  forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
+    port map(arf1, arf2, aluar, exear, memar, oalu, aluout, om4, clk, fum, fuo1, fuo2);
+  mux1 : mux_n_2_1 generic map(n => n_bit)
+    port map(ain, fuo1, fum(0), om1);
+  mux2 : mux_n_2_1 generic map(n => n_bit)
+    port map(bin, fuo2, fum(1), om2);
   areg : register_n generic map(n => n_bit)
-    port map(ain, clk, ar, '0', ae, aout);
+    port map(om1, clk, ar, '0', ae, aout);
   breg : register_n generic map(n => n_bit)
-    port map(bin, clk, br, '0', ben, bout);
+    port map(om2, clk, br, '0', ben, bout);
   immreg : register_n generic map(n => n_bit)
     port map(immin, clk, ir, '0', ie, immout);
   pcpreg : register_n generic map(n => n_bit)
@@ -258,14 +267,10 @@ begin
     port map(wri, clk, aw1r, '0', aw1e, aw1o);
 
   --execute stage
-  mux1 : mux_n_2_1 generic map(n => n_bit)
-    port map(aout, fuo1, fum(0), om1);
-  mux2 : mux_n_2_1 generic map(n => n_bit)
-    port map(bout, fuo2, fum(1), om2);
   mux3 : mux_n_2_1 generic map(n => n_bit)
-    port map(om2, immout, m3s, om3);
+    port map(bout, immout, m3s, om3);
   muxpc : mux_n_2_1 generic map(n => n_bit)
-    port map(om1, pcregout, mps, ompc);
+    port map(aout, pcregout, mps, ompc);
   muxoffpc : mux_n_2_1 generic map(n => n_bit)
     port map(om3, offconst, mss, omopc);
   mask01 : mask generic map(n => n_bit)
@@ -276,8 +281,6 @@ begin
     port map(ompc, omopc, alusel, oalu);
   aluoutinst : register_n generic map(n => n_bit)
     port map(oalu, clk, aor, '0', aoe, aluout);
-  forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
-    port map(arf1, arf2, exear, memar, aluout, om4, clk, fum, fuo1, fuo2);
   add_w2 : register_n generic map(n => n_bit)
     port map(aw1o, clk, aw2r, '0', aw2e, aw2o);
 
