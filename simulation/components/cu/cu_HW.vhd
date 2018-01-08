@@ -18,57 +18,51 @@ entity cu_hw is
   port (
     -- cw
     -- first pipe stage outputs: fetch
-    pc_reset           : out std_logic;
-    pc_en              : out std_logic;
-    npc_reset          : out std_logic;
-    npc_en             : out std_logic;
-    ir_reset           : out std_logic;
-    ir_en              : out std_logic;
+    -- pc_en              : out std_logic;
+    -- npc_en             : out std_logic;
+    -- ir_en              : out std_logic;
+    --
     -- second pipe stage outputs: decode
-    reg_file_reset     : out std_logic;
-    reg_file_en        : out std_logic;
-    reg_file_out_1     : out std_logic;
-    reg_file_out_2     : out std_logic;
-    pc_to_in_1         : out std_logic;
-    pc_offset_to_in_2  : out std_logic;
-    pc_store_reg_31    : out std_logic;
+    -- reg_file_en        : out std_logic;
+    reg_file_read_1    : out std_logic;  -- enable read from out_1 & store in reg a
+    reg_file_read_2    : out std_logic;  -- same as before for out 2 & reg b
+    reg_imm_en         : out std_logic;  -- load data from immediate
+    imm_sign_ext_en    : out std_logic;
     branch_en          : out std_logic;
-    -- eq_cond          : out std_logic;
+    branch_nez         : out std_logic;
     jump_en            : out std_logic;
-    jump_reg           : out std_logic;
-    sign_ext_en        : out std_logic;
-    reg_out_1_reset    : out std_logic;
-    reg_out_1_en       : out std_logic;
-    reg_out_2_reset    : out std_logic;
-    reg_out_2_en       : out std_logic;
-    reg_imm_reset      : out std_logic;
-    reg_imm_en         : out std_logic;
+    jr_en              : out std_logic;  -- enable also pc_delay and store_in_r_31
+    jl_en              : out std_logic;
+    -- check
+    forwarding_in_1_en : out std_logic;  -- enable forwarding 1
+    forwarding_in_2_en : out std_logic;  -- enable forwarding 2
+    --
     -- third pipe stage outputs: execute
+    -- alu selector
     alu_sel            : out alu_array;
+    -- cw_mem signals
+    alu_pc_sel         : out std_logic;  -- put pc on alu in_1 && "+8" on alu in_2 
     alu_get_imm_in     : out std_logic;
-    alu_for_in_1_en    : out std_logic;
-    alu_for_in_2_en    : out std_logic;
-    alu_mem_reg_reset  : out std_logic;
-    alu_mem_reg_en     : out std_logic;
-    alu_reg_1_for_add  : out std_logic_vector(reg_addr_size-1 downto 0);
-    alu_reg_2_for_add  : out std_logic_vector(reg_addr_size-1 downto 0);
-    bypass_imm         : out std_logic;
-    alu_out_reg_reset  : out std_logic;
     alu_out_reg_en     : out std_logic;
-    alu_mem_masksel    : out std_logic_vector(1 downto 0);
-    alu_mem_masksigned : out std_logic;
+    b_mask_sel         : out std_logic_vector(1 downto 0);
+    b_bypass_en        : out std_logic;
+    add_w_pipe_2_en    : out std_logic;
+    --
     -- fourth pipe stage outputs: memory
-    dram_write_en      : out std_logic;
+    -- cw_mem signals
+    alu_bypass_en      : out std_logic;
     dram_read_en       : out std_logic;
-    lmd_reg_reset      : out std_logic;
-    lmd_reg_en         : out std_logic;
-    alu_out_for        : out std_logic;
-    lmd_masksel        : out std_logic_vector(1 downto 0);
-    lmd_masksigned     : out std_logic;
+    dram_write_en      : out std_logic;
+    dram_write_byte    : out std_logic;
+    dram_write_word    : out std_logic;
+    lmd_mask_signed    : out std_logic;
+    lmd_mask_sel       : out std_logic_vector(1 downto 0);
+    add_w_pipe_3_en    : out std_logic;
+    --
     -- fifth pipe stage outputs: write back
-    rf_latch_en        : out std_logic;
-    wb_mux_sel         : out std_logic;
-    wb_en              : out std_logic;
+    -- cw
+    mem_out_sel        : out std_logic;
+    reg_file_write     : out std_logic;
     -- inputs
     branch_taken       : in  std_logic;
     opcode             : in  opcode_array;
@@ -85,41 +79,40 @@ architecture behavioral of cu_hw is
 
   -- lut for control word
   signal cw_mem : cw_mem_matrix := (
-    nop         => cw_nop,              -- nop
-    rtype       => cw_nop,              -- rtype
-    itype_addi  => cw_nop,
-    itype_addui => cw_nop,
-    itype_subui => cw_nop,
-    itype_subi  => cw_nop,
-    itype_andi  => cw_nop,
-    itype_ori   => cw_nop,
-    itype_xori  => cw_nop,
-    itype_slli  => cw_nop,
-    itype_srli  => cw_nop,
-    itype_srai  => cw_nop,
-    itype_seqi  => cw_nop,
-    itype_snei  => cw_nop,
-    itype_sgti  => cw_nop,
-    itype_sgtui => cw_nop,
-    itype_sgei  => cw_nop,
-    itype_sgeui => cw_nop,
-    itype_slti  => cw_nop,
-    itype_sltui => cw_nop,
-    itype_slei  => cw_nop,
-    itype_sleui => cw_nop,
-    j           => cw_nop,
-    jal         => cw_nop,
-    jr          => cw_nop,
-    jalr        => cw_nop,
-    beqz        => cw_nop,
-    bnez        => cw_nop,
-    lhi         => cw_nop,
-    lb          => cw_nop,
-    lw          => cw_nop,
-    lbu         => cw_nop,
-    lhu         => cw_nop,
-    sb          => cw_nop,
-    sw          => cw_nop,
+    nop         => cw_nop,
+    rtype       => "11000000011000001110000000101",
+    itype_addi  => "10100000010010001110000000101",
+    itype_addui => "10110000010010001110000000101",
+    itype_andi  => "10100000010010001110000000101",
+    itype_ori   => "10100000010010001110000000101",
+    itype_seqi  => "10110000010010001110000000101",
+    itype_sgei  => "10110000010010001110000000101",
+    itype_sgeui => "10100000010010001110000000101",
+    itype_sgti  => "10110000010010001110000000101",
+    itype_sgtui => "10100000010010001110000000101",
+    itype_slei  => "10110000010010001110000000101",
+    itype_sleui => "10100000010010001110000000101",
+    itype_slli  => "10100000011010001110000000101",
+    itype_slti  => "10110000010010001110000000101",
+    itype_sltui => "10100000010010001110000000101",
+    itype_snei  => "10110000010010001110000000101",
+    itype_srai  => "10100000011010001110000000101",
+    itype_srli  => "10100000011010001110000000101",
+    itype_subi  => "10110000010010001110000000101",
+    itype_subui => "10100000010010001110000000101",
+    itype_xori  => "10100000010010001110000000101",
+    beqz        => "10101000010000000000000000000",
+    bnez        => "10101100010000000000000000000",
+    j           => "00110010000000000000000000000",
+    jal         => "00110010110100000110000000101",
+    jalr        => "10100011110100000110000000101",
+    jr          => "10100011010000000000000000000",
+    lb          => "10110000011010001101000101111",
+    lbu         => "10100000011010001101000001111",
+    lw          => "10110000010010001101000110111",
+    mult        => "11000000011000001110000000101",
+    sb          => "11110000011010111000110000000",
+    sw          => "11110000011011011000101000000",
     others      => cw_nop               -- instructions not defined
     );
   -- control word from lut
@@ -127,13 +120,13 @@ architecture behavioral of cu_hw is
   -- split cw in stages
   constant cw1_array_size : integer                                     := cw_array_size;
   signal cw1              : cw_array                                    := (others => '0');
-  constant cw2_array_size : integer                                     := cw1_array_size-6;
+  constant cw2_array_size : integer                                     := cw1_array_size;
   signal cw2              : std_logic_vector(cw2_array_size-1 downto 0) := (others => '0');
-  constant cw3_array_size : integer                                     := cw2_array_size-10;
+  constant cw3_array_size : integer                                     := cw2_array_size-11;
   signal cw3              : std_logic_vector(cw3_array_size-1 downto 0) := (others => '0');
-  constant cw4_array_size : integer                                     := cw3_array_size-10;
+  constant cw4_array_size : integer                                     := cw3_array_size-7;
   signal cw4              : std_logic_vector(cw4_array_size-1 downto 0) := (others => '0');
-  constant cw5_array_size : integer                                     := cw4_array_size-7;
+  constant cw5_array_size : integer                                     := cw4_array_size-9;
   signal cw5              : std_logic_vector(cw5_array_size-1 downto 0) := (others => '0');
   -- delay alu control word
   signal alu1, alu2, alu3 : alu_array                                   := (others => '0');
@@ -146,47 +139,40 @@ begin
 
 -- todo
   -- first pipe stage outputs
-  pc_reset           <= cw1(cw1_array_size-1);
-  pc_en              <= cw1(cw1_array_size-2);
-  npc_reset          <= cw1(cw1_array_size-3);
-  npc_en             <= cw1(cw1_array_size-4);
-  ir_reset           <= cw1(cw1_array_size-5);
-  ir_en              <= cw1(cw1_array_size-6);
+  -- empty ?
   -- second pipe stage outputs
-  reg_file_reset     <= cw2(cw2_array_size-1);
-  reg_file_en        <= cw2(cw2_array_size-2);
-  reg_file_out_1     <= cw2(cw2_array_size-3);
-  reg_file_out_2     <= cw2(cw2_array_size-4);
-  pc_to_in_1         <= cw2(cw2_array_size-5);
-  pc_offset_to_in_2  <= cw2(cw2_array_size-6);
-  pc_store_reg_31    <= cw2(cw2_array_size-7);
-  branch_en          <= cw2(cw2_array_size-8);
-  jump_en            <= cw2(cw2_array_size-9);
-  jump_reg           <= cw2(cw2_array_size-10);
+  reg_file_read_1    <= cw2(cw2_array_size-1);
+  reg_file_read_2    <= cw2(cw2_array_size-2);
+  reg_imm_en         <= cw2(cw2_array_size-3);
+  imm_sign_ext_en    <= cw2(cw2_array_size-4);
+  branch_en          <= cw2(cw2_array_size-5);
+  branch_nez         <= cw2(cw2_array_size-6);
+  jump_en            <= cw2(cw2_array_size-7);
+  jr_en              <= cw2(cw2_array_size-8);
+  jl_en              <= cw2(cw2_array_size-9);
+  forwarding_in_1_en <= cw2(cw2_array_size-10);
+  forwarding_in_2_en <= cw2(cw2_array_size-11);
   -- third pipe stage outputs
   alu_sel            <= alu3;
-  alu_get_imm_in     <= '0';
-  alu_for_in_1_en    <= cw3(cw3_array_size-1);
-  alu_for_in_2_en    <= cw3(cw3_array_size-2);
-  alu_mem_reg_reset  <= cw3(cw3_array_size-3);
-  alu_mem_reg_en     <= cw3(cw3_array_size-4);
-  --alu_reg_1_for_add <= cw3(cw3_array_size-5);
-  --alu_reg_2_for_add <= cw3(cw3_array_size-6);
-  bypass_imm         <= cw3(cw3_array_size-7);
-  alu_mem_masksel    <= cw3(cw3_array_size-8 downto cw3_array_size-9);
-  alu_mem_masksigned <= cw3(cw3_array_size-10);
+  --
+  alu_pc_sel         <= cw3(cw3_array_size-1);
+  alu_get_imm_in     <= cw3(cw3_array_size-2);
+  alu_out_reg_en     <= cw3(cw3_array_size-3);
+  b_mask_sel         <= cw3(cw3_array_size-4 downto cw3_array_size-5);
+  b_bypass_en        <= cw3(cw3_array_size-6);
+  add_w_pipe_2_en    <= cw3(cw3_array_size-7);
   -- fourth pipe stage outputs
-  dram_write_en      <= cw4(cw4_array_size-1);
+  alu_bypass_en      <= cw4(cw4_array_size-1);
   dram_read_en       <= cw4(cw4_array_size-2);
-  lmd_reg_reset      <= cw4(cw4_array_size-3);
-  lmd_reg_en         <= cw4(cw4_array_size-4);
-  lmd_masksel        <= cw4(cw4_array_size-5 downto cw4_array_size-6);
-  lmd_masksigned     <= cw4(cw4_array_size-7);
+  dram_write_en      <= cw4(cw4_array_size-3);
+  dram_write_byte    <= cw4(cw4_array_size-4);
+  dram_write_word    <= cw4(cw4_array_size-5);
+  lmd_mask_signed    <= cw4(cw4_array_size-6);
+  lmd_mask_sel       <= cw4(cw4_array_size-7 downto cw4_array_size-8);
+  add_w_pipe_3_en    <= cw4(cw4_array_size-9);
   -- fifth pipe stage outputs
-  rf_latch_en        <= cw5(cw5_array_size-1);
-  wb_mux_sel         <= cw5(cw5_array_size-2);
-  wb_en              <= cw5(cw5_array_size-3);
-
+  mem_out_sel        <= cw5(cw5_array_size-1);
+  reg_file_write     <= cw5(cw5_array_size-2);
   -- process to pipeline control words
   cw_pipe : process (clk, rst)
   begin
@@ -205,17 +191,16 @@ begin
         alu1 <= alu;
         cw2  <= cw1(cw2_array_size-1 downto 0);
         alu2 <= alu1;
-        cw3  <= cw2(cw3_array_size-1 downto 0);
-        alu3 <= alu2;
       else
-        cw1  <= cw_nop;
         alu1 <= alu_nop;
         cw1  <= cw_nop;
         alu2 <= alu_nop;
         cw2  <= cw_nop(cw2_array_size-1 downto 0);
-        alu3 <= alu_nop;
-        cw3  <= cw_nop(cw3_array_size-1 downto 0);
+        -- alu3 <= alu_nop;
+        -- cw3  <= cw_nop(cw3_array_size-1 downto 0);
       end if;
+      cw3  <= cw2(cw3_array_size-1 downto 0);
+      alu3 <= alu2;
       cw4 <= cw3(cw4_array_size-1 downto 0);
       cw5 <= cw4(cw5_array_size-1 downto 0);
     end if;
@@ -249,6 +234,7 @@ begin
           when others                 => alu <= alu_nop;
         end case;
       -- itype
+      when mult                     => alu <= alu_mult;
       when itype_addi | itype_addui => alu <= alu_add;
       when itype_subi | itype_subui => alu <= alu_sub;
       --     when itype_muli               => alu <= alu_mul;
@@ -269,8 +255,8 @@ begin
       when itype_ori                => alu <= alu_or;
       when itype_xori               => alu <= alu_xor;
       -- jump
-      when j | jal                  => alu <= alu_add;
-      when jr | jalr                => alu <= alu_nop;
+      when j | jr                   => alu <= alu_nop;
+      when jal | jalr               => alu <= alu_nop;
       -- branch
       when beqz                     => alu <= alu_nop;
       when bnez                     => alu <= alu_nop;
@@ -278,7 +264,7 @@ begin
       when sb | sw                  => alu <= alu_add;
       -- load
       when lb | lbu                 => alu <= alu_add;
-      when lhi | lhu                => alu <= alu_add;
+      -- when lhi | lhu                => alu <= alu_add;
       when lw                       => alu <= alu_add;
       when others                   => alu <= alu_nop;
     end case;

@@ -43,8 +43,8 @@ entity datapath is
     ie         : in     std_logic;      --immediate register enable
     prr        : in     std_logic;      --pc pipeline reg reset
     pre        : in     std_logic;      --pc pipeline reg enable
-    aw1r       : in     std_logic;      --Address write1 reg reset
-    aw1e       : in     std_logic;      --Address write1 reg enable
+    aw1r       : in     std_logic;      --address write1 reg reset
+    aw1e       : in     std_logic;      --address write1 reg enable
     -- 3rd stage
     --forwarding unit signals
     arf1       : in     std_logic_vector(reg_addr_size-1 downto 0);  --addresses of registers for the current operation(content of a and b registers) 
@@ -63,8 +63,8 @@ entity datapath is
     mee        : in     std_logic;      --me register enable
     mps        : in     std_logic;      --mux from pc selector
     mss        : in     std_logic;      --mux to sum 8 to pc selector
-    aw2r       : in     std_logic;      --Address write2 reg reset
-    aw2e       : in     std_logic;      --Address write2 reg enable
+    aw2r       : in     std_logic;      --address write2 reg reset
+    aw2e       : in     std_logic;      --address write2 reg enable
     -- 4th stage
     r1r        : in     std_logic;      --register 1 reset
     r1e        : in     std_logic;      --register 1 enable
@@ -73,11 +73,11 @@ entity datapath is
     lmdr       : in     std_logic;      --lmd register reset
     lmde       : in     std_logic;      --lmd register reset
     m4s        : in     std_logic;      --mux 5 selector
-    aw3r       : in     std_logic;      --Address write3 reg reset
-    aw3e       : in     std_logic;      --Address write3 reg enable
+    aw3r       : in     std_logic;      --address write3 reg reset
+    aw3e       : in     std_logic;      --address write3 reg enable
     -- 5th stage
     m5s        : in     std_logic;      --mux 5 selector
-    mws        : in     std_logic;      --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
+    mws        : in     std_logic;  --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
     -- outputs
     pcout      : buffer std_logic_vector(n_bit-1 downto 0);  --program counter output per le dimensioni puoi cambiarlo, la iram puo' essere diversa dalla dram
     aluout     : buffer std_logic_vector(n_bit-1 downto 0);  --alu outpud data
