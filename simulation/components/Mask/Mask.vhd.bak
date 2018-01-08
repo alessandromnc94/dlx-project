@@ -1,35 +1,105 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY Mask IS
-  GENERIC (
-    n : INTEGER := 32
+entity mask is
+  generic (
+    n : integer := 32
     );
-  PORT (
-    a   : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
-    sel : IN  STD_LOGIC_VECTOR(1 DOWNTO 0);
-    sign_extend : in std_logic;
-    b   : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
+  port (
+    a           : in  std_logic_vector(n-1 downto 0);
+    sel         : in  std_logic;
+    sign_extend : in  std_logic;
+    b           : out std_logic_vector(n-1 downto 0)
     );
-END ENTITY;
+end entity;
 
-ARCHITECTURE behavioral OF Mask IS
+architecture behavioral of mask is
+
+signal n1 , a1: std_logic_vector(n-1 downto 0);
+
+begin
   
-  BEGIN
+  process(a, sel, sign_extend)
     
-    PROCESS(a , sel)
+    begin
       
-      BEGIN
+      for i in 0 to n-1 loop
+        n1(i) <= (not sel) and a(i);
+      end loop;
+  
+      for i in 0 to n-1 loop
+        a1(i) <= sel and a(i) and sign_extend;
+      end loop;
+  
+      b <= n1 or a1;
+  end process;
+
+end architecture;
+
+architecture structural of mask is
+  
+  component and_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
+    );
+  end component;
+  
+  component or_gate_n is
+    generic (
+      n : integer := 1
+      );
+    port (
+      in_1  : in  std_logic_vector(n-1 downto 0);
+      in_2  : in  std_logic_vector(n-1 downto 0);
+      out_s : out std_logic_vector(n-1 downto 0)
+    );
+  end component;
+  
+  component not_gate is
+    port (
+      in_s  : in  std_logic;
+      out_s : out std_logic
+    );
+  end component;
+  
+  signal a1, a2, a3 : std_logic_vector(n-1 downto 0);
+  signal nsel       : std_logic;
+  
+  begin
+      
+      not1  : not_gate port map(sel, nsel);
         
-        CASE sel IS
-          
-          WHEN "00"   => b_buffer <= a;
-          WHEN "01"   => b(n-1 DOWNTO 8) <= (OTHERS => a(7) and sign_extend); b(7 DOWNTO 0) <= a(7 DOWNTO 0);
-          WHEN "10"   => b(n-1 DOWNTO 16) <= (OTHERS => a(15) and sign_extend); b(15 DOWNTO 0) <= a(15 DOWNTO 0);
-          WHEN OTHERS => b <= a;
-            
-          END CASE;
-        
-    END PROCESS;
-    
-END ARCHITECTURE;
+      and1: for i in 0 to n-1 generate 
+        and1_x : and_gate port map(nsel, a(i), a1(i));
+        and2_x : and_gate port map(sel, a(i), a2(i));
+        and3_x : and_gate port map(a2(i), sign_extend, a3(i));
+      end generate;
+
+      or1   : or_gate_n generic map(n => n) 
+                        port map(a1, a3, b);
+
+end architecture;
+
+configuration cfg_mask_behavioral of mask is
+  for behavioral
+  end for;
+end configuration;
+
+configuration cfg_mask_structural of mask is
+  for structural
+    for notsel : not_gate use configuration work.cfg_not_gate_behavioral;
+    end for;
+    for and1
+      for and1_x : and_gate use configuration work.cfg_and_gate_behavioral;
+      end for;
+      for and2_x : and_gate use configuration work.cfg_and_gate_behavioral;
+      end for;
+      for and3_x : and_gate use configuration work.cfg_and_gate_behavioral;
+      end for;
+    end for;
+    for or1 : or_gate_n use configuration work.cfg_or_gate_n_behavioral;
+    end for;
+  end for;
+end configuration;

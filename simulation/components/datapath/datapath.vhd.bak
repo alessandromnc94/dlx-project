@@ -23,6 +23,9 @@ entity datapath is
     irr        : in     std_logic;      --instruction register reset
     ire        : in     std_logic;      --instruction register enable
     -- 2nd stage
+    --forwarding unit signals
+    arf1       : in     std_logic_vector(reg_addr_size-1 downto 0);  --addresses of registers for the current operation(content of a and b registers) 
+    arf2       : in     std_logic_vector(reg_addr_size-1 downto 0);
     --register file signals
     rfr        : in     std_logic;      --reset
     rfe        : in     std_logic;      --enable
@@ -163,7 +166,7 @@ architecture structural of datapath is
       m : integer := 32                 --data length
       );
     port (
-      arf1    : in  std_logic_vector(n-1 downto 0);  --addresses of registers for the current operation 
+      arf1    : in  std_logic_vector(n-1 downto 0);  --addresses of regisers for the current operation 
       arf2    : in  std_logic_vector(n-1 downto 0);
       aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the ALU
       exear   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in execute stage
@@ -244,7 +247,7 @@ begin
   branch : branch_unit generic map(n1 => n_bit)
     port map(immin, om1, npcout, be, jr, jmp, pcin);
   forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
-    port map(irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), aw1o, aw2o, aw3o, oalu, aluout, om4, clk, fum, fuo1, fuo2);
+    port map(arf1, arf2, aw1o, aw2o, aw3o, oalu, aluout, om4, clk, fum, fuo1, fuo2);
   mux1 : mux_n_2_1 generic map(n => n_bit)
     port map(ain, fuo1, fum(0), om1);
   mux2 : mux_n_2_1 generic map(n => n_bit)
