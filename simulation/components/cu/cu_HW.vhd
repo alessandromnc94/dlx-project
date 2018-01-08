@@ -81,6 +81,7 @@ architecture behavioral of cu_hw is
   signal cw_mem : cw_mem_matrix := (
     nop         => cw_nop,
     rtype       => "11000000011000001110000000101",
+    ftype       => "11000000011000001110000000101",
     itype_addi  => "10100000010010001110000000101",
     itype_addui => "10110000010010001110000000101",
     itype_andi  => "10100000010010001110000000101",
@@ -110,7 +111,6 @@ architecture behavioral of cu_hw is
     lb          => "10110000011010001101000101111",
     lbu         => "10100000011010001101000001111",
     lw          => "10110000010010001101000110111",
-    mult        => "11000000011000001110000000101",
     sb          => "11110000011010111000110000000",
     sw          => "11110000011011011000101000000",
     others      => cw_nop               -- instructions not defined
@@ -214,7 +214,6 @@ begin
         case conv_integer(unsigned(func)) is
           when rtype_add | rtype_addu => alu <= alu_add;
           when rtype_sub | rtype_subu => alu <= alu_sub;
-          --when rtype_mul              => alu <= alu_mul;
           when rtype_sll              => alu <= alu_sll;
           when rtype_srl              => alu <= alu_srl;
           when rtype_sra              => alu <= alu_sra;
@@ -231,10 +230,11 @@ begin
           when rtype_and              => alu <= alu_and;
           when rtype_or               => alu <= alu_or;
           when rtype_xor              => alu <= alu_xor;
+          when rtype_mult             => alu <= alu_mult;
+          when rtype_multu            => alu <= alu_multu;
           when others                 => alu <= alu_nop;
-        end case;
+      end case;
       -- itype
-      when mult                     => alu <= alu_mult;
       when itype_addi | itype_addui => alu <= alu_add;
       when itype_subi | itype_subui => alu <= alu_sub;
       --     when itype_muli               => alu <= alu_mul;

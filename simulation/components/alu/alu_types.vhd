@@ -33,8 +33,8 @@ package alu_types is
   constant alu_slt        : alu_array := conv_std_logic_vector(22, alu_array_size);
   constant alu_sge        : alu_array := conv_std_logic_vector(23, alu_array_size);
   constant alu_sle        : alu_array := conv_std_logic_vector(24, alu_array_size);
-  constant alu_mul        : alu_array := conv_std_logic_vector(25, alu_array_size);
-  constant alu_mul_signed : alu_array := conv_std_logic_vector(26, alu_array_size);
+  constant alu_multu        : alu_array := conv_std_logic_vector(25, alu_array_size);
+  constant alu_mult : alu_array := conv_std_logic_vector(26, alu_array_size);
 
   constant alu_nop : alu_array := alu_add;
 end package;

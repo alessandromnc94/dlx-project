@@ -21,8 +21,8 @@ package cu_hw_types is
   constant cw_nop : cw_array := (others => '0');
 
 -- r-type instruction -> opcode field
-  constant rtype       : integer := 16#01#;  -- for any register-to-register operation
----- r-type instruction -> func field
+  constant rtype       : integer := 16#00#;  -- for any register-to-register operation
+-- r-type instruction -> func field
 --
   constant rtype_sll   : integer := 16#04#;
   constant rtype_srl   : integer := 16#06#;
@@ -44,7 +44,9 @@ package cu_hw_types is
   constant rtype_sgtu  : integer := 16#3b#;
   constant rtype_sleu  : integer := 16#3c#;
   constant rtype_sgeu  : integer := 16#3d#;
---  constant rtype_mul   : integer   := 16#20#; -- is floating point ?
+  -- modified instruction list
+  constant rtype_mult   : integer   := 16#3e#;
+  constant rtype_multu   : integer   := 16#3f#;
 -- i-type instruction -> opcode field
   constant nop         : integer := 16#00#;
   constant itype_addi  : integer := 16#08#;
@@ -67,7 +69,6 @@ package cu_hw_types is
   constant itype_sltui : integer := 16#3b#;
   constant itype_slei  : integer := 16#3c#;
   constant itype_sleui : integer := 16#3d#;
-  -- constant itype_mul   : integer := 16#20; -- as before
 -- jump instruction -> opcode field
   constant j           : integer := 16#02#;
   constant jal         : integer := 16#03#;

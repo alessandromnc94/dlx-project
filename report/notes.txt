@@ -1,0 +1,19 @@
++ nota #1:
+Il compilatore (o l'utente) deve aggiungere l'istruzione NOP se la seguente coppia di istruzioni viene scritta nel codice del programma:
+    LOAD r1, address    =>      LOAD r1, address
+                        =>      NOP
+    BRANCH r1, label    =>      BRANCH r1, label (forwarding possibile)
+in quanto esiste uno stallo che non viene gestito dal DLX (dovrebbe essere l'unico)
+
++ nota #1bis:
+Ogni stallo non gestito direttamente dal DLX deve essere manualmente risolto inserendo le NOP 
+
++ nota #2:
+La forwarding_in_1 gestisce il forwarding anche per il branch manager (evita tutti gli stalli ad eccezione di quello mostrato nella nota #1)
+
++ nota #3:
+Le istruzioni mult e multu nel nostro DLX permette di fare la moltiplicazione tra due registri rispettivamente signed e unsigned.
+Sono stati modificati i loro codici (#104 e #112 del file dlxasm.pl) rispettivamente in "r,0x3e" e "r,0x3f" in quanto non esiste la FPU
+
++ nota #4
+Lista delle istruzioni possibili è memorizzata nel file "instructions.txt"
