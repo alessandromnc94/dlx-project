@@ -1,5 +1,5 @@
 + nota #1:
-Il compilatore (o l'utente) deve aggiungere l'istruzione NOP se la seguente coppia di istruzioni viene scritta nel codice del programma:
+L'utente deve aggiungere l'istruzione NOP se la seguente coppia di istruzioni viene scritta nel codice del programma:
     LOAD r1, address    =>      LOAD r1, address
                         =>      NOP
     BRANCH r1, label    =>      BRANCH r1, label (forwarding possibile)
@@ -17,3 +17,12 @@ Sono stati modificati i loro codici (#104 e #112 del file dlxasm.pl) rispettivam
 
 + nota #4
 Lista delle istruzioni possibili è memorizzata nel file "instructions.txt"
+
++ nota #5
+la maschera per le istruzioni lb e lbu è di tipo structural per ridurre le dimensioni
+
++ nota #6
+La maschera per la sb è una semplice AND ma eviterei di inserirla internamente al datapath per lasciare il lavoro alla DRAM che dovrà scrivere solo il byte interessato (meno area usata nel datapath e cw_mem ridutta di una colonna)
+
++ nota #7
+verificare che nel nostro DLX i segnali in IF vengono gestiti esternamente alla CU (reset) o se bisogna aggiungerli e in quale forma (cw_mem o stalli)

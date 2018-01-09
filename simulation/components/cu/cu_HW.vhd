@@ -39,12 +39,11 @@ entity cu_hw is
     --
     -- third pipe stage outputs: execute
     -- alu selector
-    alu_sel            : out alu_array;
+    alu_op_sel         : out alu_array;
     -- cw_mem signals
     alu_pc_sel         : out std_logic;  -- put pc on alu in_1 && "+8" on alu in_2 
     alu_get_imm_in     : out std_logic;
     alu_out_reg_en     : out std_logic;
-    b_mask_sel         : out std_logic_vector(1 downto 0);
     b_bypass_en        : out std_logic;
     add_w_pipe_2_en    : out std_logic;
     --
@@ -54,9 +53,8 @@ entity cu_hw is
     dram_read_en       : out std_logic;
     dram_write_en      : out std_logic;
     dram_write_byte    : out std_logic;
-    dram_write_word    : out std_logic;
-    lmd_mask_signed    : out std_logic;
-    lmd_mask_sel       : out std_logic_vector(1 downto 0);
+    mask_2_signed      : out std_logic;
+    mask_2_en          : out std_logic;
     add_w_pipe_3_en    : out std_logic;
     --
     -- fifth pipe stage outputs: write back
@@ -79,41 +77,40 @@ architecture behavioral of cu_hw is
 
   -- lut for control word
   signal cw_mem : cw_mem_matrix := (
-    nop         => cw_nop,
-    rtype       => "11000000011000001110000000101",
-    ftype       => "11000000011000001110000000101",
-    itype_addi  => "10100000010010001110000000101",
-    itype_addui => "10110000010010001110000000101",
-    itype_andi  => "10100000010010001110000000101",
-    itype_ori   => "10100000010010001110000000101",
-    itype_seqi  => "10110000010010001110000000101",
-    itype_sgei  => "10110000010010001110000000101",
-    itype_sgeui => "10100000010010001110000000101",
-    itype_sgti  => "10110000010010001110000000101",
-    itype_sgtui => "10100000010010001110000000101",
-    itype_slei  => "10110000010010001110000000101",
-    itype_sleui => "10100000010010001110000000101",
-    itype_slli  => "10100000011010001110000000101",
-    itype_slti  => "10110000010010001110000000101",
-    itype_sltui => "10100000010010001110000000101",
-    itype_snei  => "10110000010010001110000000101",
-    itype_srai  => "10100000011010001110000000101",
-    itype_srli  => "10100000011010001110000000101",
-    itype_subi  => "10110000010010001110000000101",
-    itype_subui => "10100000010010001110000000101",
-    itype_xori  => "10100000010010001110000000101",
-    beqz        => "10101000010000000000000000000",
-    bnez        => "10101100010000000000000000000",
-    j           => "00110010000000000000000000000",
-    jal         => "00110010110100000110000000101",
-    jalr        => "10100011110100000110000000101",
-    jr          => "10100011010000000000000000000",
-    lb          => "10110000011010001101000101111",
-    lbu         => "10100000011010001101000001111",
-    lw          => "10110000010010001101000110111",
-    sb          => "11110000011010111000110000000",
-    sw          => "11110000011011011000101000000",
-    others      => cw_nop               -- instructions not defined
+    nop    => cw_nop,
+    rtype  => "1100000001100011100000101",
+    addi   => "1010000001001011100000101",
+    addui  => "1011000001001011100000101",
+    andi   => "1010000001001011100000101",
+    beqz   => "1010100001000000000000000",
+    bnez   => "1010110001000000000000000",
+    j      => "0011001000000000000000000",
+    jal    => "0011001011010001100000101",
+    jalr   => "1010001111010001100000101",
+    jr     => "1010001101000000000000000",
+    lb     => "1011000001101011010011111",
+    lbu    => "1010000001101011010001111",
+    lw     => "1011000001001011010010111",
+    ori    => "1010000001001011100000101",
+    sb     => "1111000001101110001100000",
+    seqi   => "1011000001001011100000101",
+    sgei   => "1011000001001011100000101",
+    sgeui  => "1010000001001011100000101",
+    sgti   => "1011000001001011100000101",
+    sgtui  => "1010000001001011100000101",
+    slei   => "1011000001001011100000101",
+    sleui  => "1010000001001011100000101",
+    slli   => "1010000001101011100000101",
+    slti   => "1011000001001011100000101",
+    sltui  => "1010000001001011100000101",
+    snei   => "1011000001001011100000101",
+    srai   => "1010000001101011100000101",
+    srli   => "1010000001101011100000101",
+    subi   => "1011000001001011100000101",
+    subui  => "1010000001001011100000101",
+    sw     => "1111000001101110001000000",
+    xori   => "1010000001001011100000101",
+    others => cw_nop                    -- instructions not defined
     );
   -- control word from lut
   signal cw               : cw_array                                    := (others => '0');
@@ -153,7 +150,7 @@ begin
   forwarding_in_1_en <= cw2(cw2_array_size-10);
   forwarding_in_2_en <= cw2(cw2_array_size-11);
   -- third pipe stage outputs
-  alu_sel            <= alu3;
+  alu_op_sel         <= alu3;
   --
   alu_pc_sel         <= cw3(cw3_array_size-1);
   alu_get_imm_in     <= cw3(cw3_array_size-2);
@@ -196,13 +193,13 @@ begin
         cw1  <= cw_nop;
         alu2 <= alu_nop;
         cw2  <= cw_nop(cw2_array_size-1 downto 0);
-        -- alu3 <= alu_nop;
-        -- cw3  <= cw_nop(cw3_array_size-1 downto 0);
+      -- alu3 <= alu_nop;
+      -- cw3  <= cw_nop(cw3_array_size-1 downto 0);
       end if;
       cw3  <= cw2(cw3_array_size-1 downto 0);
       alu3 <= alu2;
-      cw4 <= cw3(cw4_array_size-1 downto 0);
-      cw5 <= cw4(cw5_array_size-1 downto 0);
+      cw4  <= cw3(cw4_array_size-1 downto 0);
+      cw5  <= cw4(cw5_array_size-1 downto 0);
     end if;
   end process;
 
@@ -233,7 +230,7 @@ begin
           when rtype_mult             => alu <= alu_mult;
           when rtype_multu            => alu <= alu_multu;
           when others                 => alu <= alu_nop;
-      end case;
+        end case;
       -- itype
       when itype_addi | itype_addui => alu <= alu_add;
       when itype_subi | itype_subui => alu <= alu_sub;

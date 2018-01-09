@@ -39,8 +39,8 @@ begin
   begin
     if rising_edge(clk) then
       if reset = '1' then
-        out1      <= (others => 'Z');
-        out2      <= (others => 'Z');
+        out1      <= (others => 'z');
+        out2      <= (others => 'z');
         registers <= (others => (others => '0'));
       elsif enable = '1' then
         if wr = '1' then

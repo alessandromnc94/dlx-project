@@ -22,7 +22,7 @@ begin
       -- if rst and set are equal to '1'
       -- forbidden input
       if rst = set then
-        q <= 'X';
+        q <= 'x';
       elsif rst = '1' then
         q <= '0';
       else

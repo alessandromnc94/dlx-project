@@ -28,7 +28,7 @@ begin
       -- if rst and set are equal to '1'
       -- forbidden input
       if rst = set then
-        dout <= (others => 'X');
+        dout <= (others => 'x');
       elsif rst = '1' then
         dout <= (others => '0');
       else

@@ -9,7 +9,7 @@ package cu_hw_types is
 -- control unit std_logic_vector sizes
   constant opcode_size   : integer := 6;   -- opcode field size
   constant func_size     : integer := 11;  -- func field size 
-  constant cw_array_size : integer := 29;  -- cw size
+  constant cw_array_size : integer := 25;  -- cw size
 
 -- change the values of the instructions coding as you want, depending also on the type of control unit choosen
   subtype cw_array is std_logic_vector(cw_array_size-1 downto 0);
@@ -45,8 +45,8 @@ package cu_hw_types is
   constant rtype_sleu  : integer := 16#3c#;
   constant rtype_sgeu  : integer := 16#3d#;
   -- modified instruction list
-  constant rtype_mult   : integer   := 16#3e#;
-  constant rtype_multu   : integer   := 16#3f#;
+  constant rtype_mult  : integer := 16#3e#;
+  constant rtype_multu : integer := 16#3f#;
 -- i-type instruction -> opcode field
   constant nop         : integer := 16#00#;
   constant itype_addi  : integer := 16#08#;
