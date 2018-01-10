@@ -2,3 +2,4 @@
 !.gitkeep
 # ignora cartella script personali
 ignore/
+*.vhd.bak
