@@ -15,16 +15,13 @@ entity datapath is
     instr      : in     std_logic_vector(n_bit-1 downto 0);  --current instruction from iram, feeds the ir
     lmdin      : in     std_logic_vector(n_bit-1 downto 0);  --lmd register data input
     clk        : in     std_logic;      --clock signal
+    rst        : in     std_logic;      --general reset signal
     -- 1st stage
-    pcr        : in     std_logic;      --program counter reset
     pce        : in     std_logic;      --program counter enable
-    npcr       : in     std_logic;      --npc reset
     npce       : in     std_logic;      --npc counter enable
-    irr        : in     std_logic;      --instruction register reset
     ire        : in     std_logic;      --instruction register enable
     -- 2nd stage
     --register file signals
-    rfr        : in     std_logic;      --reset
     rfe        : in     std_logic;      --enable
     rfr1       : in     std_logic;      --read enable 1
     rfr2       : in     std_logic;      --read enable 2
@@ -35,40 +32,27 @@ entity datapath is
     jmp        : in     std_logic;      --jmp/!nojmp
     --sign extender and registers signals
     see        : in     std_logic;      --sign extender enable
-    ar         : in     std_logic;      --a register reset
     ae         : in     std_logic;      --a register enable
-    br         : in     std_logic;      --b register reset
     ben        : in     std_logic;      --b register enable
-    ir         : in     std_logic;      --immediate register enable
     ie         : in     std_logic;      --immediate register enable
-    prr        : in     std_logic;      --pc pipeline reg reset
     pre        : in     std_logic;      --pc pipeline reg enable
-    aw1r       : in     std_logic;      --Address write1 reg reset
     aw1e       : in     std_logic;      --Address write1 reg enable
     -- 3rd stage
     --alu signals
     alusel     : in     alu_array;      --alu operation selectors
     --muxes and registers signals
     m3s        : in     std_logic;      --mux 3 selector
-    aor        : in     std_logic;      --alu_out register reset
     aoe        : in     std_logic;      --alu_out registes enable
-    msksel1    : in     std_logic;      --selector for store byte mask
-    msksigned1 : in     std_logic;      -- mask is signed if enabled
-    mer        : in     std_logic;      --me register reset
     mee        : in     std_logic;      --me register enable
     mps        : in     std_logic;      --mux from pc selector
     mss        : in     std_logic;      --mux to sum 8 to pc selector
-    aw2r       : in     std_logic;      --Address write2 reg reset
     aw2e       : in     std_logic;      --Address write2 reg enable
     -- 4th stage
-    r1r        : in     std_logic;      --register 1 reset
     r1e        : in     std_logic;      --register 1 enable
     msksel2    : in     std_logic;      --selector for load byte mask
     msksigned2 : in     std_logic;      -- mask is signed if enabled
-    lmdr       : in     std_logic;      --lmd register reset
-    lmde       : in     std_logic;      --lmd register reset
+    lmde       : in     std_logic;      --lmd register enable
     m4s        : in     std_logic;      --mux 5 selector
-    aw3r       : in     std_logic;      --Address write3 reg reset
     aw3e       : in     std_logic;      --Address write3 reg enable
     -- 5th stage
     m5s        : in     std_logic;      --mux 5 selector
@@ -168,6 +152,9 @@ architecture structural of datapath is
       aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the ALU
       exear   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in execute stage
       memar   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in memory stage
+      alue    : in  std_logic;
+      exe     : in  std_logic;
+      meme    : in  std_logic;
       alud    : in  std_logic_vector(m-1 downto 0);  -- data coming from output of ALU
       exed    : in  std_logic_vector(m-1 downto 0);  -- data coming from execute stage
       memd    : in  std_logic_vector(m-1 downto 0);  -- data coming from memory stage
@@ -219,46 +206,46 @@ architecture structural of datapath is
   signal irout                                                      : std_logic_vector(n_bit-1 downto 0);
   signal om5, ain, bin, immin, aout, bout, immout, fuo1, fuo2, fuo3 : std_logic_vector(n_bit-1 downto 0);
   signal fuo4, om1, om2, om3, om4, oalu, r1out, lmdout, ompc        : std_logic_vector(n_bit-1 downto 0);
-  signal omopc, wri, msk1out, msk2out, aw1o, aw2o, aw3o             : std_logic_vector(n_bit-1 downto 0);
+  signal omopc, wri, msk2out, aw1o, aw2o, aw3o                      : std_logic_vector(n_bit-1 downto 0);
   signal fum                                                        : std_logic_vector(1 downto 0);
 
 begin
 
   --fetch stage
   pc : register_n generic map(n => n_bit)
-    port map(pcin, clk, pcr, '0', pce, pcout);
+    port map(pcin, clk, rst, '0', pce, pcout);
   inrreg : register_n generic map(n => n_bit)
-    port map(instr, clk, irr, '0', ire, irout);
+    port map(instr, clk, rst, '0', ire, irout);
   add : rca_n generic map(n => n_bit)
     port map(pcout, aconst, '0', npcin, open);
   npc : register_n generic map(n => n_bit)
-    port map(npcin, clk, npcr, '0', npce, npcout);
+    port map(npcin, clk, rst, '0', npce, npcout);
 
   --decode stage
   mux31w : mux_n_2_1 generic map(n => n_bit)
     port map(irout(n_bit-7 downto n_bit-11), raddrconst, mws, wri);
   reg_file : register_file generic map(width_add => reg_addr_size, width_data => n_bit)
-    port map(clk, rfr, rfe, rfr1, rfr2, rfw, aw3o, irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), om5, ain, bin);
+    port map(clk, rst, rfe, rfr1, rfr2, rfw, aw3o, irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), om5, ain, bin);
   sign_extend : sign_extender generic map(n_in => imm_val_size, n_out => n_bit)
     port map(irout(n_bit-17 downto 0), see, immin);
   branch : branch_unit generic map(n1 => n_bit)
     port map(immin, om1, npcout, be, jr, jmp, pcin);
   forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
-    port map(irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), aw1o, aw2o, aw3o, oalu, aluout, om4, clk, fum, fuo1, fuo2);
+    port map(irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), aw1o, aw2o, aw3o, aw1e, aw2e, aw3e, oalu, aluout, om4, clk, fum, fuo1, fuo2);
   mux1 : mux_n_2_1 generic map(n => n_bit)
     port map(ain, fuo1, fum(0), om1);
   mux2 : mux_n_2_1 generic map(n => n_bit)
     port map(bin, fuo2, fum(1), om2);
   areg : register_n generic map(n => n_bit)
-    port map(om1, clk, ar, '0', ae, aout);
+    port map(om1, clk, rst, '0', ae, aout);
   breg : register_n generic map(n => n_bit)
-    port map(om2, clk, br, '0', ben, bout);
+    port map(om2, clk, rst, '0', ben, bout);
   immreg : register_n generic map(n => n_bit)
-    port map(immin, clk, ir, '0', ie, immout);
+    port map(immin, clk, rst, '0', ie, immout);
   pcpreg : register_n generic map(n => n_bit)
-    port map(pcout, clk, prr, '0', pre, pcregout);
+    port map(pcout, clk, rst, '0', pre, pcregout);
   add_w1 : register_n generic map(n => n_bit)
-    port map(wri, clk, aw1r, '0', aw1e, aw1o);
+    port map(wri, clk, rst, '0', aw1e, aw1o);
 
   --execute stage
   mux3 : mux_n_2_1 generic map(n => n_bit)
@@ -267,28 +254,26 @@ begin
     port map(aout, pcregout, mps, ompc);
   muxoffpc : mux_n_2_1 generic map(n => n_bit)
     port map(om3, offconst, mss, omopc);
-  mask01 : mask generic map(n => n_bit)
-    port map(bout, msksel1, msksigned1, msk1out);
   me : register_n generic map(n => n_bit)
-    port map(msk1out, clk, mer, '0', mee, meout);
+    port map(bout, clk, rst, '0', mee, meout);
   aluinst : alu generic map(n => n_bit)
     port map(ompc, omopc, alusel, oalu);
   aluoutinst : register_n generic map(n => n_bit)
-    port map(oalu, clk, aor, '0', aoe, aluout);
+    port map(oalu, clk, rst, '0', aoe, aluout);
   add_w2 : register_n generic map(n => n_bit)
-    port map(aw1o, clk, aw2r, '0', aw2e, aw2o);
+    port map(aw1o, clk, rst, '0', aw2e, aw2o);
 
   --memory stage
   reg1inst : register_n generic map(n => n_bit)
-    port map(aluout, clk, r1r, '0', r1e, r1out);
+    port map(aluout, clk, rst, '0', r1e, r1out);
   mask02 : mask generic map(n => n_bit)
     port map(lmdin, msksel2, msksigned2, msk2out);
   lmd : register_n generic map(n => n_bit)
-    port map(msk2out, clk, lmdr, '0', lmde, lmdout);
+    port map(msk2out, clk, rst, '0', lmde, lmdout);
   mux4 : mux_n_2_1 generic map(n => n_bit)
     port map(r1out, lmdout, m4s, om4);
   add_w3 : register_n generic map(n => n_bit)
-    port map(aw2o, clk, aw3r, '0', aw3e, aw3o);
+    port map(aw2o, clk, rst, '0', aw3e, aw3o);
 
   --write back stage
   mux5 : mux_n_2_1 generic map(n => n_bit)
