@@ -12,9 +12,6 @@ use work.cu_hw_types.all;
 -- use work.cu_hw_functions.all;
 
 entity cu_hw is
-  generic (
-    reg_addr_size : natural := 32
-    );
   port (
     -- cw
     -- first pipe stage outputs: fetch
