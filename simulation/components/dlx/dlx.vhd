@@ -3,6 +3,7 @@ use ieee.std_logic_1164.all;
 
 use work.alu_types.all;
 use work.cu_hw_types.all;
+use work.my_const.all;
 
 entity dlx is
   port (
@@ -72,6 +73,63 @@ architecture structural of dlx is
   end component;
 
   component datapath is
+    generic (
+      imm_val_size  : integer := 16;
+      j_val_size    : integer := 26; --NOT USED
+      reg_addr_size : integer := 5
+      );
+    port (
+      -- input
+      instr      : in     std_logic_vector(n_bit-1 downto 0);  --current instruction from iram, feeds the ir
+      lmdin      : in     std_logic_vector(n_bit-1 downto 0);  --lmd register data input
+      clk        : in     std_logic;      --clock signal
+      rst        : in     std_logic;      --general reset signal
+      -- 1st stage
+      pce        : in     std_logic;      --program counter enable
+      npce       : in     std_logic;      --npc counter enable
+      ire        : in     std_logic;      --instruction register enable
+      -- 2nd stage
+      --register file signals
+      rfe        : in     std_logic;      --enable
+      rfr1       : in     std_logic;      --read enable 1
+      rfr2       : in     std_logic;      --read enable 2
+      rfw        : in     std_logic;      --write enable
+      --branch unit signals
+      be         : in     std_logic;      --beqz/!bnez
+      jr         : in     std_logic;      --jr/!nojr
+      jmp        : in     std_logic;      --jmp/!nojmp
+      --sign extender and registers signals
+      see        : in     std_logic;      --sign extender enable
+      ae         : in     std_logic;      --a register enable
+      ben        : in     std_logic;      --b register enable
+      ie         : in     std_logic;      --immediate register enable
+      pre        : in     std_logic;      --pc pipeline reg enable
+      aw1e       : in     std_logic;      --Address write1 reg enable
+      -- 3rd stage
+      --alu signals
+      alusel     : in     alu_array;      --alu operation selectors
+      --muxes and registers signals
+      m3s        : in     std_logic;      --mux 3 selector
+      aoe        : in     std_logic;      --alu_out registes enable
+      mee        : in     std_logic;      --me register enable
+      mps        : in     std_logic;      --mux from pc selector
+      mss        : in     std_logic;      --mux to sum 8 to pc selector
+      aw2e       : in     std_logic;      --Address write2 reg enable
+      -- 4th stage
+      r1e        : in     std_logic;      --register 1 enable
+      msksel2    : in     std_logic;      --selector for load byte mask
+      msksigned2 : in     std_logic;      -- mask is signed if enabled
+      lmde       : in     std_logic;      --lmd register enable
+      m4s        : in     std_logic;      --mux 5 selector
+      aw3e       : in     std_logic;      --Address write3 reg enable
+      -- 5th stage
+      m5s        : in     std_logic;      --mux 5 selector
+      mws        : in     std_logic;      --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
+      -- outputs
+      pcout      : buffer std_logic_vector(n_bit-1 downto 0);  --program counter output per le dimensioni puoi cambiarlo, la iram puo' essere diversa dalla dram
+      aluout     : buffer std_logic_vector(n_bit-1 downto 0);  --alu outpud data
+      meout      : out    std_logic_vector(n_bit-1 downto 0)  --me register data out
+      );
   end component;
 
   component iram is
@@ -129,9 +187,8 @@ architecture structural of dlx is
 -- datapath
 -- TODO
   constant imm_val_size         : integer := 16;
-  constant j_val_size           : integer := 26;
+  constant j_val_size           : integer := 26; --NOT USED
   constant reg_addr_size        : integer := 5;
-  constant reg_data_width       : integer := 32;
 
   signal datapath_iram_addr   : std_logic_vector(iram_addr_size-1 downto 0);
   signal datapath_iram_dout   : std_logic_vector(4*iram_data_cell_width-1 downto 0);
@@ -268,7 +325,50 @@ begin  -- architecture structural
     );
 
     -- TODO
-  datapath0 : datapath generic map(1) port map(1);
+  datapath0 : datapath generic map(
+           imm_val_size =>  imm_val_size;
+           j_val_size =>    j_val_size;
+           reg_addr_size => reg_addr_size
+           ) port map(
+           instr      =>  iram_dout;
+           lmdin      =>  dram_out;
+           clk        =>  clk;
+           rst        =>  rst;
+           pce        =>
+           npce       =>
+           ire        =>
+           rfe        =>
+           rfr1       =>  cu_hw_reg_file_read_1;
+           rfr2       =>  cu_hw_reg_file_read_2;
+           rfw        =>  cu_hw_reg_file_write;
+           be         =>  cu_hw_branch_en;
+           jr         =>  cu_hw_jr_en;
+           jmp        =>  cu_hw_jump_en;
+           see        =>  cu_hw_imm_sign_ext_en;
+           ae         =>
+           ben        =>
+           ie         =>
+           pre        =>
+           aw1e       =>
+           alusel     =>  cu_hw_alu_op_sel;
+           m3s        =>
+           aoe        =>  cu_hw_alu_out_reg_en;
+           mee        =>
+           mps        =>
+           mss        =>
+           aw2e       =>  cu_hw_add_w_pipe_2_en;
+           r1e        =>
+           msksel2    =>  cu_hw_mask_2_en;;
+           msksigned2 =>  cu_hw_mask_2_signed;
+           lmde       =>
+           m4s        =>
+           aw3e       =>  cu_hw_add_w_pipe_3_en;
+           m5s        =>
+           mws        =>
+           pcout      => iram_addr;
+           aluout     => dram_addr_w;
+           meout      => dram_din
+           );
 
   -- signal redirects
   -- datapath <--> iram
