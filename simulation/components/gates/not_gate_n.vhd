@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity not_gate_n is
   generic (
-    n : integer := 1
+    n : natural := 1
     );
   port (
     in_s  : in  std_logic_vector(n-1 downto 0);

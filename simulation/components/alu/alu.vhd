@@ -10,7 +10,7 @@ use work.my_arith_functions.all;
 
 entity alu is
   generic (
-    n : integer := 32
+    n : natural := 32
     );
   port (
     in_1   : in  std_logic_vector(n-1 downto 0);
@@ -27,7 +27,7 @@ end entity;
 architecture behavioral of alu is
   component mux_n_2_1 is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_0  : in  std_logic_vector(n-1 downto 0);
@@ -41,7 +41,7 @@ architecture behavioral of alu is
 -- mux_n_6_1 for: output mux and comparator mux
   component mux_n_6_1 is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_0  : in  std_logic_vector(n-1 downto 0);
@@ -59,7 +59,7 @@ architecture behavioral of alu is
 
   component not_gate_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_s  : in  std_logic_vector(n-1 downto 0);
@@ -70,7 +70,7 @@ architecture behavioral of alu is
 
   component logicals_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1  : in  std_logic_vector(n-1 downto 0);
@@ -84,7 +84,7 @@ architecture behavioral of alu is
 
   component booth_multiplier is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1       : in  std_logic_vector(n-1 downto 0);
@@ -98,8 +98,8 @@ architecture behavioral of alu is
 
   component p4_adder is
     generic (
-      n          : integer;
-      carry_step : integer
+      n          : natural;
+      carry_step : natural
       );
     port (
       in_1      : in  std_logic_vector(n-1 downto 0);
@@ -115,7 +115,7 @@ architecture behavioral of alu is
 
   component zero_comparator is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_s  : in  std_logic_vector(n-1 downto 0);
@@ -142,7 +142,7 @@ architecture behavioral of alu is
   -- insert shifter/rotator component declaration
   component shifter is
     generic (
-      n : integer
+      n : natural
       );
     port (
       base_vector    : in  std_logic_vector(n-1 downto 0);
@@ -158,7 +158,7 @@ architecture behavioral of alu is
 -- insert rotator component declaration (re-used left_shift to reduce signals)
   component rotator is
     generic (
-      n : integer
+      n : natural
       );
     port (
       base_vector     : in  std_logic_vector(n-1 downto 0);
@@ -350,10 +350,10 @@ begin
       when conv_integer(unsigned(alu_xnor)) =>
         logicals_mode <= logicals_xnor;
         out_mux_sel   <= out_logicals_value_sel;
-      when conv_integer(unsigned(alu_mul_signed)) =>
+      when conv_integer(unsigned(alu_mult)) =>
         out_mux_sel <= out_mul_value_sel;
         signed_mul  <= '1';
-      when conv_integer(unsigned(alu_mul)) =>
+      when conv_integer(unsigned(alu_multu)) =>
         out_mux_sel <= out_mul_value_sel;
         signed_mul  <= '0';
       when conv_integer(unsigned(alu_sll)) =>
@@ -428,9 +428,6 @@ begin
     end case;
   end process;
 
---
--- insert: divider
---
 end architecture;
 
 -- configurations

@@ -3,30 +3,30 @@ use ieee.math_real.all;
 
 package my_arith_functions is
   function log2int (
-    n : integer
+    n : natural
     )
-    return integer;
+    return natural;
   function log2int_own (
-    n : integer
+    n : natural
     )
-    return integer;
+    return natural;
 end package;
 
 package body my_arith_functions is
   function log2int (
-    n : integer
-    ) return integer is
+    n : natural
+    ) return natural is
   begin
     return integer(ceil(log2(real(n))));
 
   end function;
 
   function log2int_own (
-    n : integer
+    n : natural
     )
-    return integer is
-    variable tmp : integer := n;
-    variable ret : integer := 0;
+    return natural is
+    variable tmp : natural := n;
+    variable ret : natural := 0;
   begin
     while tmp > 0 loop
       tmp := tmp/2;

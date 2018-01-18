@@ -3,19 +3,19 @@ use ieee.std_logic_1164.all;
 
 entity forwarding_unit is
   generic(
-    n : integer := 32;                  --address length
-    m : integer := 32                   --data length
+    n : natural := 32;                  --address length
+    m : natural := 32                   --data length
     );
   port (
     arf1    : in  std_logic_vector(n-1 downto 0);  --addresses of regisers for the current operation 
     arf2    : in  std_logic_vector(n-1 downto 0);
-    aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the ALU 
+    aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the alu 
     exear   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in execute stage
     memar   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in memory stage
     alue    : in  std_logic;
     exe     : in  std_logic;
     meme    : in  std_logic;
-    alud    : in  std_logic_vector(m-1 downto 0);  -- data coming from output of ALU
+    alud    : in  std_logic_vector(m-1 downto 0);  -- data coming from output of alu
     exed    : in  std_logic_vector(m-1 downto 0);  -- data coming from execute stage
     memd    : in  std_logic_vector(m-1 downto 0);  -- data coming from memory stage
     clk     : in  std_logic;
@@ -55,7 +55,7 @@ begin
     data_in(0) <= alud;
     data_in(1) <= exed;
     data_in(2) <= memd;
-    
+
     enarray(0) <= alue;
     enarray(1) <= exe;
     enarray(2) <= meme;

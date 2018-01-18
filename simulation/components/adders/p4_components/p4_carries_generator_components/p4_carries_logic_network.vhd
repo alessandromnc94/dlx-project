@@ -7,8 +7,8 @@ use work.p4_carries_logic_network_functions.all;
 
 entity p4_carries_logic_network is
   generic (
-    n          : integer := 32;
-    carry_step : integer := 4
+    n          : natural := 32;
+    carry_step : natural := 4
     );
 
   port (
@@ -20,10 +20,10 @@ entity p4_carries_logic_network is
 end entity;
 
 architecture structural of p4_carries_logic_network is
-  constant n_bit_log2 : integer    := log2int(n);
+  constant n_bit_log2 : natural    := log2int(n);
   type charvector is array (n downto 0) of character;
   type charmatrix is array (0 to n_bit_log2) of charvector;
-  signal matrix_char  : charmatrix := (others => (others => 'x'));
+  signal matrix_char  : charmatrix := (others => (others => 'X'));
 
 
 
@@ -47,8 +47,8 @@ architecture structural of p4_carries_logic_network is
       );
   end component;
 
-  constant n_log2          : integer := log2int(n);
-  constant carry_step_log2 : integer := log2int(carry_step);
+  constant n_log2          : natural := log2int(n);
+  constant carry_step_log2 : natural := log2int(carry_step);
 
   type signalvector is array (0 to n_log2) of std_logic_vector (n downto 0);
 

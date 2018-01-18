@@ -7,8 +7,8 @@ use work.my_arith_functions.all;
 
 entity t2_mask_selector is
   generic (
-    n           : integer := 32;
-    mask_offset : integer := 3
+    n           : natural := 32;
+    mask_offset : natural := 3
     );
   port (
     base_vector    : in  std_logic_vector(n-1 downto 0);
@@ -37,8 +37,8 @@ end entity;
 architecture structural of t2_mask_selector is
   component t2_mask_generator is
     generic (
-      n           : integer;
-      mask_offset : integer
+      n           : natural;
+      mask_offset : natural
       );
     port (
       base_vector : in  std_logic_vector(n-1 downto 0);

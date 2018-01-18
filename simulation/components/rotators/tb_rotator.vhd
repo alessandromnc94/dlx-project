@@ -5,10 +5,10 @@ entity tb_rotator is
 end entity;
 
 architecture behavioral of tb_rotator is
-  constant n : integer := 4;
+  constant n : natural := 4;
   component rotator is
     generic (
-      n : integer
+      n : natural
       );
     port (
       base_vector     : in  std_logic_vector(n-1 downto 0);

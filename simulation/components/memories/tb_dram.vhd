@@ -9,9 +9,9 @@ architecture behavioral of tb_dram is
 
   component dram is
     generic (
-      ram_depth  : integer := 64;
-      data_width : integer := 8;
-      addr_size  : integer := 32
+      ram_depth  : natural := 64;
+      data_width : natural := 8;
+      addr_size  : natural := 32
       );
     port (
       rst               : in  std_logic;

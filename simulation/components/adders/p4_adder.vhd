@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 
 entity p4_adder is
   generic (
-    n          : integer := 32;
-    carry_step : integer := 4
+    n          : natural := 32;
+    carry_step : natural := 4
     );
   port (
     in_1      : in  std_logic_vector (n-1 downto 0);
@@ -23,8 +23,8 @@ architecture structural of p4_adder is
 
   component p4_carries_generator is
     generic (
-      n          : integer;
-      carry_step : integer
+      n          : natural;
+      carry_step : natural
       );
     port (
       in_1        : in  std_logic_vector (n-1 downto 0);
@@ -36,8 +36,8 @@ architecture structural of p4_adder is
 
   component p4_sum_generator is
     generic (
-      n          : integer;
-      carry_step : integer
+      n          : natural;
+      carry_step : natural
       );
     port (
       in_1       : in  std_logic_vector (n-1 downto 0);

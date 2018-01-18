@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity mux_n_2_1 is
   generic (
-    n : integer := 1
+    n : natural := 1
     );
   port (
     in_0  : in  std_logic_vector(n-1 downto 0);
@@ -26,7 +26,7 @@ architecture structural of mux_n_2_1 is
 
   component and_gate_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1  : in  std_logic_vector(n-1 downto 0);
@@ -37,7 +37,7 @@ architecture structural of mux_n_2_1 is
 
   component or_gate_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1  : in  std_logic_vector(n-1 downto 0);

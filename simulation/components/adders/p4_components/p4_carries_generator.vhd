@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 
 entity p4_carries_generator is
   generic (
-    n          : integer := 32;
-    carry_step : integer := 4
+    n          : natural := 32;
+    carry_step : natural := 4
     );
   port (
     in_1        : in  std_logic_vector (n-1 downto 0);
@@ -21,7 +21,7 @@ architecture structural of p4_carries_generator is
 
   component pg_network is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1 : in  std_logic_vector (n-1 downto 0);
@@ -33,8 +33,8 @@ architecture structural of p4_carries_generator is
 
   component p4_carries_logic_network is
     generic (
-      n          : integer;
-      carry_step : integer
+      n          : natural;
+      carry_step : natural
       );
     port (
       pg          : in  std_logic_vector (n-1 downto 0);

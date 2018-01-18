@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 
 entity shifter is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     base_vector    : in  std_logic_vector(n-1 downto 0);
@@ -21,7 +21,7 @@ end entity;
 -- behavioral architecture
 architecture behavioral of shifter is
   signal out_s_tmp, base_vector_casted : bit_vector(n-1 downto 0);
-  signal shift_by_value_casted         : integer;
+  signal shift_by_value_casted         : natural;
 begin
   base_vector_casted    <= to_bitvector(base_vector);
   shift_by_value_casted <= conv_integer(shift_by_value);

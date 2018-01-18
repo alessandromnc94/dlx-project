@@ -5,10 +5,10 @@ entity tb_shifter is
 end entity;
 
 architecture behavioral of tb_shifter is
-  constant n : integer := 8;
+  constant n : natural := 8;
   component shifter is
     generic (
-      n : integer
+      n : natural
       );
     port (
       base_vector    : in  std_logic_vector(n-1 downto 0);

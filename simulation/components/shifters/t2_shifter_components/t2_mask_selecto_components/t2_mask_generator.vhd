@@ -5,8 +5,8 @@ use ieee.std_logic_unsigned.all;
 
 entity t2_mask_generator is
   generic (
-    n           : integer := 32;
-    mask_offset : integer := 3
+    n           : natural := 32;
+    mask_offset : natural := 3
     );
   port (
     base_vector : in  std_logic_vector(n-1 downto 0);
@@ -41,7 +41,7 @@ architecture structural of t2_mask_generator is
   end component;
   component mux_n_2_1 is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_0  : std_logic_vector(n-1 downto 0);

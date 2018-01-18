@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity register_n is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     din  : in  std_logic_vector(n-1 downto 0);
@@ -28,7 +28,7 @@ begin
       -- if rst and set are equal to '1'
       -- forbidden input
       if rst = set then
-        dout <= (others => 'x');
+        dout <= (others => 'X');
       elsif rst = '1' then
         dout <= (others => '0');
       else

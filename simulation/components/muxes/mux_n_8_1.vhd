@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 
 entity mux_n_8_1 is
   generic (
-    n : integer := 1                           -- number of bits for inputs
+    n : natural := 1                           -- number of bits for inputs
     );
   port (
     in_0  : in  std_logic_vector(n-1 downto 0);

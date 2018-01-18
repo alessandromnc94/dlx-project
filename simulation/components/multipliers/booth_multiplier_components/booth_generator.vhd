@@ -6,8 +6,8 @@ use work.booth_generator_types.all;
 
 entity booth_generator is
   generic(
-    n_in  : integer := 16;
-    n_out : integer := 3*16
+    n_in  : natural := 16;
+    n_out : natural := 3*16
     );
   port(
     in_s    : in  std_logic_vector(n_in-1 downto 0);

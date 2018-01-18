@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity xor_gate_single_n is
   generic (
-    n : integer := 3
+    n : natural := 3
     );
   port (
     in_s  : in  std_logic_vector(n-1 downto 0);

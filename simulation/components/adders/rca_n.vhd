@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity rca_n is
   generic (
-    n : integer := 4
+    n : natural := 4
     );
   port (
     in_1      : in  std_logic_vector(n-1 downto 0);

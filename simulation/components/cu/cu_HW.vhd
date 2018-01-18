@@ -74,53 +74,53 @@ architecture behavioral of cu_hw is
 
   -- lut for control word
   signal cw_mem : cw_mem_matrix := (
-    nop    => cw_nop,
-    rtype  => "1100000001100011100000101",
-    addi   => "1010000001001011100000101",
-    addui  => "1011000001001011100000101",
-    andi   => "1010000001001011100000101",
-    beqz   => "1010100001000000000000000",
-    bnez   => "1010110001000000000000000",
-    j      => "0011001000000000000000000",
-    jal    => "0011001011010001100000101",
-    jalr   => "1010001111010001100000101",
-    jr     => "1010001101000000000000000",
-    lb     => "1011000001101011010011111",
-    lbu    => "1010000001101011010001111",
-    lw     => "1011000001001011010010111",
-    ori    => "1010000001001011100000101",
-    sb     => "1111000001101110001100000",
-    seqi   => "1011000001001011100000101",
-    sgei   => "1011000001001011100000101",
-    sgeui  => "1010000001001011100000101",
-    sgti   => "1011000001001011100000101",
-    sgtui  => "1010000001001011100000101",
-    slei   => "1011000001001011100000101",
-    sleui  => "1010000001001011100000101",
-    slli   => "1010000001101011100000101",
-    slti   => "1011000001001011100000101",
-    sltui  => "1010000001001011100000101",
-    snei   => "1011000001001011100000101",
-    srai   => "1010000001101011100000101",
-    srli   => "1010000001101011100000101",
-    subi   => "1011000001001011100000101",
-    subui  => "1010000001001011100000101",
-    sw     => "1111000001101110001000000",
-    xori   => "1010000001001011100000101",
-    others => cw_nop                    -- instructions not defined
+    nop         => cw_nop,
+    rtype       => "1100000001100011100000101",
+    itype_addi  => "1010000001001011100000101",
+    itype_addui => "1011000001001011100000101",
+    itype_andi  => "1010000001001011100000101",
+    beqz        => "1010100001000000000000000",
+    bnez        => "1010110001000000000000000",
+    j           => "0011001000000000000000000",
+    jal         => "0011001011010001100000101",
+    jalr        => "1010001111010001100000101",
+    jr          => "1010001101000000000000000",
+    lb          => "1011000001101011010011111",
+    lbu         => "1010000001101011010001111",
+    lw          => "1011000001001011010010111",
+    itype_ori   => "1010000001001011100000101",
+    sb          => "1111000001101110001100000",
+    itype_seqi  => "1011000001001011100000101",
+    itype_sgei  => "1011000001001011100000101",
+    itype_sgeui => "1010000001001011100000101",
+    itype_sgti  => "1011000001001011100000101",
+    itype_sgtui => "1010000001001011100000101",
+    itype_slei  => "1011000001001011100000101",
+    itype_sleui => "1010000001001011100000101",
+    itype_slli  => "1010000001101011100000101",
+    itype_slti  => "1011000001001011100000101",
+    itype_sltui => "1010000001001011100000101",
+    itype_snei  => "1011000001001011100000101",
+    itype_srai  => "1010000001101011100000101",
+    itype_srli  => "1010000001101011100000101",
+    itype_subi  => "1011000001001011100000101",
+    itype_subui => "1010000001001011100000101",
+    sw          => "1111000001101110001000000",
+    itype_xori  => "1010000001001011100000101",
+    others      => cw_nop               -- instructions not defined
     );
   -- control word from lut
   signal cw               : cw_array                                    := (others => '0');
   -- split cw in stages
-  constant cw1_array_size : integer                                     := cw_array_size;
+  constant cw1_array_size : natural                                     := cw_array_size;
   signal cw1              : cw_array                                    := (others => '0');
-  constant cw2_array_size : integer                                     := cw1_array_size;
+  constant cw2_array_size : natural                                     := cw1_array_size;
   signal cw2              : std_logic_vector(cw2_array_size-1 downto 0) := (others => '0');
-  constant cw3_array_size : integer                                     := cw2_array_size-11;
+  constant cw3_array_size : natural                                     := cw2_array_size-11;
   signal cw3              : std_logic_vector(cw3_array_size-1 downto 0) := (others => '0');
-  constant cw4_array_size : integer                                     := cw3_array_size-7;
+  constant cw4_array_size : natural                                     := cw3_array_size-5;
   signal cw4              : std_logic_vector(cw4_array_size-1 downto 0) := (others => '0');
-  constant cw5_array_size : integer                                     := cw4_array_size-9;
+  constant cw5_array_size : natural                                     := cw4_array_size-7;
   signal cw5              : std_logic_vector(cw5_array_size-1 downto 0) := (others => '0');
   -- delay alu control word
   signal alu1, alu2, alu3 : alu_array                                   := (others => '0');
@@ -152,18 +152,16 @@ begin
   alu_pc_sel         <= cw3(cw3_array_size-1);
   alu_get_imm_in     <= cw3(cw3_array_size-2);
   alu_out_reg_en     <= cw3(cw3_array_size-3);
-  b_mask_sel         <= cw3(cw3_array_size-4 downto cw3_array_size-5);
-  b_bypass_en        <= cw3(cw3_array_size-6);
-  add_w_pipe_2_en    <= cw3(cw3_array_size-7);
+  b_bypass_en        <= cw3(cw3_array_size-4);
+  add_w_pipe_2_en    <= cw3(cw3_array_size-5);
   -- fourth pipe stage outputs
   alu_bypass_en      <= cw4(cw4_array_size-1);
   dram_read_en       <= cw4(cw4_array_size-2);
   dram_write_en      <= cw4(cw4_array_size-3);
   dram_write_byte    <= cw4(cw4_array_size-4);
-  dram_write_word    <= cw4(cw4_array_size-5);
-  lmd_mask_signed    <= cw4(cw4_array_size-6);
-  lmd_mask_sel       <= cw4(cw4_array_size-7 downto cw4_array_size-8);
-  add_w_pipe_3_en    <= cw4(cw4_array_size-9);
+  mask_2_signed      <= cw4(cw4_array_size-5);
+  mask_2_en          <= cw4(cw4_array_size-6);
+  add_w_pipe_3_en    <= cw4(cw4_array_size-7);
   -- fifth pipe stage outputs
   mem_out_sel        <= cw5(cw5_array_size-1);
   reg_file_write     <= cw5(cw5_array_size-2);

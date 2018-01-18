@@ -4,10 +4,10 @@ use ieee.std_logic_arith.all;
 
 entity tb_register_file_win is
   generic (
-    width_data         : integer := 4;
-    n_global_registers : integer := 1;
-    n_local_registers  : integer := 1;
-    windows            : integer := 4
+    width_data         : natural := 4;
+    n_global_registers : natural := 1;
+    n_local_registers  : natural := 1;
+    windows            : natural := 4
     );
 end entity;
 
@@ -16,10 +16,10 @@ architecture testbench of tb_register_file_win is
 
   component register_file_win is
     generic (
-      width_data         : integer := 64;
-      n_global_registers : integer := 8;
-      n_local_registers  : integer := 8;
-      windows            : integer := 4
+      width_data         : natural := 64;
+      n_global_registers : natural := 8;
+      n_local_registers  : natural := 8;
+      windows            : natural := 4
       );
     port (
       clk              : in  std_logic;
@@ -63,8 +63,8 @@ architecture testbench of tb_register_file_win is
   signal from_memory_data : std_logic_vector(width_data-1 downto 0)                                      := (others => '0');
 
   -- signals for testbench
-  signal windows_in_memory : integer := 0;
-  signal windows_in_rf     : integer := 1;
+  signal windows_in_memory : natural := 0;
+  signal windows_in_rf     : natural := 1;
 
   -- signal added only for show the clk_period during simulation
   signal clk_period_s : time := clk_period;

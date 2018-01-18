@@ -7,10 +7,10 @@ entity tb_booth_multiplier is
 end entity;
 
 architecture behavioral of tb_booth_multiplier is
-  constant n : integer := 4;
+  constant n : natural := 4;
   component booth_multiplier is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1       : in  std_logic_vector(n-1 downto 0);

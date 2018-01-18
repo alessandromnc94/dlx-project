@@ -5,7 +5,7 @@ use work.logicals_types.all;
 
 entity logicals_n is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     in_1  : in  std_logic_vector(n-1 downto 0);

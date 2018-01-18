@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 
 entity mux_n_6_1 is
   generic (
-    n : integer := 1                           -- number of bits for inputs
+    n : natural := 1                           -- number of bits for inputs
     );
   port (
     in_0  : in  std_logic_vector(n-1 downto 0);
@@ -33,7 +33,7 @@ begin
       when 3      => out_s <= in_3;
       when 4      => out_s <= in_4;
       when 5      => out_s <= in_5;
-      when others => out_s <= (others => 'z');
+      when others => out_s <= (others => 'Z');
     end case;
   end process;
 end architecture;

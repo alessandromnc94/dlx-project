@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity branch_unit is
   generic (
-    n1 : integer := 32
+    n1 : natural := 32
     );
   port (
     imm : in  std_logic_vector(n1-1 downto 0);  --from datapath
@@ -20,7 +20,7 @@ architecture structural of branch_unit is
 
   component mux_n_2_1 is
     generic (
-      n : integer := 1
+      n : natural := 1
       );
     port (
       in_0  : in  std_logic_vector(n-1 downto 0);
@@ -32,7 +32,7 @@ architecture structural of branch_unit is
 
   component zero_comparator is
     generic (
-      n : integer := 8
+      n : natural := 8
       );
     port (
       in_s  : in  std_logic_vector(n-1 downto 0);
@@ -42,7 +42,7 @@ architecture structural of branch_unit is
 
   component rca_n is
     generic (
-      n : integer := 4
+      n : natural := 4
       );
     port (
       in_1      : in  std_logic_vector(n-1 downto 0);

@@ -7,10 +7,10 @@ use work.my_arith_functions.all;
 
 entity register_file_win is
   generic (
-    width_data         : integer := 64;
-    n_global_registers : integer := 8;
-    n_local_registers  : integer := 8;
-    windows            : integer := 8);
+    width_data         : natural := 64;
+    n_global_registers : natural := 8;
+    n_local_registers  : natural := 8;
+    windows            : natural := 8);
   port (
     clk              : in  std_logic;
     reset            : in  std_logic;
@@ -39,13 +39,13 @@ end entity;
 architecture behavioral of register_file_win is
   -- define constants
   -- offset_cwp is used to shift pointers swp and cwp
-  constant offset_cwp            : integer := 2 * n_local_registers;
+  constant offset_cwp            : natural := 2 * n_local_registers;
   -- n_window_registers contains the number of registers (except global) of a window (in + local + out)
-  constant n_window_registers    : integer := 3 * n_local_registers;
+  constant n_window_registers    : natural := 3 * n_local_registers;
   -- width_add contains the number of bits to address registers in a window (global + in + local + out )
-  constant width_add             : integer := log2int(n_window_registers + n_global_registers);
+  constant width_add             : natural := log2int(n_window_registers + n_global_registers);
   -- total_registers contains the number of all registers (except global)
-  constant n_total_win_registers : integer := windows * offset_cwp;
+  constant n_total_win_registers : natural := windows * offset_cwp;
 
   -- define type for registers array
   type reg_array is (natural range <>) of std_logic_vector(width_data-1 downto 0);
@@ -56,15 +56,15 @@ architecture behavioral of register_file_win is
   -- 'win_registers' is the collection of in, local (and out) registers
   signal win_registers           : reg_array(0 to n_total_win_registers-1) := (others => (others => '0'));
   -- 'swp' and 'cwp' contains the address of the 1st register of stored window and current window
-  signal cwp, swp                : integer                                 := 0;
+  signal cwp, swp                : natural                                 := 0;
   -- 'in_spilling' and 'in_filling' are signals used to check which operation is in execution.
   -- they are needed because 'spill' and 'fill' outputs can be only modified but not checked in 'if' conditions
   signal in_spilling, in_filling : std_logic                               := '0';
   -- 'rf_cycles' contains how many times cycles are started.
   -- it is used to check if at the least one window is stored in memory
-  signal rf_cycles               : integer                                 := 0;
+  signal rf_cycles               : natural                                 := 0;
   -- 'memory_cnt' is an offset used during filling and spilling operation
-  signal memory_cnt              : integer                                 := 0;
+  signal memory_cnt              : natural                                 := 0;
 
 begin
 
@@ -78,13 +78,13 @@ begin
       if reset = '1' then
         win_registers    <= (others => (others => '0'));
         global_registers <= (others => (others => '0'));
-        out1             <= (others => 'z');
-        out2             <= (others => 'z');
+        out1             <= (others => 'Z');
+        out2             <= (others => 'Z');
         cwp              <= 0;
         swp              <= 0;
         in_spilling      <= '0';
         in_filling       <= '0';
-        to_memory_data   <= (others => 'z');
+        to_memory_data   <= (others => 'Z');
         rf_cycles        <= 0;
       elsif enable = '1' then
         if in_spilling = '1' then

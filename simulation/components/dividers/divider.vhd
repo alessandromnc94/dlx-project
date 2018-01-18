@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 
 entity divider is
   generic (
-    n : integer := 8
+    n : natural := 8
     )
     port (
       in_1  : in  std_logic_vector(n-1 downto 0);

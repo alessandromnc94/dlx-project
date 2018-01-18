@@ -10,9 +10,9 @@ use ieee.std_logic_textio.all;
 -- file name is "test.asm.mem"
 entity iram is
   generic (
-    ram_depth  : integer := 64;
-    data_width : integer := 8;
-    addr_size  : integer := 32
+    ram_depth  : natural := 64;
+    data_cell_width : natural := 8;
+    addr_size  : natural := 32
     );
   port (
     rst  : in  std_logic;
@@ -42,11 +42,11 @@ begin
   fill_mem_p : process (rst)
     file mem_fp         : text;
     variable file_line  : line;
-    variable index_rst  : integer := 0;
+    variable index_rst  : natural := 0;
     variable tmp_data_u : std_logic_vector(4*data_width-1 downto 0);
   begin  -- process fill_mem_p
     if (rst = '0') then
-      file_open(mem_fp, "../my_test_jump_no_hazard_dump.txt", read_mode);
+      file_open(mem_fp, "../test_dump.txt", read_mode);
       while (not endfile(mem_fp)) loop
         readline(mem_fp, file_line);
         hread(file_line, tmp_data_u);
@@ -56,7 +56,7 @@ begin
         index_rst := index_rst + 4;
       end loop;
       if(index_rst < ram_depth) then
-        iram_mem(index_rst to ram_depth-1) <= (others => '0');
+        iram_mem(index_rst to ram_depth-1) <= (others => (others => '0'));
       end if;
     end if;
   end process fill_mem_p;

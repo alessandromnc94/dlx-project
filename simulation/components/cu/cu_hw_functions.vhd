@@ -18,7 +18,7 @@ package body cu_hw_functions is
     file file_in                    : text;
     variable line_in                : line;
     variable cw_mem_ret             : cw_mem_matrix := (others => (others => '0'));
-    variable index_start, index_end : integer;
+    variable index_start, index_end : natural;
     variable line_format            : character;
     variable content                : cw_mem_array;
   begin

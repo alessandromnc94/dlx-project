@@ -10,11 +10,11 @@ end entity;
 
 architecture behavioral of tb_alu is
 
-  constant n : integer := 8;
+  constant n : natural := 8;
 
   component alu is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1   : in  std_logic_vector(n-1 downto 0);
@@ -79,9 +79,9 @@ begin
         op_sel <= alu_ror;
         wait for 100 ps;
 
-        op_sel <= alu_mul_signed;
+        op_sel <= alu_mult;
         wait for 100 ps;
-        op_sel <= alu_mul;
+        op_sel <= alu_multu;
         wait for 100 ps;
 
         op_sel <= alu_seq;
@@ -139,10 +139,10 @@ begin
       when alu_xnor =>
         operation      <= " xnor";
         expected_out_s <= in_1 xnor in_2;
-      when alu_mul =>
+      when alu_multu =>
         operation      <= "u mul";
         expected_out_s <= unsigned(in_1(n/2-1 downto 0)) * unsigned(in_2(n/2-1 downto 0));
-      when alu_mul_signed =>
+      when alu_mult =>
         operation      <= "s mul";
         expected_out_s <= signed(in_1(n/2-1 downto 0)) * signed(in_2(n/2-1 downto 0));
       when alu_sll =>

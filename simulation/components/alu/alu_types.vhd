@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 
 package alu_types is
 
-  constant alu_array_size : integer := 5;
+  constant alu_array_size : natural := 5;
   subtype alu_array is std_logic_vector(alu_array_size-1 downto 0);
 
   constant alu_add   : alu_array := conv_std_logic_vector(0, alu_array_size);

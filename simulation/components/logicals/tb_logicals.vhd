@@ -7,10 +7,10 @@ entity tb_logicals is
 end entity;
 
 architecture behavioral of tb_logicals is
-  constant n : integer := 4;
+  constant n : natural := 4;
   component logicals_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1  : in  std_logic_vector(n-1 downto 0);

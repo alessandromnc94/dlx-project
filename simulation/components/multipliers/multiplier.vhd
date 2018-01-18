@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 
 entity multiplier is
   generic (
-    n : integer := 16
+    n : natural := 16
     )
     port (
       in_1  : in  std_logic_vector(n-1 downto 0);

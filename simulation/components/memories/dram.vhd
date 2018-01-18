@@ -7,9 +7,9 @@ use ieee.std_logic_arith.all;
 -- memory initial status: all '0's
 entity dram is
   generic (
-    ram_depth  : integer := 64;
-    data_width : integer := 8;
-    addr_size  : integer := 6
+    ram_depth  : natural := 64;
+    data_cell_width : natural := 8;
+    addr_size  : natural := 6
     );
   port (
     rst               : in  std_logic;
@@ -34,7 +34,7 @@ begin
 
 
   process(addr_r, read_enable, rst)
-    variable index : integer := 0;
+    variable index : natural := 0;
   begin
     index := conv_integer(unsigned(addr_r));
     if(rst = '0') then
@@ -54,7 +54,7 @@ begin
 
 
   process (addr_w, din, write_enable, write_single_cell, rst)
-    variable index : integer := 0;
+    variable index : natural := 0;
   begin
     index := conv_integer(unsigned(addr_w));
 

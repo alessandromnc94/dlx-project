@@ -35,7 +35,7 @@ end architecture;
 architecture structural of logicals is
   component nand_gate_single_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_s  : in  std_logic_vector(n-1 downto 0);

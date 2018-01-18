@@ -8,10 +8,10 @@ entity tb_p4_adder is
 end entity;
 
 architecture behavioral of tb_p4_adder is
-  constant n : integer := 16;
+  constant n : natural := 16;
   component p4_adder is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1      : in  std_logic_vector (n-1 downto 0);
@@ -75,6 +75,3 @@ configuration cfg_tb_p4_adder_structural of tb_p4_adder is
     end for;
   end for;
 end configuration;
-
-
-

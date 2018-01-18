@@ -6,9 +6,9 @@ use work.my_const.all;
 
 entity datapath is
   generic (
-    imm_val_size  : integer := 16;
-    j_val_size    : integer := 26;
-    reg_addr_size : integer := 5
+    imm_val_size  : natural := 16;
+    j_val_size    : natural := 26;
+    reg_addr_size : natural := 32
     );
   port (
     -- input
@@ -36,7 +36,7 @@ entity datapath is
     ben        : in     std_logic;      --b register enable
     ie         : in     std_logic;      --immediate register enable
     pre        : in     std_logic;      --pc pipeline reg enable
-    aw1e       : in     std_logic;      --Address write1 reg enable
+    aw1e       : in     std_logic;      --address write1 reg enable
     -- 3rd stage
     --alu signals
     alusel     : in     alu_array;      --alu operation selectors
@@ -46,17 +46,17 @@ entity datapath is
     mee        : in     std_logic;      --me register enable
     mps        : in     std_logic;      --mux from pc selector
     mss        : in     std_logic;      --mux to sum 8 to pc selector
-    aw2e       : in     std_logic;      --Address write2 reg enable
+    aw2e       : in     std_logic;      --address write2 reg enable
     -- 4th stage
     r1e        : in     std_logic;      --register 1 enable
     msksel2    : in     std_logic;      --selector for load byte mask
     msksigned2 : in     std_logic;      -- mask is signed if enabled
     lmde       : in     std_logic;      --lmd register enable
     m4s        : in     std_logic;      --mux 5 selector
-    aw3e       : in     std_logic;      --Address write3 reg enable
+    aw3e       : in     std_logic;      --address write3 reg enable
     -- 5th stage
     m5s        : in     std_logic;      --mux 5 selector
-    mws        : in     std_logic;      --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
+    mws        : in     std_logic;  --write addr mux selector(mux is physically in decode stage, but driven in wb stage)
     -- outputs
     pcout      : buffer std_logic_vector(n_bit-1 downto 0);  --program counter output per le dimensioni puoi cambiarlo, la iram puo' essere diversa dalla dram
     aluout     : buffer std_logic_vector(n_bit-1 downto 0);  --alu outpud data
@@ -68,7 +68,7 @@ architecture structural of datapath is
 
   component register_n is
     generic (
-      n : integer := 8
+      n : natural := 8
       );
     port (
       din  : in  std_logic_vector(n-1 downto 0);
@@ -82,7 +82,7 @@ architecture structural of datapath is
 
   component rca_n is
     generic (
-      n : integer := 4
+      n : natural := 4
       );
     port (
       in_1      : in  std_logic_vector(n-1 downto 0);
@@ -95,7 +95,7 @@ architecture structural of datapath is
 
   component branch_unit is
     generic (
-      n1 : integer := 32
+      n1 : natural := 32
       );
     port (
       imm : in  std_logic_vector(n1-1 downto 0);  --from datapath
@@ -110,8 +110,8 @@ architecture structural of datapath is
 
   component register_file is
     generic (
-      width_add  : integer := 5;
-      width_data : integer := 64
+      width_add  : natural := 5;
+      width_data : natural := 64
       );
     port (
       clk     : in  std_logic;
@@ -131,8 +131,8 @@ architecture structural of datapath is
 
   component sign_extender is
     generic (
-      n_in  : integer := 32;
-      n_out : integer := 64
+      n_in  : natural := 32;
+      n_out : natural := 64
       );
     port (
       in_s  : in  std_logic_vector(n_in-1 downto 0);
@@ -143,19 +143,19 @@ architecture structural of datapath is
 
   component forwarding_unit is
     generic (
-      n : integer := 32;                --address length
-      m : integer := 32                 --data length
+      n : natural := 32;                --address length
+      m : natural := 32                 --data length
       );
     port (
       arf1    : in  std_logic_vector(n-1 downto 0);  --addresses of registers for the current operation 
       arf2    : in  std_logic_vector(n-1 downto 0);
-      aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the ALU
+      aluar   : in  std_logic_vector(n-1 downto 0);  --address of reg in output to the alu
       exear   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in execute stage
       memar   : in  std_logic_vector(n-1 downto 0);  --adrress of reg in memory stage
       alue    : in  std_logic;
       exe     : in  std_logic;
       meme    : in  std_logic;
-      alud    : in  std_logic_vector(m-1 downto 0);  -- data coming from output of ALU
+      alud    : in  std_logic_vector(m-1 downto 0);  -- data coming from output of alu
       exed    : in  std_logic_vector(m-1 downto 0);  -- data coming from execute stage
       memd    : in  std_logic_vector(m-1 downto 0);  -- data coming from memory stage
       clk     : in  std_logic;
@@ -167,7 +167,7 @@ architecture structural of datapath is
 
   component mux_n_2_1 is
     generic (
-      n : integer := 1
+      n : natural := 1
       );
     port (
       in_0  : in  std_logic_vector(n-1 downto 0);
@@ -179,7 +179,7 @@ architecture structural of datapath is
 
   component alu is
     generic (
-      n : integer := 32
+      n : natural := 32
       );
     port (
       in_1   : in  std_logic_vector(n-1 downto 0);
@@ -192,7 +192,7 @@ architecture structural of datapath is
 
   component mask is
     generic (
-      n : integer := 32
+      n : natural := 32
       );
     port (
       a           : in  std_logic_vector(n-1 downto 0);

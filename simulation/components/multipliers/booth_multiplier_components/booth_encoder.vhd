@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity booth_encoder is
   generic(
-    n : integer := 8
+    n : natural := 8
     );
   port(
     in_s  : in  std_logic_vector(n-1 downto 0);
@@ -22,7 +22,7 @@ architecture structural of booth_encoder is
       );
   end component;
 
-  constant n_encoders_block : integer                                       := n/2 + n mod 2;
+  constant n_encoders_block : natural                                       := n/2 + n mod 2;
   signal in_s_tmp           : std_logic_vector(2*n_encoders_block downto 0) := (others => '0');
 begin
   in_s_tmp(n downto 1) <= in_s;

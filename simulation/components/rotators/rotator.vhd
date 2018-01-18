@@ -5,7 +5,7 @@ use ieee.std_logic_arith.all;
 
 entity rotator is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     base_vector     : in  std_logic_vector(n-1 downto 0);
@@ -20,7 +20,7 @@ end entity;
 -- behavioral architecture
 architecture behavioral of rotator is
   signal out_s_tmp, base_vector_casted : bit_vector(n-1 downto 0);
-  signal rotate_by_value_casted        : integer;
+  signal rotate_by_value_casted        : natural;
 begin
   base_vector_casted     <= to_bitvector(base_vector);
   rotate_by_value_casted <= conv_integer(rotate_by_value);

@@ -17,7 +17,7 @@ architecture structural of booth_encoder_block is
 
   component and_gate_single_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_s  : in  std_logic_vector(n-1 downto 0);
@@ -51,7 +51,7 @@ architecture structural of booth_encoder_block is
 
   component not_gate_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_s  : in  std_logic_vector(n-1 downto 0);

@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity p4_carry_select_block is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     in_1      : in  std_logic_vector (n-1 downto 0);
@@ -17,7 +17,7 @@ architecture structural of p4_carry_select_block is
 
   component rca_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1      : in  std_logic_vector (n-1 downto 0);
@@ -30,7 +30,7 @@ architecture structural of p4_carry_select_block is
 
   component mux_n_2_1 is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_0  : in  std_logic_vector (n-1 downto 0);

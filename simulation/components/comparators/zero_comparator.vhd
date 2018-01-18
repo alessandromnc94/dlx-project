@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity zero_comparator is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     in_s  : in  std_logic_vector(n-1 downto 0);

@@ -5,7 +5,7 @@ use work.booth_generator_types.all;
 
 entity booth_multiplier is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     in_1       : in  std_logic_vector(n-1 downto 0);
@@ -22,7 +22,7 @@ architecture structural of booth_multiplier is
 
   component booth_encoder is
     generic(
-      n : integer
+      n : natural
       );
     port(
       in_s  : in  std_logic_vector(n-1 downto 0);
@@ -32,8 +32,8 @@ architecture structural of booth_multiplier is
 
   component booth_generator is
     generic(
-      n_in  : integer;
-      n_out : integer
+      n_in  : natural;
+      n_out : natural
       );
     port(
       in_s    : in  std_logic_vector(n_in-1 downto 0);
@@ -49,7 +49,7 @@ architecture structural of booth_multiplier is
 -- in_4 : -2 x k
   component mux_n_5_1 is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_0  : in  std_logic_vector(n-1 downto 0);
@@ -64,7 +64,7 @@ architecture structural of booth_multiplier is
 
   component rca_n is
     generic (
-      n : integer
+      n : natural
       );
     port (
       in_1      : in  std_logic_vector(n-1 downto 0);
@@ -75,10 +75,10 @@ architecture structural of booth_multiplier is
       );
   end component;
 
-  constant n_prime : integer := n+2;
+  constant n_prime : natural := n+2;
 
-  constant n_level   : integer := n_prime/2 + n_prime mod 2;
-  constant n_shifted : integer := 3*n_prime;
+  constant n_level   : natural := n_prime/2 + n_prime mod 2;
+  constant n_shifted : natural := 3*n_prime;
 
   type signal_matrix is array(0 to n_level-1) of std_logic_vector(2*n_prime-1 downto 0);
   signal encoder_out                      : std_logic_vector(3*n_level-1 downto 0);

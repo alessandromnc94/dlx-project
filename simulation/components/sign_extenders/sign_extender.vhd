@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 
 entity sign_extender is
   generic (
-    n_in  : integer := 32;
-    n_out : integer := 64
+    n_in  : natural := 32;
+    n_out : natural := 64
     );
   port (
     in_s  : in  std_logic_vector(n_in-1 downto 0);

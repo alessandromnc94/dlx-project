@@ -5,8 +5,8 @@ use ieee.std_logic_unsigned.all;
 
 entity register_file is
   generic (
-    width_add  : integer := 5;
-    width_data : integer := 64
+    width_add  : natural := 5;
+    width_data : natural := 64
     );
   port (
     clk     : in  std_logic;
@@ -39,8 +39,8 @@ begin
   begin
     if rising_edge(clk) then
       if reset = '1' then
-        out1      <= (others => 'z');
-        out2      <= (others => 'z');
+        out1      <= (others => 'Z');
+        out2      <= (others => 'Z');
         registers <= (others => (others => '0'));
       elsif enable = '1' then
         if wr = '1' then

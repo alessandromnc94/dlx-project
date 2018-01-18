@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity pg_network is
   generic (
-    n : integer := 8
+    n : natural := 8
     );
   port (
     in_1 : in  std_logic_vector (n-1 downto 0);
