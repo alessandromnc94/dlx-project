@@ -89,7 +89,7 @@ end configuration;
 
 configuration cfg_mask_structural of mask is
   for structural
-    for not1 : not_gate use configuration work.cfg_not_gate_behavioral;
+    for notsel : not_gate use configuration work.cfg_not_gate_behavioral;
     end for;
     for and1
       for and1_x : and_gate use configuration work.cfg_and_gate_behavioral;
