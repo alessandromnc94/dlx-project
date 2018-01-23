@@ -76,7 +76,8 @@ architecture structural of dlx is
     generic (
       imm_val_size  : natural := 16;
       j_val_size    : natural := 26;    --not used
-      reg_addr_size : natural := 5
+      reg_addr_size : natural := 32;
+      n_bit         : natural := 32
       );
     port (
       -- input
@@ -141,7 +142,7 @@ architecture structural of dlx is
     port (
       rst  : in  std_logic;
       addr : in  std_logic_vector(addr_size - 1 downto 0);
-      dout : out std_logic_vector(4*data_width - 1 downto 0)
+      dout : out std_logic_vector(4*data_cell_width - 1 downto 0)
       );
 
   end component;
@@ -159,8 +160,8 @@ architecture structural of dlx is
       read_enable       : in  std_logic;
       write_enable      : in  std_logic;
       write_single_cell : in  std_logic;
-      din               : in  std_logic_vector(4*data_width - 1 downto 0);
-      dout              : out std_logic_vector(4*data_width - 1 downto 0)
+      din               : in  std_logic_vector(4*data_cell_width - 1 downto 0);
+      dout              : out std_logic_vector(4*data_cell_width - 1 downto 0)
       );
 
   end component;
@@ -188,7 +189,8 @@ architecture structural of dlx is
 -- todo
   constant imm_val_size  : natural := 16;
   constant j_val_size    : natural := 26;  --not used
-  constant reg_addr_size : natural := 5;
+  constant reg_addr_size : natural := 32;
+  constant n_bit         : natural := 32;
 
   signal datapath_iram_addr   : std_logic_vector(iram_addr_size-1 downto 0);
   signal datapath_iram_dout   : std_logic_vector(4*iram_data_cell_width-1 downto 0);
@@ -330,7 +332,8 @@ begin  -- architecture structural
   datapath0 : datapath generic map(
     imm_val_size  => imm_val_size,
     j_val_size    => j_val_size,
-    reg_addr_size => reg_addr_size
+    reg_addr_size => reg_addr_size,
+    n_bit         => n_bit
     ) port map(
       instr      => datapath_iram_dout,
       lmdin      => datapath_dram_dout,
@@ -343,7 +346,7 @@ begin  -- architecture structural
       rfr1       => cu_hw_reg_file_read_1,
       rfr2       => cu_hw_reg_file_read_2,
       rfw        => cu_hw_reg_file_write,
-      be         => cu_hw_branch_en,
+      be         => cu_hw_branch_en, --maybe is cu_hw_branch_nez, CHECK IT!
       jr         => cu_hw_jr_en,
       jmp        => cu_hw_jump_en,
       see        => cu_hw_imm_sign_ext_en,

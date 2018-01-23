@@ -8,7 +8,8 @@ entity datapath is
   generic (
     imm_val_size  : natural := 16;
     j_val_size    : natural := 26;
-    reg_addr_size : natural := 32
+    reg_addr_size : natural := 32;
+    n_bit         : natural := 32
     );
   port (
     -- input
@@ -202,7 +203,7 @@ architecture structural of datapath is
       );
   end component;
 
-  signal pcin, npcin, npcout, pcregout                              : std_logic_vector(n_bit-1 downto 0);
+  signal pcin, npcin, npcout, pcregout, mux31win, addrd1, addrd2    : std_logic_vector(n_bit-1 downto 0);
   signal irout                                                      : std_logic_vector(n_bit-1 downto 0);
   signal om5, ain, bin, immin, aout, bout, immout, fuo1, fuo2, fuo3 : std_logic_vector(n_bit-1 downto 0);
   signal fuo4, om1, om2, om3, om4, oalu, r1out, lmdout, ompc        : std_logic_vector(n_bit-1 downto 0);
@@ -222,16 +223,24 @@ begin
     port map(npcin, clk, rst, '0', npce, npcout);
 
   --decode stage
+  mux31win(n_bit-1 downto 5) <= (others => '0');
+  mux31win(4 downto 0) <= irout(n_bit-7 downto n_bit-11);
+  addrd1(n_bit-1 downto 5) <= (others => '0');
+  addrd1(4 downto 0) <= irout(n_bit-12 downto n_bit-16);
+  addrd2(n_bit-1 downto 5) <= (others => '0');
+  addrd2(4 downto 0) <= irout(n_bit-17 downto n_bit-21);
+  
+  
   mux31w : mux_n_2_1 generic map(n => n_bit)
-    port map(irout(n_bit-7 downto n_bit-11), raddrconst, mws, wri);
+    port map(mux31win, raddrconst, mws, wri);
   reg_file : register_file generic map(width_add => reg_addr_size, width_data => n_bit)
-    port map(clk, rst, rfe, rfr1, rfr2, rfw, aw3o, irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), om5, ain, bin);
+    port map(clk, rst, rfe, rfr1, rfr2, rfw, aw3o, addrd1, addrd2, om5, ain, bin);
   sign_extend : sign_extender generic map(n_in => imm_val_size, n_out => n_bit)
     port map(irout(n_bit-17 downto 0), see, immin);
   branch : branch_unit generic map(n1 => n_bit)
     port map(immin, om1, npcout, be, jr, jmp, pcin);
   forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
-    port map(irout(n_bit-12 downto n_bit-16), irout(n_bit-17 downto n_bit-21), aw1o, aw2o, aw3o, aw1e, aw2e, aw3e, oalu, aluout, om4, clk, fum, fuo1, fuo2);
+    port map(addrd1, addrd2, aw1o, aw2o, aw3o, aw1e, aw2e, aw3e, oalu, aluout, om4, clk, fum, fuo1, fuo2);
   mux1 : mux_n_2_1 generic map(n => n_bit)
     port map(ain, fuo1, fum(0), om1);
   mux2 : mux_n_2_1 generic map(n => n_bit)

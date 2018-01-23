@@ -18,15 +18,15 @@ entity dram is
     read_enable       : in  std_logic;
     write_enable      : in  std_logic;
     write_single_cell : in  std_logic;
-    din               : in  std_logic_vector(4*data_width - 1 downto 0);
-    dout              : out std_logic_vector(4*data_width - 1 downto 0)
+    din               : in  std_logic_vector(4*data_cell_width - 1 downto 0);
+    dout              : out std_logic_vector(4*data_cell_width - 1 downto 0)
     );
 
 end entity;
 
 architecture behavioral of dram is
 
-  type ramtype is array (0 to ram_depth - 1) of std_logic_vector(data_width-1 downto 0);  -- std_logic_vector(i_size - 1 downto 0);
+  type ramtype is array (0 to ram_depth - 1) of std_logic_vector(data_cell_width-1 downto 0);  -- std_logic_vector(i_size - 1 downto 0);
 
   signal dram_mem : ramtype;
 
@@ -39,14 +39,14 @@ begin
     index := conv_integer(unsigned(addr_r));
     if(rst = '0') then
       for i in 0 to 3 loop
-        dout((i+1)*data_width-1 downto i*data_width) <= (others => '0');
+        dout((i+1)*data_cell_width-1 downto i*data_cell_width) <= (others => '0');
       end loop;
     elsif(read_enable = '1') then
       for i in 0 to 3 loop
         if(index+i < ram_depth) then
-          dout((i+1)*data_width-1 downto i*data_width) <= dram_mem(index+i);
+          dout((i+1)*data_cell_width-1 downto i*data_cell_width) <= dram_mem(index+i);
         else
-          dout((i+1)*data_width-1 downto i*data_width) <= (others => '0');
+          dout((i+1)*data_cell_width-1 downto i*data_cell_width) <= (others => '0');
         end if;
       end loop;
     end if;
@@ -62,10 +62,10 @@ begin
       dram_mem <= (others => (others => '0'));
     elsif (write_enable = '1') then
       if(write_single_cell = '1') then
-        dram_mem(index) <= din(data_width-1 downto 0);
+        dram_mem(index) <= din(data_cell_width-1 downto 0);
       else
         for i in 0 to 3 loop
-          dram_mem(index+3-i) <= din((i+1)*data_width-1 downto i*data_width);
+          dram_mem(index+3-i) <= din((i+1)*data_cell_width-1 downto i*data_cell_width);
         end loop;
       end if;
     end if;
