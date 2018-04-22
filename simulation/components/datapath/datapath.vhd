@@ -28,7 +28,8 @@ entity datapath is
     rfr2       : in     std_logic;      --read enable 2
     rfw        : in     std_logic;      --write enable
     --branch unit signals
-    be         : in     std_logic;      --beqz/!bnez
+    be         : in     std_logic;      --branch enable
+    bnez         : in     std_logic;      --beqz/!bnez
     jr         : in     std_logic;      --jr/!nojr
     jmp        : in     std_logic;      --jmp/!nojmp
     --sign extender and registers signals
@@ -103,6 +104,7 @@ architecture structural of datapath is
       reg : in  std_logic_vector(n1-1 downto 0);
       npc : in  std_logic_vector(n1-1 downto 0);
       be  : in  std_logic;                        --from cu
+      bnez  : in  std_logic;                        --from cu
       jr  : in  std_logic;
       jmp : in  std_logic;
       pc  : out std_logic_vector(n1-1 downto 0)
@@ -238,7 +240,7 @@ begin
   sign_extend : sign_extender generic map(n_in => imm_val_size, n_out => n_bit)
     port map(irout(n_bit-17 downto 0), see, immin);
   branch : branch_unit generic map(n1 => n_bit)
-    port map(immin, om1, npcout, be, jr, jmp, pcin);
+    port map(immin, om1, npcout, be, bnez, jr, jmp, pcin);
   forwinst : forwarding_unit generic map(n => reg_addr_size, m => n_bit)
     port map(addrd1, addrd2, aw1o, aw2o, aw3o, aw1e, aw2e, aw3e, oalu, aluout, om4, clk, fum, fuo1, fuo2);
   mux1 : mux_n_2_1 generic map(n => n_bit)

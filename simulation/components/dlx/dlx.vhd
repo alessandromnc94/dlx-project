@@ -96,7 +96,8 @@ architecture structural of dlx is
       rfr2       : in     std_logic;    --read enable 2
       rfw        : in     std_logic;    --write enable
       --branch unit signals
-      be         : in     std_logic;    --beqz/!bnez
+      be         : in     std_logic;
+      bnez       : in     std_logic;    --bnez/!beqz
       jr         : in     std_logic;    --jr/!nojr
       jmp        : in     std_logic;    --jmp/!nojmp
       --sign extender and registers signals
@@ -135,9 +136,9 @@ architecture structural of dlx is
 
   component iram is
     generic (
-      ram_depth  : natural;
+      ram_depth       : natural;
       data_cell_width : natural;
-      addr_size  : natural
+      addr_size       : natural
       );
     port (
       rst  : in  std_logic;
@@ -149,9 +150,9 @@ architecture structural of dlx is
 
   component dram is
     generic (
-      ram_depth  : natural;
+      ram_depth       : natural;
       data_cell_width : natural;
-      addr_size  : natural
+      addr_size       : natural
       );
     port (
       rst               : in  std_logic;
@@ -192,14 +193,33 @@ architecture structural of dlx is
   constant reg_addr_size : natural := 32;
   constant n_bit         : natural := 32;
 
-  signal datapath_iram_addr   : std_logic_vector(iram_addr_size-1 downto 0);
-  signal datapath_iram_dout   : std_logic_vector(4*iram_data_cell_width-1 downto 0);
-  signal datapath_dram_addr_r : std_logic_vector(dram_addr_size-1 downto 0);
-  signal datapath_dram_addr_w : std_logic_vector(dram_addr_size-1 downto 0);
-  signal datapath_dram_din    : std_logic_vector(4*dram_data_cell_width-1 downto 0);
-  signal datapath_dram_dout   : std_logic_vector(4*dram_data_cell_width-1 downto 0);
+  signal datapath_iram_addr              : std_logic_vector(iram_addr_size-1 downto 0);
+  signal datapath_iram_dout              : std_logic_vector(4*iram_data_cell_width-1 downto 0);
+  signal datapath_dram_addr_r            : std_logic_vector(dram_addr_size-1 downto 0);
+  signal datapath_dram_addr_w            : std_logic_vector(dram_addr_size-1 downto 0);
+  signal datapath_dram_din               : std_logic_vector(4*dram_data_cell_width-1 downto 0);
+  signal datapath_dram_dout              : std_logic_vector(4*dram_data_cell_width-1 downto 0);
   signal datapath_dram_write_single_cell : std_logic;
-  
+  --
+  signal datapath_pce                    : std_logic;
+  signal datapath_npce                   : std_logic;
+  signal datapath_rfe                    : std_logic;
+  signal datapath_ae                     : std_logic;
+  signal datapath_ben                    : std_logic;
+  signal datapath_ie                     : std_logic;
+  signal datapath_ire                    : std_logic;
+  signal datapath_pre                    : std_logic;
+  signal datapath_aw1e                   : std_logic;
+  signal datapath_m3s                    : std_logic;
+  signal datapath_mee                    : std_logic;
+  signal datapath_mps                    : std_logic;
+  signal datapath_mss                    : std_logic;
+  signal datapath_r1e                    : std_logic;
+  signal datapath_lmde                   : std_logic;
+  signal datapath_m4s                    : std_logic;
+  signal datapath_m5s                    : std_logic;
+  signal datapath_mws                    : std_logic;
+
 
   -- check which signals are useless (they are cloned by cu_hw port map)
   signal datapath_reg_file_read_1    : std_logic;
@@ -270,9 +290,9 @@ begin  -- architecture structural
 
 -- component instancing
   dram0 : dram generic map(
-    ram_depth  => dram_depth,
+    ram_depth       => dram_depth,
     data_cell_width => dram_data_cell_width,
-    addr_size  => dram_addr_size
+    addr_size       => dram_addr_size
     ) port map(
       rst               => rst,
       addr_r            => dram_addr_r,
@@ -285,9 +305,9 @@ begin  -- architecture structural
       );
 
   iram0 : iram generic map(
-    ram_depth  => iram_depth,
+    ram_depth       => iram_depth,
     data_cell_width => iram_data_cell_width,
-    addr_size  => iram_addr_size
+    addr_size       => iram_addr_size
     ) port map(
       rst  => rst,
       addr => iram_addr,
@@ -339,41 +359,64 @@ begin  -- architecture structural
       lmdin      => datapath_dram_dout,
       clk        => clk,
       rst        => rst,
-      pce        => '1',
-      npce       => '1',
-      ire        => '1',
-      rfe        => '1',
-      rfr1       => cu_hw_reg_file_read_1,
-      rfr2       => cu_hw_reg_file_read_2,
-      rfw        => cu_hw_reg_file_write,
-      be         => cu_hw_branch_en, --maybe is cu_hw_branch_nez, CHECK IT!
-      jr         => cu_hw_jr_en,
-      jmp        => cu_hw_jump_en,
-      see        => cu_hw_imm_sign_ext_en,
-      ae         => '1',
-      ben        => '1',
-      ie         => '1',
-      pre        => '1',
-      aw1e       => '1',
-      alusel     => cu_hw_alu_op_sel,
-      m3s        => '1',
-      aoe        => cu_hw_alu_out_reg_en,
-      mee        => '1',
-      mps        => '1',
-      mss        => '1',
-      aw2e       => cu_hw_add_w_pipe_2_en,
-      r1e        => '1',
-      msksel2    => cu_hw_mask_2_en,
-      msksigned2 => cu_hw_mask_2_signed,
-      lmde       => '1',
-      m4s        => '1',
-      aw3e       => cu_hw_add_w_pipe_3_en,
-      m5s        => '1',
-      mws        => '1',
-      pcout      => iram_addr,
-      aluout     => dram_addr_w,
-      meout      => dram_din
+      pce        => datapath_pce,
+      npce       => datapath_npce,
+      ire        => datapath_ire,
+      rfe        => datapath_rfe,
+      rfr1       => datapath_reg_file_read_1,
+      rfr2       => datapath_reg_file_read_2,
+      rfw        => datapath_reg_file_write,
+      be         => datapath_branch_en,
+      bnez       => datapath_branch_nez,
+      jr         => datapath_jr_en,
+      jmp        => datapath_jump_en,
+      see        => datapath_imm_sign_ext_en,
+      ae         => datapath_ae,
+      ben        => datapath_ben,
+      ie         => datapath_ie,
+      pre        => datapath_pre,
+      aw1e       => datapath_aw1e,
+      alusel     => datapath_alu_op_sel,
+      m3s        => datapath_m3s,
+      aoe        => datapath_alu_out_reg_en,
+      mee        => datapath_mee,
+      mps        => datapath_mps,
+      mss        => datapath_mss,
+      aw2e       => datapath_add_w_pipe_2_en,
+      r1e        => datapath_r1e,
+      msksel2    => datapath_mask_2_en,
+      msksigned2 => datapath_mask_2_signed,
+      lmde       => datapath_lmde,
+      m4s        => datapath_m4s,
+      aw3e       => datapath_add_w_pipe_3_en,
+      m5s        => datapath_m5s,
+      mws        => datapath_mws,
+      pcout      => datapath_iram_addr,
+      aluout     => datapath_dram_addr_w,
+      meout      => datapath_dram_din
       );
+
+-- stucked signals
+  datapath_pce  <= '1';
+  datapath_npce <= '1';
+  datapath_rfe  <= '1';
+  datapath_ae   <= '1';
+  datapath_ben  <= '1';
+  datapath_ie   <= '1';
+  datapath_ire  <= '1';
+  datapath_pre  <= '1';
+  datapath_aw1e <= '1';
+  -- datapath_m3s  <= '1';
+  datapath_mee  <= '1';
+  -- datapath_mps  <= '1';
+  -- datapath_mss  <= '1';
+  datapath_r1e  <= '1';
+  -- datapath_lmde <= '1';
+  -- datapath_m4s  <= '1';
+  -- datapath_m5s  <= '1';
+  -- datapath_mws  <= '1';
+
+
 
   -- signal redirects
   -- datapath <--> iram
