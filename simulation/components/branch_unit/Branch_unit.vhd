@@ -60,18 +60,44 @@ architecture structural of branch_unit is
       out_s : out std_logic
       );
   end component;
+  
+  component or_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
+      );
+  end component;
+  
+  component xor_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
+      );
+  end component;
+  
+  component and_gate is
+    port (
+      in_1  : in  std_logic;
+      in_2  : in  std_logic;
+      out_s : out std_logic
+      );
+  end component;
 
-  signal om1, os              : std_logic_vector(n1-1 downto 0);
-  signal ocmp, oinv, om2, om3 : std_logic_vector(0 downto 0);
-    signal do_branch, do_jump : std_logic;
+  signal om1, os                       : std_logic_vector(n1-1 downto 0);
+  signal ocmp, oinv, om2, om3          : std_logic_vector(0 downto 0);
+  signal do_branch, do_jump, xor_out   : std_logic;
 
 begin
--- TODO
-do_branch <= be and (bnez xor ocmp(0)); -- 
-  do_jump <= do_branch or jmp;
-
+  
   comp : zero_comparator generic map(n => n1)
     port map(reg, ocmp(0)); -- ocmp = "1" if reg == "0"s
+  
+  xor1: xor_gate port map(bnez, ocmp(0), xor_out);
+  dobranch: and_gate port map(be, xor_out, do_branch);
+  dojump: or_gate port map(do_branch, jmp, do_jump);
+    
   add : rca_n generic map(n => n1)
     port map(npc, imm, '0', os, open); -- os = npc+imm
   -- inv  : not_gate port map(ocmp(0), oinv(0)); -- oinv = ! ocmp = reg != "0"s -- USE do_branch
