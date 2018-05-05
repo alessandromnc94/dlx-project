@@ -94,20 +94,15 @@ begin
   comp : zero_comparator generic map(n => n1)
     port map(reg, ocmp(0)); -- ocmp = "1" if reg == "0"s
   
-  xor1: xor_gate port map(bnez, ocmp(0), xor_out);
-  dobranch: and_gate port map(be, xor_out, do_branch);
-  dojump: or_gate port map(do_branch, jmp, do_jump);
+  xor1: xor_gate port map(bnez, ocmp(0), xor_out); --if bnez or beqz
+  dobranch: and_gate port map(be, xor_out, do_branch); --if jal, jalr, jr
+  dojump: or_gate port map(do_branch, jmp, do_jump); --if branch or j
     
   add : rca_n generic map(n => n1)
-    port map(npc, imm, '0', os, open); -- os = npc+imm
-  -- inv  : not_gate port map(ocmp(0), oinv(0)); -- oinv = ! ocmp = reg != "0"s -- USE do_branch
+    port map(npc, imm, '0', os, open);
   mux1 : mux_n_2_1 generic map(n => n1)
-    port map(os, reg, jr, om1); -- om1 = reg if jr = 1 else os
-  -- mux2 : mux_n_2_1 generic map(n => 1)
-    -- port map(ocmp, oinv,  bnez, om2); -- USE do_branch
-  -- mux3 : mux_n_2_1 generic map(n => 1)
-    -- port map("0", om2, jmp, om3); -- USE do_jump
+    port map(os, reg, jr, om1);
   mux4 : mux_n_2_1 generic map(n => n1)
-    port map(npc, om1, do_jump, pc); -- ????
+    port map(npc, om1, do_jump, pc);
 
 end architecture;
